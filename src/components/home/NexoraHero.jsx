@@ -28,10 +28,10 @@ const ParticleBackground = ({ count = 8000 }) => {
     positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
     positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
 
-    // Deep space colors
-    colors[i * 3] = 0.1 + Math.random() * 0.2;
-    colors[i * 3 + 1] = 0.2 + Math.random() * 0.3;
-    colors[i * 3 + 2] = 0.4 + Math.random() * 0.4;
+    // Very dark blue colors
+    colors[i * 3] = 0.05 + Math.random() * 0.1; // Dark blue
+    colors[i * 3 + 1] = 0.05 + Math.random() * 0.15; // Dark purple
+    colors[i * 3 + 2] = 0.1 + Math.random() * 0.2; // Deep blue
   }
 
   useFrame((state, delta) => {
@@ -52,10 +52,10 @@ const ParticleBackground = ({ count = 8000 }) => {
     <Points ref={particlesRef} positions={positions} colors={colors}>
       <PointMaterial
         vertexColors
-        size={0.012}
+        size={0.018}
         sizeAttenuation
         transparent
-        opacity={0.8}
+        opacity={0.5}
         alphaTest={0.01}
         depthWrite={false}
       />
@@ -90,7 +90,7 @@ const AnimatedText = ({ text, delay = 0, className = "", size = "xl" }) => {
           transition: { duration: 0.3 },
         }}
         style={{
-          background: "linear-gradient(45deg, #a78bfa, #ec4899, #06b6d4)",
+          background: "linear-gradient(45deg, #4f46e5, #7c3aed, #0369a1)",
           backgroundSize: "200% 200%",
           backgroundClip: "text",
           WebkitBackgroundClip: "text",
@@ -148,17 +148,17 @@ const VideoPlayer = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.4 }}
-          className="text-purple-300 text-sm font-light tracking-widest"
+          className="text-indigo-400 text-sm font-light tracking-widest"
         >
           EXPERIENCE OUR WORK IN MOTION
         </motion.div>
       </motion.div>
 
       <motion.div
-        className="w-full h-[400px] lg:h-[500px] relative overflow-hidden rounded-2xl border border-purple-500/20 shadow-2xl shadow-purple-500/10 bg-black/60 backdrop-blur-sm"
+        className="w-full h-[400px] lg:h-[500px] relative overflow-hidden rounded-2xl border border-indigo-600/40 shadow-2xl shadow-indigo-900/30 bg-black/80 backdrop-blur-sm"
         whileHover={{
           scale: 1.02,
-          borderColor: "rgba(192, 132, 252, 0.4)",
+          borderColor: "rgba(79, 70, 229, 0.6)",
           transition: { duration: 0.3 },
         }}
         onClick={handlePlayPause}
@@ -174,18 +174,18 @@ const VideoPlayer = () => {
           <source src={videoSource} type="video/mp4" />
         </video>
 
-        {/* Enhanced Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none z-10" />
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black/70 to-transparent pointer-events-none z-10" />
+        {/* Minimal Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none z-10" />
+        <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-black/50 to-transparent pointer-events-none z-10" />
 
         {/* Video Title */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.6 }}
-          className="absolute top-4 left-4 bg-black/80 px-4 py-2 rounded-lg text-sm font-mono z-20 backdrop-blur-sm text-purple-300 border border-purple-500/30 flex items-center gap-2"
+          className="absolute top-4 left-4 bg-black/80 px-4 py-2 rounded-lg text-sm font-mono z-20 backdrop-blur-sm text-indigo-300 border border-indigo-600/50 flex items-center gap-2"
         >
-          <FaVideo className="text-purple-400" />
+          <FaVideo className="text-indigo-400" />
           <span>INTRODUCTION_2025.MP4</span>
         </motion.div>
 
@@ -210,10 +210,10 @@ const VideoPlayer = () => {
               >
                 {/* Pulsing Glow Rings */}
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-purple-500/30"
+                  className="absolute inset-0 rounded-full bg-indigo-600/30"
                   animate={{
                     scale: [1, 1.5, 1],
-                    opacity: [0.5, 0.8, 0.5],
+                    opacity: [0.3, 0.5, 0.3],
                   }}
                   transition={{
                     duration: 2,
@@ -222,10 +222,10 @@ const VideoPlayer = () => {
                   }}
                 />
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-pink-500/20"
+                  className="absolute inset-0 rounded-full bg-blue-600/20"
                   animate={{
                     scale: [1, 1.8, 1],
-                    opacity: [0.3, 0.6, 0.3],
+                    opacity: [0.2, 0.4, 0.2],
                   }}
                   transition={{
                     duration: 2.5,
@@ -236,8 +236,8 @@ const VideoPlayer = () => {
                 />
 
                 {/* Main Button */}
-                <div className="relative w-24 h-24 bg-gradient-to-br from-purple-600 via-pink-600 to-cyan-600 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm border-2 border-white/20">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent" />
+                <div className="relative w-24 h-24 bg-gradient-to-br from-indigo-700 via-purple-700 to-blue-700 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm border-2 border-white/10">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/10 to-transparent" />
                   <HiPlay className="w-10 h-10 text-white " />
                 </div>
 
@@ -246,7 +246,7 @@ const VideoPlayer = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-full backdrop-blur-sm border border-white/20 flex items-center gap-2"
+                  className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-white text-sm font-medium bg-black/70 px-4 py-2 rounded-full backdrop-blur-sm border border-white/10 flex items-center gap-2"
                 >
                   <HiCursorClick className="w-4 h-4" />
                   Play
@@ -271,14 +271,31 @@ export default function HeroSection() {
         </Canvas>
       </div>
 
-      {/* Animated Glow Effects */}
+      {/* Milky Glow Effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Main Milky Way Effect */}
         <motion.div
-          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-purple-900/30 blur-3xl"
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[800px] rounded-full bg-gradient-to-br from-indigo-500/5 via-purple-500/8 to-blue-500/10 blur-[100px]"
           animate={{
-            x: [0, 100, 0],
-            y: [0, -50, 0],
+            scale: [1, 1.1, 1],
+            rotate: [0, 5, 0],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            repeatType: "loop",
+          }}
+        />
+
+        {/* Soft Milky Clouds */}
+        <motion.div
+          className="absolute top-1/4 left-1/4 w-[600px] h-[400px] rounded-full bg-gradient-to-r from-indigo-400/10 to-purple-400/15 blur-[80px]"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, -30, 0],
             scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2],
           }}
           transition={{
             duration: 20,
@@ -286,28 +303,92 @@ export default function HeroSection() {
             repeatType: "loop",
           }}
         />
+
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-blue-900/20 blur-3xl"
+          className="absolute bottom-1/3 right-1/4 w-[500px] h-[350px] rounded-full bg-gradient-to-l from-blue-400/10 to-indigo-400/12 blur-[70px]"
           animate={{
-            x: [0, -80, 0],
-            y: [0, 60, 0],
+            x: [0, -40, 0],
+            y: [0, 25, 0],
+            scale: [1, 1.15, 1],
+            opacity: [0.15, 0.3, 0.15],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            repeatType: "loop",
+            delay: 3,
+          }}
+        />
+
+        {/* Milky Nebula Effects */}
+        <motion.div
+          className="absolute top-1/3 right-1/3 w-[400px] h-[300px] rounded-full bg-gradient-to-tr from-purple-300/8 to-pink-300/6 blur-[60px]"
+          animate={{
             scale: [1, 1.3, 1],
+            opacity: [0.1, 0.25, 0.1],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            repeatType: "loop",
+            delay: 6,
+          }}
+        />
+
+        <motion.div
+          className="absolute bottom-1/4 left-1/3 w-[350px] h-[250px] rounded-full bg-gradient-to-bl from-blue-300/7 to-cyan-300/5 blur-[50px]"
+          animate={{
+            scale: [1, 1.25, 1],
+            opacity: [0.08, 0.2, 0.08],
+          }}
+          transition={{
+            duration: 14,
+            repeat: Infinity,
+            repeatType: "loop",
+            delay: 8,
+          }}
+        />
+
+        {/* Floating Milky Orbs */}
+        <motion.div
+          className="absolute top-20 right-20 w-64 h-64 rounded-full bg-gradient-to-br from-white/5 to-indigo-200/8 blur-[40px]"
+          animate={{
+            y: [0, -30, 0],
+            x: [0, 15, 0],
+            scale: [1, 1.1, 1],
+            opacity: [0.1, 0.2, 0.1],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            repeatType: "loop",
+          }}
+        />
+
+        <motion.div
+          className="absolute bottom-32 left-20 w-48 h-48 rounded-full bg-gradient-to-tr from-purple-200/6 to-white/4 blur-[35px]"
+          animate={{
+            y: [0, 20, 0],
+            x: [0, -10, 0],
+            scale: [1, 1.08, 1],
+            opacity: [0.08, 0.15, 0.08],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            repeatType: "loop",
+            delay: 4,
+          }}
+        />
+
+        {/* Subtle Background Haze */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-b from-indigo-900/3 via-transparent to-purple-900/2"
+          animate={{
+            opacity: [0.02, 0.05, 0.02],
           }}
           transition={{
             duration: 25,
-            repeat: Infinity,
-            repeatType: "loop",
-            delay: 5,
-          }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-900/10 rounded-full blur-2xl"
-          animate={{
-            scale: [1, 1.5, 1],
-            opacity: [0.3, 0.6, 0.3],
-          }}
-          transition={{
-            duration: 15,
             repeat: Infinity,
             repeatType: "loop",
           }}
@@ -324,7 +405,7 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
             className="mb-8"
           >
-            <div className="text-purple-400 text-lg md:text-xl font-medium tracking-widest">
+            <div className="text-indigo-400 text-lg md:text-xl font-medium tracking-widest">
               NEXT-GENERATION VIDEO PLATFORM
             </div>
           </motion.div>
@@ -353,7 +434,7 @@ export default function HeroSection() {
           transition={{ delay: 0.9, duration: 0.8 }}
           className="mb-12 max-w-2xl mx-auto text-center"
         >
-          <p className="text-xl md:text-2xl text-gray-300 leading-relaxed font-light">
+          <p className="text-xl md:text-2xl text-gray-400 leading-relaxed font-light">
             Transform raw footage into professional-grade videos in minutes.
             Experience the future of video editing with advanced processing and
             cinematic rendering.
@@ -374,10 +455,10 @@ export default function HeroSection() {
           <motion.button
             whileHover={{
               scale: 1.05,
-              boxShadow: "0 0 40px rgba(192, 132, 252, 0.4)",
+              boxShadow: "0 0 30px rgba(79, 70, 229, 0.3)",
             }}
             whileTap={{ scale: 0.95 }}
-            className="relative px-12 py-5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl text-white font-bold text-xl hover:shadow-2xl transition-all group overflow-hidden flex items-center gap-3"
+            className="relative px-12 py-5 bg-gradient-to-r from-indigo-700 to-purple-700 rounded-2xl text-white font-bold text-xl hover:shadow-2xl transition-all group overflow-hidden flex items-center gap-3"
           >
             <span className="relative z-10 flex items-center">
               <FaRocket className="w-5 h-5 mr-2" />
@@ -391,7 +472,7 @@ export default function HeroSection() {
               </motion.span>
             </span>
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-purple-700 to-pink-700"
+              className="absolute inset-0 bg-gradient-to-r from-indigo-800 to-purple-800"
               initial={{ x: "-100%" }}
               whileHover={{ x: 0 }}
               transition={{ duration: 0.4 }}
@@ -401,11 +482,11 @@ export default function HeroSection() {
           <motion.button
             whileHover={{
               scale: 1.05,
-              borderColor: "rgba(192, 132, 252, 0.6)",
-              color: "#e879f9",
+              borderColor: "rgba(79, 70, 229, 0.5)",
+              color: "#818cf8",
             }}
             whileTap={{ scale: 0.95 }}
-            className="px-12 py-5 bg-gray-900/80 backdrop-blur-md border border-gray-700 text-gray-300 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all flex items-center gap-3"
+            className="px-12 py-5 bg-gray-900/90 backdrop-blur-md border border-gray-800 text-gray-400 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all flex items-center gap-3"
           >
             <FaVideo className="w-5 h-5" />
             View Reel
@@ -438,14 +519,14 @@ export default function HeroSection() {
                 repeat: Infinity,
                 repeatType: "loop",
               }}
-              className="text-purple-300 text-sm mb-3 tracking-widest font-light flex items-center gap-2"
+              className="text-indigo-500 text-sm mb-3 tracking-widest font-light flex items-center gap-2"
             >
               <FaChevronDown className="w-3 h-3" />
               SCROLL TO EXPLORE
               <FaChevronDown className="w-3 h-3" />
             </motion.span>
             <motion.div
-              className="w-px h-16 bg-gradient-to-b from-purple-400 to-transparent"
+              className="w-px h-16 bg-gradient-to-b from-indigo-500 to-transparent"
               animate={{
                 height: [16, 32, 16],
                 opacity: [0.5, 1, 0.5],
@@ -459,36 +540,6 @@ export default function HeroSection() {
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Floating Glow Elements */}
-      <motion.div
-        animate={{
-          y: [0, -40, 0],
-          x: [0, 20, 0],
-          opacity: [0.3, 0.7, 0.3],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          repeatType: "loop",
-        }}
-        className="absolute top-20 left-10 w-48 h-48 bg-purple-900/20 rounded-full blur-xl"
-      />
-
-      <motion.div
-        animate={{
-          y: [0, 30, 0],
-          x: [0, -25, 0],
-          opacity: [0.2, 0.6, 0.2],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          repeatType: "loop",
-          delay: 2,
-        }}
-        className="absolute bottom-40 right-16 w-32 h-32 bg-cyan-900/15 rounded-full blur-xl"
-      />
     </div>
   );
 }
