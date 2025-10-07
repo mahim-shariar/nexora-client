@@ -17,49 +17,364 @@ import {
   HiPlay,
 } from "react-icons/hi";
 
-// ===== Infinite Particle Background =====
-const ParticleBackground = ({ count = 8000 }) => {
+// ===== Enhanced Particle Background with Brighter Stars =====
+const ParticleBackground = ({ count = 10000 }) => {
   const particlesRef = useRef();
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
+  const sizes = new Float32Array(count);
 
   for (let i = 0; i < count; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 50;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+    positions[i * 3] = (Math.random() - 0.5) * 100;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
 
-    // Very dark blue colors
-    colors[i * 3] = 0.05 + Math.random() * 0.1; // Dark blue
-    colors[i * 3 + 1] = 0.05 + Math.random() * 0.15; // Dark purple
-    colors[i * 3 + 2] = 0.1 + Math.random() * 0.2; // Deep blue
+    // More varied star colors with brighter elements
+    const starType = Math.random();
+    if (starType < 0.7) {
+      // Regular stars - brighter blues and purples
+      colors[i * 3] = 0.1 + Math.random() * 0.3;
+      colors[i * 3 + 1] = 0.1 + Math.random() * 0.2;
+      colors[i * 3 + 2] = 0.2 + Math.random() * 0.4;
+    } else if (starType < 0.9) {
+      // Bright blue stars
+      colors[i * 3] = 0.3 + Math.random() * 0.3;
+      colors[i * 3 + 1] = 0.4 + Math.random() * 0.4;
+      colors[i * 3 + 2] = 0.8 + Math.random() * 0.2;
+    } else {
+      // Rare white/yellow bright stars
+      colors[i * 3] = 0.8 + Math.random() * 0.2;
+      colors[i * 3 + 1] = 0.7 + Math.random() * 0.3;
+      colors[i * 3 + 2] = 0.4 + Math.random() * 0.3;
+    }
+
+    // Variable sizes for stars
+    sizes[i] = Math.random() * 0.03 + 0.008;
   }
 
   useFrame((state, delta) => {
     if (particlesRef.current) {
       const time = state.clock.getElapsedTime();
 
-      // Infinite flowing movement
-      particlesRef.current.rotation.x = Math.sin(time * 0.1) * 0.1;
-      particlesRef.current.rotation.y = Math.cos(time * 0.15) * 0.1;
-      particlesRef.current.rotation.z += delta * 0.02;
+      // Enhanced flowing movement
+      particlesRef.current.rotation.x = Math.sin(time * 0.08) * 0.15;
+      particlesRef.current.rotation.y = Math.cos(time * 0.12) * 0.15;
+      particlesRef.current.rotation.z += delta * 0.015;
 
-      // Continuous forward movement
-      particlesRef.current.position.z = Math.sin(time * 0.2) * 2;
+      // Subtle floating movement
+      particlesRef.current.position.y = Math.sin(time * 0.1) * 0.5;
     }
   });
 
   return (
-    <Points ref={particlesRef} positions={positions} colors={colors}>
+    <Points
+      ref={particlesRef}
+      positions={positions}
+      colors={colors}
+      sizes={sizes}
+    >
       <PointMaterial
         vertexColors
-        size={0.018}
+        size={0.025}
         sizeAttenuation
         transparent
-        opacity={0.5}
+        opacity={0.8}
         alphaTest={0.01}
         depthWrite={false}
+        blending={THREE.AdditiveBlending}
       />
     </Points>
+  );
+};
+
+// ===== Shooting Stars Component =====
+const ShootingStars = ({ count = 8 }) => {
+  const groupRef = useRef();
+  const stars = useRef(
+    Array.from({ length: count }, () => ({
+      position: [
+        (Math.random() - 0.5) * 100,
+        (Math.random() - 0.5) * 100,
+        (Math.random() - 0.5) * 50,
+      ],
+      speed: 0.5 + Math.random() * 1,
+      delay: Math.random() * 10,
+      active: false,
+    }))
+  );
+
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      const time = state.clock.getElapsedTime();
+
+      stars.current.forEach((star, i) => {
+        if (!star.active && time > star.delay) {
+          star.active = true;
+        }
+
+        if (star.active) {
+          // Move shooting star
+          star.position[0] -= star.speed * delta * 30;
+          star.position[1] -= star.speed * delta * 15;
+          star.position[2] += star.speed * delta * 10;
+
+          // Reset if out of bounds
+          if (star.position[0] < -60 || star.position[2] > 40) {
+            star.position = [
+              (Math.random() - 0.2) * 80,
+              (Math.random() - 0.5) * 80,
+              -30 + Math.random() * 20,
+            ];
+            star.speed = 0.5 + Math.random() * 1;
+          }
+        }
+      });
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      {stars.current.map((star, i) => (
+        <mesh key={i} position={star.position}>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshBasicMaterial
+            color={[2, 2, 3]}
+            transparent
+            opacity={0.8}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+};
+
+// ===== Nebula Cloud Effects =====
+const NebulaClouds = () => {
+  const cloudsRef = useRef();
+
+  useFrame((state) => {
+    if (cloudsRef.current) {
+      const time = state.clock.getElapsedTime();
+      cloudsRef.current.rotation.y = time * 0.02;
+    }
+  });
+
+  return (
+    <group ref={cloudsRef}>
+      {/* Various nebula clouds */}
+      <mesh position={[15, 8, -20]}>
+        <sphereGeometry args={[12, 32, 32]} />
+        <meshBasicMaterial
+          color={[0.3, 0.2, 0.8]}
+          transparent
+          opacity={0.05}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+      <mesh position={[-12, -5, -15]}>
+        <sphereGeometry args={[8, 32, 32]} />
+        <meshBasicMaterial
+          color={[0.8, 0.3, 0.6]}
+          transparent
+          opacity={0.04}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+      <mesh position={[5, -12, -25]}>
+        <sphereGeometry args={[6, 32, 32]} />
+        <meshBasicMaterial
+          color={[0.2, 0.6, 0.9]}
+          transparent
+          opacity={0.03}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+    </group>
+  );
+};
+
+// ===== Pulsing Stars Effect =====
+const PulsingStars = () => {
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      {/* Large distant stars */}
+      <motion.div
+        className="absolute top-1/4 right-1/4 w-4 h-4 bg-white rounded-full blur-sm"
+        animate={{
+          scale: [1, 1.5, 1],
+          opacity: [0.3, 0.8, 0.3],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+      />
+      <motion.div
+        className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-blue-300 rounded-full blur-sm"
+        animate={{
+          scale: [1, 2, 1],
+          opacity: [0.2, 0.6, 0.2],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          repeatType: "reverse",
+          delay: 1,
+        }}
+      />
+      <motion.div
+        className="absolute top-2/3 right-1/3 w-2 h-2 bg-purple-300 rounded-full blur-sm"
+        animate={{
+          scale: [1, 1.8, 1],
+          opacity: [0.4, 0.9, 0.4],
+        }}
+        transition={{
+          duration: 2.5,
+          repeat: Infinity,
+          repeatType: "reverse",
+          delay: 2,
+        }}
+      />
+
+      {/* Additional twinkling stars */}
+      <motion.div
+        className="absolute top-10 left-20 w-2 h-2 bg-cyan-200 rounded-full blur-sm"
+        animate={{
+          scale: [1, 1.6, 1],
+          opacity: [0.2, 0.7, 0.2],
+        }}
+        transition={{
+          duration: 2.8,
+          repeat: Infinity,
+          repeatType: "reverse",
+          delay: 0.5,
+        }}
+      />
+      <motion.div
+        className="absolute bottom-20 right-40 w-3 h-3 bg-indigo-200 rounded-full blur-sm"
+        animate={{
+          scale: [1, 1.7, 1],
+          opacity: [0.3, 0.8, 0.3],
+        }}
+        transition={{
+          duration: 3.2,
+          repeat: Infinity,
+          repeatType: "reverse",
+          delay: 1.5,
+        }}
+      />
+    </div>
+  );
+};
+
+// ===== Enhanced Light Orbs =====
+const FloatingLightOrbs = () => {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Large central light orb */}
+      <motion.div
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-indigo-500/20 via-purple-500/15 to-blue-500/25 blur-[120px]"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          repeatType: "loop",
+        }}
+      />
+
+      {/* Additional floating orbs */}
+      <motion.div
+        className="absolute top-20 right-32 w-64 h-64 rounded-full bg-gradient-to-br from-blue-400/15 to-cyan-400/10 blur-[80px]"
+        animate={{
+          x: [0, 30, 0],
+          y: [0, -20, 0],
+          scale: [1, 1.3, 1],
+          opacity: [0.2, 0.4, 0.2],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          repeatType: "loop",
+        }}
+      />
+
+      <motion.div
+        className="absolute bottom-40 left-40 w-48 h-48 rounded-full bg-gradient-to-tr from-purple-400/12 to-pink-400/8 blur-[60px]"
+        animate={{
+          x: [0, -25, 0],
+          y: [0, 15, 0],
+          scale: [1, 1.4, 1],
+          opacity: [0.15, 0.3, 0.15],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          repeatType: "loop",
+          delay: 3,
+        }}
+      />
+
+      {/* Small twinkling orbs */}
+      <motion.div
+        className="absolute top-32 left-20 w-8 h-8 bg-cyan-300/40 rounded-full blur-md"
+        animate={{
+          scale: [1, 1.5, 1],
+          opacity: [0.1, 0.6, 0.1],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+      />
+
+      <motion.div
+        className="absolute bottom-32 right-24 w-6 h-6 bg-indigo-300/50 rounded-full blur-sm"
+        animate={{
+          scale: [1, 2, 1],
+          opacity: [0.2, 0.8, 0.2],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          repeatType: "reverse",
+          delay: 1,
+        }}
+      />
+
+      {/* Glowing particles */}
+      <motion.div
+        className="absolute top-44 left-1/4 w-12 h-12 bg-purple-400/30 rounded-full blur-lg"
+        animate={{
+          scale: [1, 1.8, 1],
+          opacity: [0.1, 0.4, 0.1],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          repeatType: "reverse",
+          delay: 2,
+        }}
+      />
+    </div>
+  );
+};
+
+// ===== Enhanced Canvas with All Effects =====
+const SpaceCanvas = () => {
+  return (
+    <div className="absolute inset-0 z-0">
+      <Canvas camera={{ position: [0, 0, 10], fov: 75 }}>
+        <ParticleBackground />
+        <ShootingStars />
+        <NebulaClouds />
+      </Canvas>
+    </div>
   );
 };
 
@@ -260,42 +575,26 @@ const VideoPlayer = () => {
   );
 };
 
-// ===== HeroSection =====
+// ===== Enhanced HeroSection with New Light Effects =====
 export default function HeroSection() {
   return (
     <div className="relative w-full bg-black overflow-hidden flex flex-col justify-center min-h-screen">
-      {/* Infinite Particle Background */}
-      <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 8], fov: 75 }}>
-          <ParticleBackground />
-        </Canvas>
-      </div>
+      {/* Enhanced Space Background */}
+      <SpaceCanvas />
 
-      {/* Milky Glow Effects */}
+      {/* New Light Effects */}
+      <FloatingLightOrbs />
+      <PulsingStars />
+
+      {/* Enhanced Milky Way Effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Main Milky Way Effect */}
+        {/* Main Galactic Core */}
         <motion.div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[800px] rounded-full bg-gradient-to-br from-indigo-500/5 via-purple-500/8 to-blue-500/10 blur-[100px]"
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[1400px] h-[1000px] rounded-full bg-gradient-to-br from-indigo-600/8 via-purple-600/12 to-blue-600/15 blur-[150px]"
           animate={{
-            scale: [1, 1.1, 1],
-            rotate: [0, 5, 0],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            repeatType: "loop",
-          }}
-        />
-
-        {/* Soft Milky Clouds */}
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-[600px] h-[400px] rounded-full bg-gradient-to-r from-indigo-400/10 to-purple-400/15 blur-[80px]"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-            scale: [1, 1.2, 1],
-            opacity: [0.2, 0.4, 0.2],
+            scale: [1, 1.15, 1],
+            rotate: [0, 180, 360],
+            opacity: [0.4, 0.7, 0.4],
           }}
           transition={{
             duration: 20,
@@ -304,91 +603,75 @@ export default function HeroSection() {
           }}
         />
 
+        {/* Spiral Arms */}
         <motion.div
-          className="absolute bottom-1/3 right-1/4 w-[500px] h-[350px] rounded-full bg-gradient-to-l from-blue-400/10 to-indigo-400/12 blur-[70px]"
+          className="absolute top-1/3 left-1/4 w-[800px] h-[600px] rounded-full bg-gradient-to-r from-blue-500/6 to-indigo-500/10 blur-[120px]"
           animate={{
-            x: [0, -40, 0],
-            y: [0, 25, 0],
-            scale: [1, 1.15, 1],
-            opacity: [0.15, 0.3, 0.15],
+            x: [0, 60, 0],
+            y: [0, -40, 0],
+            scale: [1, 1.25, 1],
+            opacity: [0.3, 0.5, 0.3],
           }}
           transition={{
-            duration: 18,
+            duration: 25,
             repeat: Infinity,
             repeatType: "loop",
-            delay: 3,
           }}
         />
 
-        {/* Milky Nebula Effects */}
         <motion.div
-          className="absolute top-1/3 right-1/3 w-[400px] h-[300px] rounded-full bg-gradient-to-tr from-purple-300/8 to-pink-300/6 blur-[60px]"
+          className="absolute bottom-1/3 right-1/4 w-[700px] h-[500px] rounded-full bg-gradient-to-l from-purple-500/8 to-pink-500/6 blur-[100px]"
+          animate={{
+            x: [0, -50, 0],
+            y: [0, 35, 0],
+            scale: [1, 1.2, 1],
+            opacity: [0.25, 0.4, 0.25],
+          }}
+          transition={{
+            duration: 22,
+            repeat: Infinity,
+            repeatType: "loop",
+            delay: 5,
+          }}
+        />
+
+        {/* Galactic Haze */}
+        <motion.div
+          className="absolute top-10 left-10 w-[300px] h-[300px] rounded-full bg-gradient-to-br from-cyan-400/5 to-blue-400/3 blur-[80px]"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.1, 0.25, 0.1],
           }}
           transition={{
-            duration: 12,
+            duration: 15,
             repeat: Infinity,
             repeatType: "loop",
-            delay: 6,
+            delay: 2,
           }}
         />
 
         <motion.div
-          className="absolute bottom-1/4 left-1/3 w-[350px] h-[250px] rounded-full bg-gradient-to-bl from-blue-300/7 to-cyan-300/5 blur-[50px]"
+          className="absolute bottom-20 right-20 w-[250px] h-[250px] rounded-full bg-gradient-to-tr from-purple-400/4 to-pink-400/2 blur-[60px]"
           animate={{
-            scale: [1, 1.25, 1],
+            scale: [1, 1.4, 1],
             opacity: [0.08, 0.2, 0.08],
           }}
           transition={{
-            duration: 14,
+            duration: 18,
             repeat: Infinity,
             repeatType: "loop",
-            delay: 8,
+            delay: 7,
           }}
         />
 
-        {/* Floating Milky Orbs */}
+        {/* Cosmic Dust */}
         <motion.div
-          className="absolute top-20 right-20 w-64 h-64 rounded-full bg-gradient-to-br from-white/5 to-indigo-200/8 blur-[40px]"
+          className="absolute inset-0 bg-gradient-to-b from-indigo-900/5 via-transparent to-purple-900/8"
           animate={{
-            y: [0, -30, 0],
-            x: [0, 15, 0],
-            scale: [1, 1.1, 1],
-            opacity: [0.1, 0.2, 0.1],
+            opacity: [0.03, 0.08, 0.03],
           }}
           transition={{
-            duration: 8,
-            repeat: Infinity,
-            repeatType: "loop",
-          }}
-        />
-
-        <motion.div
-          className="absolute bottom-32 left-20 w-48 h-48 rounded-full bg-gradient-to-tr from-purple-200/6 to-white/4 blur-[35px]"
-          animate={{
-            y: [0, 20, 0],
-            x: [0, -10, 0],
-            scale: [1, 1.08, 1],
-            opacity: [0.08, 0.15, 0.08],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            repeatType: "loop",
-            delay: 4,
-          }}
-        />
-
-        {/* Subtle Background Haze */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-indigo-900/3 via-transparent to-purple-900/2"
-          animate={{
-            opacity: [0.02, 0.05, 0.02],
-          }}
-          transition={{
-            duration: 25,
+            duration: 30,
             repeat: Infinity,
             repeatType: "loop",
           }}
@@ -405,8 +688,20 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
             className="mb-8"
           >
-            <div className="text-indigo-400 text-lg md:text-xl font-medium tracking-widest">
+            <div className="text-indigo-400 text-lg md:text-xl font-medium tracking-widest flex items-center justify-center gap-3">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <HiSparkles className="w-5 h-5 text-indigo-400" />
+              </motion.div>
               NEXT-GENERATION VIDEO PLATFORM
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <HiSparkles className="w-5 h-5 text-indigo-400" />
+              </motion.div>
             </div>
           </motion.div>
 
@@ -455,7 +750,7 @@ export default function HeroSection() {
           <motion.button
             whileHover={{
               scale: 1.05,
-              boxShadow: "0 0 30px rgba(79, 70, 229, 0.3)",
+              boxShadow: "0 0 40px rgba(79, 70, 229, 0.4)",
             }}
             whileTap={{ scale: 0.95 }}
             className="relative px-12 py-5 bg-gradient-to-r from-indigo-700 to-purple-700 rounded-2xl text-white font-bold text-xl hover:shadow-2xl transition-all group overflow-hidden flex items-center gap-3"
@@ -496,7 +791,7 @@ export default function HeroSection() {
         {/* Video Player */}
         <VideoPlayer />
 
-        {/* Animated Scroll Indicator */}
+        {/* Enhanced Scroll Indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -519,14 +814,14 @@ export default function HeroSection() {
                 repeat: Infinity,
                 repeatType: "loop",
               }}
-              className="text-indigo-500 text-sm mb-3 tracking-widest font-light flex items-center gap-2"
+              className="text-indigo-400 text-sm mb-3 tracking-widest font-light flex items-center gap-2"
             >
               <FaChevronDown className="w-3 h-3" />
               SCROLL TO EXPLORE
               <FaChevronDown className="w-3 h-3" />
             </motion.span>
             <motion.div
-              className="w-px h-16 bg-gradient-to-b from-indigo-500 to-transparent"
+              className="w-px h-16 bg-gradient-to-b from-indigo-400 to-transparent"
               animate={{
                 height: [16, 32, 16],
                 opacity: [0.5, 1, 0.5],
