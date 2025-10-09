@@ -11,8 +11,11 @@ import {
   FaVolumeUp,
   FaVolumeMute,
   FaRegClock,
+  FaMagic,
+  FaRocket,
+  FaAward,
 } from "react-icons/fa";
-import { HiSparkles } from "react-icons/hi";
+import { HiSparkles, HiGlobeAlt } from "react-icons/hi";
 
 // Video data - replace with your actual video URLs
 const videoSlides = [
@@ -82,31 +85,75 @@ const videoSlides = [
     features: ["Vertical Format", "Captions", "Platform Optimized"],
     accentColor: "from-violet-500 to-indigo-500",
   },
-  {
-    id: 7,
-    title: "Visual Effects Magic",
-    description: "Seamless VFX that transforms reality",
-    videoUrl: "/videos/vfx-reel.mp4",
-    thumbnail: "/thumbnails/vfx.jpg",
-    category: "VFX",
-    duration: "3:45",
-    features: ["CGI Integration", "Compositing", "Particle Effects"],
-    accentColor: "from-cyan-500 to-blue-500",
-  },
-  {
-    id: 8,
-    title: "Color Grading Excellence",
-    description: "Mood-setting color that tells emotional stories",
-    videoUrl: "/videos/color-grading.mp4",
-    thumbnail: "/thumbnails/color.jpg",
-    category: "Color",
-    duration: "2:20",
-    features: ["DaVinci Resolve", "LUT Creation", "Style Development"],
-    accentColor: "from-orange-500 to-yellow-500",
-  },
 ];
 
-// Enhanced Video Player Component with responsive design
+// Static Floating Background Bubbles - doesn't change with slides
+const StaticFloatingBubbles = () => {
+  const bubbles = React.useMemo(
+    () =>
+      [...Array(20)].map((_, i) => ({
+        id: i,
+        size: Math.random() * 300 + 100,
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        colorIndex: i % 6,
+        duration: Math.random() * 25 + 15,
+        delay: Math.random() * 5,
+        xMovement: (Math.random() - 0.5) * 150,
+        yMovement: (Math.random() - 0.5) * 150,
+      })),
+    []
+  );
+
+  const getGradientColors = (colorIndex) => {
+    const colors = [
+      { from: "#3b82f6", to: "#06b6d4" }, // blue to cyan
+      { from: "#8b5cf6", to: "#ec4899" }, // purple to pink
+      { from: "#10b981", to: "#14b8a6" }, // emerald to teal
+      { from: "#f59e0b", to: "#f97316" }, // amber to orange
+      { from: "#f43f5e", to: "#ef4444" }, // rose to red
+      { from: "#8b5cf6", to: "#4f46e5" }, // violet to indigo
+    ];
+    return colors[colorIndex];
+  };
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {bubbles.map((bubble) => {
+        const colors = getGradientColors(bubble.colorIndex);
+        return (
+          <motion.div
+            key={bubble.id}
+            className="absolute rounded-full opacity-10"
+            style={{
+              background: `linear-gradient(45deg, ${colors.from}, ${colors.to})`,
+              width: `${bubble.size}px`,
+              height: `${bubble.size}px`,
+              top: `${bubble.top}%`,
+              left: `${bubble.left}%`,
+              filter: "blur(60px)",
+            }}
+            animate={{
+              x: [0, bubble.xMovement, 0],
+              y: [0, bubble.yMovement, 0],
+              opacity: [0.05, 0.15, 0.05],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: bubble.duration,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+              delay: bubble.delay,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+// Enhanced Video Player Component
 const VideoPlayer = ({ video, onVideoEnd, isPlaying, onTogglePlay }) => {
   const videoRef = useRef(null);
   const [progress, setProgress] = useState(0);
@@ -176,9 +223,9 @@ const VideoPlayer = ({ video, onVideoEnd, isPlaying, onTogglePlay }) => {
         <source src={video.videoUrl} type="video/mp4" />
       </video>
 
-      {/* Enhanced Controls Bar - Responsive */}
+      {/* Enhanced Controls Bar */}
       <motion.div
-        className={`absolute bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-black/90 to-transparent transition-all duration-300 ${
+        className={`absolute bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-all duration-300 ${
           showControls
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-10"
@@ -250,7 +297,7 @@ const VideoPlayer = ({ video, onVideoEnd, isPlaying, onTogglePlay }) => {
         </div>
       </motion.div>
 
-      {/* Playback Indicator - Responsive */}
+      {/* Playback Indicator */}
       <AnimatePresence>
         {isPlaying && (
           <motion.div
@@ -275,7 +322,7 @@ const VideoPlayer = ({ video, onVideoEnd, isPlaying, onTogglePlay }) => {
   );
 };
 
-// Enhanced Video Thumbnail Component with responsive design
+// Enhanced Video Thumbnail Component
 const VideoThumbnail = ({ video, onPlay }) => {
   return (
     <motion.div
@@ -288,7 +335,7 @@ const VideoThumbnail = ({ video, onPlay }) => {
     >
       {/* Animated Background */}
       <div
-        className={`absolute inset-0 bg-gradient-to-br ${video.accentColor} opacity-20`}
+        className={`absolute inset-0 bg-gradient-to-br ${video.accentColor} opacity-30`}
       />
 
       {/* Floating Elements */}
@@ -307,7 +354,7 @@ const VideoThumbnail = ({ video, onPlay }) => {
         <HiSparkles className="w-2 h-2 md:w-3 md:h-3 text-white" />
       </motion.div>
 
-      {/* Content - Responsive */}
+      {/* Content */}
       <div className="relative z-10 h-full flex flex-col justify-end p-4 md:p-6 lg:p-8">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
           <motion.div
@@ -353,7 +400,7 @@ const VideoThumbnail = ({ video, onPlay }) => {
           {video.description}
         </motion.p>
 
-        {/* Features Tags - Responsive */}
+        {/* Features Tags */}
         <motion.div
           className="flex flex-wrap gap-1 md:gap-1.5"
           initial={{ y: 10, opacity: 0 }}
@@ -375,7 +422,7 @@ const VideoThumbnail = ({ video, onPlay }) => {
           ))}
         </motion.div>
 
-        {/* Enhanced Play Button Overlay - Responsive */}
+        {/* Enhanced Play Button Overlay */}
         <motion.div
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 shadow-2xl"
           whileHover={{
@@ -392,7 +439,7 @@ const VideoThumbnail = ({ video, onPlay }) => {
           </motion.div>
         </motion.div>
 
-        {/* Hover Text - Responsive */}
+        {/* Hover Text */}
         <motion.div
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-12 md:translate-y-14 lg:translate-y-16 text-white font-semibold text-xs md:text-sm opacity-0 group-hover:opacity-100 transition-all duration-500"
           initial={{ y: 10 }}
@@ -412,40 +459,7 @@ const VideoThumbnail = ({ video, onPlay }) => {
   );
 };
 
-// Enhanced Floating Particles
-const FloatingParticles = () => {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {[...Array(15)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            width: Math.random() * 3 + 1,
-            height: Math.random() * 3 + 1,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            background: `rgba(99, 102, 241, ${Math.random() * 0.3 + 0.1})`,
-          }}
-          animate={{
-            y: [0, -100, 0],
-            x: [0, Math.random() * 40 - 20, 0],
-            opacity: [0, 1, 0],
-            scale: [0, 1, 0],
-          }}
-          transition={{
-            duration: Math.random() * 6 + 6,
-            repeat: Infinity,
-            delay: Math.random() * 2,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-
-// Enhanced Video Showreel Section with full responsiveness
+// Enhanced Video Showreel Section with static floating bubbles
 const VideoShowreelSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
@@ -546,32 +560,16 @@ const VideoShowreelSection = () => {
   return (
     <section
       id="showreel"
-      className="relative py-16 md:py-24 lg:py-32 px-4 overflow-hidden"
+      className="relative py-20 md:py-28 lg:py-36 px-4 overflow-hidden bg-black"
     >
-      {/* Enhanced Background Elements */}
+      {/* Static Floating Background Bubbles - doesn't change with slides */}
+      <StaticFloatingBubbles />
+
+      {/* Additional Animated Elements */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Animated Grid */}
-        <div className="absolute inset-0 opacity-[0.015]">
-          <div className="grid grid-cols-8 md:grid-cols-12 gap-2 md:gap-4 h-full transform rotate-1 md:rotate-2">
-            {Array.from({ length: 96 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="border border-indigo-500 rounded"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: i * 0.01 }}
-                viewport={{ once: true }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Floating Particles */}
-        <FloatingParticles />
-
-        {/* Enhanced Scanning Laser Effect */}
+        {/* Scanning Laser Effect */}
         <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/2 to-transparent"
+          className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/5 to-transparent"
           animate={{ y: ["-100%", "200%"] }}
           transition={{
             duration: 8,
@@ -581,47 +579,44 @@ const VideoShowreelSection = () => {
           }}
         />
 
-        {/* Multiple Pulsing Orbs - Responsive */}
-        <motion.div
-          className="absolute top-1/4 -left-16 md:-left-32 w-32 h-32 md:w-64 md:h-64 rounded-full bg-indigo-500/3 blur-[50px] md:blur-[100px]"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-
-        <motion.div
-          className="absolute bottom-1/3 -right-16 md:-right-32 w-24 h-24 md:w-48 md:h-48 rounded-full bg-purple-500/3 blur-[40px] md:blur-[80px]"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.1, 0.3, 0.1],
-          }}
-          transition={{
-            duration: 7,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-        />
+        {/* Floating Particles */}
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={`particle-${i}`}
+            className="absolute rounded-full bg-indigo-400/20"
+            style={{
+              width: Math.random() * 6 + 2,
+              height: Math.random() * 6 + 2,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -100, 0],
+              x: [0, Math.random() * 40 - 20, 0],
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0],
+            }}
+            transition={{
+              duration: Math.random() * 10 + 10,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+            }}
+          />
+        ))}
       </div>
 
-      <div className="max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto relative z-10">
-        {/* Enhanced Header - Responsive */}
+      <div className="max-w-6xl xl:max-w-7xl mx-auto relative z-10">
+        {/* Enhanced Header */}
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="text-center mb-12 md:mb-16 lg:mb-20"
+          className="text-center mb-16 md:mb-20 lg:mb-24"
         >
           <motion.div
-            className="inline-flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl bg-gray-900/50 backdrop-blur-xl border border-indigo-500/30 mb-4 md:mb-6"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-gray-900/50 backdrop-blur-xl border border-indigo-500/30 mb-6"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -631,21 +626,21 @@ const VideoShowreelSection = () => {
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
             >
-              <HiSparkles className="w-4 h-4 md:w-5 md:h-5 text-indigo-400" />
+              <FaFilm className="w-5 h-5 text-indigo-400" />
             </motion.div>
-            <span className="text-indigo-300 font-medium tracking-widest text-xs md:text-sm uppercase">
+            <span className="text-indigo-300 font-medium tracking-widest text-sm uppercase">
               Portfolio Showcase
             </span>
             <motion.div
               animate={{ rotate: -360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
             >
-              <HiSparkles className="w-4 h-4 md:w-5 md:h-5 text-indigo-400" />
+              <FaAward className="w-5 h-5 text-indigo-400" />
             </motion.div>
           </motion.div>
 
           <motion.h2
-            className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white mb-4 md:mb-6 tracking-tighter leading-tight"
+            className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 tracking-tighter leading-tight"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
@@ -653,9 +648,12 @@ const VideoShowreelSection = () => {
           >
             Visual{" "}
             <span
-              className="bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent"
               style={{
+                background: "linear-gradient(45deg, #4f46e5, #7c3aed, #0369a1)",
                 backgroundSize: "200% 200%",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
               }}
             >
               Excellence
@@ -663,7 +661,7 @@ const VideoShowreelSection = () => {
           </motion.h2>
 
           <motion.p
-            className="text-lg md:text-xl text-gray-400 max-w-md md:max-w-2xl mx-auto leading-relaxed px-4"
+            className="text-xl md:text-2xl text-gray-400 max-w-2xl md:max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
@@ -671,14 +669,16 @@ const VideoShowreelSection = () => {
           >
             Experience the pinnacle of video production through our curated
             collection of{" "}
-            <span className="text-indigo-300">award-winning projects</span>
+            <span className="text-indigo-300 font-semibold">
+              award-winning projects
+            </span>
           </motion.p>
         </motion.div>
 
-        {/* Enhanced Main Video Carousel - Responsive */}
-        <div className="relative mb-8 md:mb-12 lg:mb-16">
+        {/* Enhanced Main Video Carousel */}
+        <div className="relative mb-12 md:mb-16 lg:mb-20">
           <div
-            className="relative h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] rounded-xl md:rounded-2xl lg:rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/5 border border-white/10"
+            className="relative h-[350px] sm:h-[450px] md:h-[550px] lg:h-[650px] rounded-2xl lg:rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/10 border border-white/10 backdrop-blur-sm"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -710,44 +710,44 @@ const VideoShowreelSection = () => {
             </AnimatePresence>
           </div>
 
-          {/* Enhanced Navigation Arrows - Responsive */}
+          {/* Enhanced Navigation Arrows */}
           <motion.button
-            className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-xl md:rounded-2xl bg-black/70 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 group cursor-pointer z-20"
+            className="absolute left-4 md:left-6 top-1/2 transform -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-black/70 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 group cursor-pointer z-20"
             onClick={prevSlide}
             whileHover={{ scale: 1.1, x: -2 }}
             whileTap={{ scale: 0.9 }}
           >
-            <FaChevronLeft className="w-3 h-3 md:w-4 md:h-4 group-hover:scale-110 transition-transform duration-200" />
+            <FaChevronLeft className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform duration-200" />
           </motion.button>
 
           <motion.button
-            className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-xl md:rounded-2xl bg-black/70 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 group cursor-pointer z-20"
+            className="absolute right-4 md:right-6 top-1/2 transform -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-black/70 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 group cursor-pointer z-20"
             onClick={nextSlide}
             whileHover={{ scale: 1.1, x: 2 }}
             whileTap={{ scale: 0.9 }}
           >
-            <FaChevronRight className="w-3 h-3 md:w-4 md:h-4 group-hover:scale-110 transition-transform duration-200" />
+            <FaChevronRight className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform duration-200" />
           </motion.button>
 
-          {/* Enhanced Slide Counter - Responsive */}
+          {/* Enhanced Slide Counter */}
           <motion.div
-            className="absolute top-3 md:top-4 right-3 md:right-4 px-2 py-1 md:px-3 md:py-2 rounded-xl md:rounded-2xl bg-black/70 backdrop-blur-xl border border-white/20"
+            className="absolute top-4 right-4 px-3 py-2 rounded-2xl bg-black/70 backdrop-blur-xl border border-white/20"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
           >
-            <div className="flex items-center gap-1 md:gap-2 text-white">
-              <FaFilm className="w-2 h-2 md:w-3 md:h-3 text-indigo-400" />
-              <span className="font-semibold text-xs md:text-sm">
+            <div className="flex items-center gap-2 text-white">
+              <FaFilm className="w-3 h-3 text-indigo-400" />
+              <span className="font-semibold text-sm">
                 {currentSlide + 1} / {videoSlides.length}
               </span>
             </div>
           </motion.div>
         </div>
 
-        {/* Enhanced Thumbnail Navigation - Responsive */}
+        {/* Enhanced Thumbnail Navigation */}
         <motion.div
-          className="flex justify-center gap-1 md:gap-2 mb-8 md:mb-12 px-2"
+          className="flex justify-center gap-2 md:gap-3 mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -756,17 +756,17 @@ const VideoShowreelSection = () => {
           {videoSlides.map((slide, index) => (
             <motion.button
               key={slide.id}
-              className={`relative flex-1 max-w-16 h-10 md:max-w-20 md:h-12 lg:max-w-24 lg:h-14 rounded-lg md:rounded-xl overflow-hidden border transition-all duration-300 group/thumbnail cursor-pointer ${
+              className={`relative flex-1 max-w-20 h-12 md:max-w-24 md:h-14 lg:max-w-28 lg:h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 group/thumbnail cursor-pointer ${
                 index === currentSlide
-                  ? "border-indigo-500 scale-105 shadow-lg shadow-indigo-500/20"
+                  ? "border-indigo-500 scale-105 shadow-lg shadow-indigo-500/30"
                   : "border-white/10 hover:border-white/30"
               }`}
               onClick={() => goToSlide(index)}
-              whileHover={{ scale: 1.05, y: -1 }}
+              whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
             >
               <div
-                className={`w-full h-full bg-gradient-to-br ${slide.accentColor} opacity-60 relative`}
+                className={`w-full h-full bg-gradient-to-br ${slide.accentColor} opacity-70 relative`}
               >
                 <div
                   className={`absolute inset-0 transition-all duration-300 ${
@@ -776,15 +776,15 @@ const VideoShowreelSection = () => {
                   }`}
                 />
 
-                <div className="absolute bottom-0 left-0 right-0 p-0.5 md:p-1 bg-gradient-to-t from-black/90 to-transparent">
-                  <div className="text-[8px] md:text-[10px] font-semibold text-white text-center truncate px-0.5">
+                <div className="absolute bottom-0 left-0 right-0 p-1 bg-gradient-to-t from-black/90 to-transparent">
+                  <div className="text-[10px] md:text-xs font-semibold text-white text-center truncate px-1">
                     {slide.title.split(" ")[0]}
                   </div>
                 </div>
 
                 {index === currentSlide && (
                   <motion.div
-                    className="absolute top-1 right-1 w-1 h-1 md:w-1.5 md:h-1.5 bg-indigo-400 rounded-full shadow-lg"
+                    className="absolute top-1 right-1 w-2 h-2 bg-indigo-400 rounded-full shadow-lg"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.2 }}
@@ -795,45 +795,70 @@ const VideoShowreelSection = () => {
           ))}
         </motion.div>
 
-        {/* Enhanced Controls - Responsive */}
+        {/* Enhanced Stats & Controls */}
         <motion.div
-          className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
           viewport={{ once: true }}
         >
-          <motion.button
-            className="flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 rounded-lg md:rounded-xl bg-gray-900/80 backdrop-blur-xl border border-gray-700 text-white hover:border-indigo-500/50 transition-all duration-300 group cursor-pointer w-full sm:w-auto justify-center"
-            onClick={() => setAutoPlay(!autoPlay)}
-            whileHover={{ scale: 1.05, y: -1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <div
-              className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
-                autoPlay
-                  ? "bg-green-500 shadow shadow-green-500/50"
-                  : "bg-red-500 shadow shadow-red-500/50"
-              }`}
-            />
-            <span className="text-sm font-medium">
-              Auto {autoPlay ? "On" : "Off"}
-            </span>
-          </motion.button>
+          {/* Stats */}
+          <div className="grid grid-cols-2 gap-4">
+            <motion.div
+              className="p-4 rounded-2xl bg-gray-900/60 backdrop-blur-xl border border-gray-700 text-center"
+              whileHover={{ y: -4, scale: 1.02 }}
+            >
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1">
+                {videoSlides.length}+
+              </div>
+              <div className="text-gray-400 text-sm">Projects</div>
+            </motion.div>
+            <motion.div
+              className="p-4 rounded-2xl bg-gray-900/60 backdrop-blur-xl border border-gray-700 text-center"
+              whileHover={{ y: -4, scale: 1.02 }}
+            >
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1">
+                4K
+              </div>
+              <div className="text-gray-400 text-sm">Quality</div>
+            </motion.div>
+          </div>
 
-          <motion.button
-            className="flex items-center gap-2 md:gap-3 px-5 py-2 md:px-7 md:py-3 lg:px-8 lg:py-3 rounded-lg md:rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover:shadow-2xl transition-all duration-300 group cursor-pointer w-full sm:w-auto justify-center"
-            whileHover={{
-              scale: 1.05,
-              y: -1,
-              boxShadow: "0 10px 40px rgba(79, 70, 229, 0.4)",
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FaExpand className="w-3 h-3 md:w-4 md:h-4 group-hover:scale-110 transition-transform duration-200" />
-            <span className="text-sm">Full Portfolio</span>
-            <HiSparkles className="w-3 h-3 md:w-4 md:h-4 group-hover:rotate-180 transition-transform duration-500" />
-          </motion.button>
+          {/* Controls */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-end">
+            <motion.button
+              className="flex items-center gap-3 px-6 py-3 rounded-xl bg-gray-900/80 backdrop-blur-xl border border-gray-700 text-white hover:border-indigo-500/50 transition-all duration-300 group cursor-pointer justify-center"
+              onClick={() => setAutoPlay(!autoPlay)}
+              whileHover={{ scale: 1.05, y: -1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  autoPlay
+                    ? "bg-green-500 shadow shadow-green-500/50"
+                    : "bg-red-500 shadow shadow-red-500/50"
+                }`}
+              />
+              <span className="text-sm font-medium">
+                Auto Play {autoPlay ? "On" : "Off"}
+              </span>
+            </motion.button>
+
+            <motion.button
+              className="flex items-center gap-3 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover:shadow-2xl transition-all duration-300 group cursor-pointer justify-center"
+              whileHover={{
+                scale: 1.05,
+                y: -1,
+                boxShadow: "0 10px 40px rgba(79, 70, 229, 0.4)",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FaExpand className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+              <span className="text-sm">Full Portfolio</span>
+              <HiSparkles className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
+            </motion.button>
+          </div>
         </motion.div>
       </div>
     </section>
