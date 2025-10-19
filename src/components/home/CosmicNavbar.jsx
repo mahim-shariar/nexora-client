@@ -19,7 +19,7 @@ const NavbarParticles = () => {
       {Array.from({ length: 12 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-indigo-400/20 rounded-full"
+          className="absolute w-1 h-1 bg-[#0084FF]/20 rounded-full"
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
@@ -63,7 +63,7 @@ const MobileMenu = ({ isOpen, onClose, navigation }) => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25 }}
-            className="absolute right-0 top-0 h-full w-80 bg-gradient-to-b from-gray-900 to-black border-l border-indigo-500/30"
+            className="absolute right-0 top-0 h-full w-80 bg-gradient-to-b from-gray-900 to-black border-l border-[#0084FF]/30"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-800/50">
@@ -75,7 +75,7 @@ const MobileMenu = ({ isOpen, onClose, navigation }) => {
                     repeat: Infinity,
                     ease: "linear",
                   }}
-                  className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center"
+                  className="w-8 h-8 bg-gradient-to-br from-[#0084FF] to-[#0066CC] rounded-lg flex items-center justify-center"
                 >
                   <FaRocket className="w-4 h-4 text-white" />
                 </motion.div>
@@ -98,10 +98,10 @@ const MobileMenu = ({ isOpen, onClose, navigation }) => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="flex items-center gap-3 p-3 rounded-xl bg-gray-800/30 text-white hover:bg-indigo-900/30 transition-all duration-300 group"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-gray-800/30 text-white hover:bg-[#0084FF]/30 transition-all duration-300 group"
                   onClick={onClose}
                 >
-                  <item.icon className="w-5 h-5 text-indigo-400 group-hover:text-indigo-300" />
+                  <item.icon className="w-5 h-5 text-[#0084FF] group-hover:text-[#66B5FF]" />
                   <span className="font-medium">{item.name}</span>
                   <HiSparkles className="w-4 h-4 text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity ml-auto" />
                 </motion.a>
@@ -114,7 +114,7 @@ const MobileMenu = ({ isOpen, onClose, navigation }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
-                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all duration-300"
+                className="w-full py-3 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all duration-300"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -159,7 +159,7 @@ export default function CosmicNavbar() {
         animate={{ y: 0 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? "bg-black/80 backdrop-blur-xl border-b border-indigo-500/20"
+            ? "bg-black/80 backdrop-blur-xl border-b border-[#0084FF]/20"
             : "bg-transparent"
         }`}
       >
@@ -167,7 +167,7 @@ export default function CosmicNavbar() {
         <NavbarParticles />
 
         {/* Top Gradient Bar */}
-        <div className="h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600" />
+        <div className="h-1 bg-gradient-to-r from-[#0084FF] via-[#0066CC] to-[#66B5FF]" />
 
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
@@ -180,12 +180,12 @@ export default function CosmicNavbar() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center relative"
+                className="w-10 h-10 bg-gradient-to-br from-[#0084FF] to-[#0066CC] rounded-xl flex items-center justify-center relative"
               >
                 <FaRocket className="w-5 h-5 text-white" />
                 {/* Glow Effect */}
                 <motion.div
-                  className="absolute inset-0 rounded-xl bg-indigo-500/30 blur-sm"
+                  className="absolute inset-0 rounded-xl bg-[#0084FF]/30 blur-sm"
                   animate={{
                     opacity: [0.3, 0.6, 0.3],
                     scale: [1, 1.2, 1],
@@ -198,7 +198,7 @@ export default function CosmicNavbar() {
               </motion.div>
               <div className="hidden sm:block">
                 <h1 className="text-xl font-black text-white">COSMIC</h1>
-                <p className="text-indigo-300 text-xs -mt-1">STUDIO</p>
+                <p className="text-[#0084FF] text-xs -mt-1">STUDIO</p>
               </div>
             </motion.div>
 
@@ -210,7 +210,7 @@ export default function CosmicNavbar() {
                   href={item.href}
                   className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 group ${
                     activeLink === item.name
-                      ? "text-white bg-indigo-900/30"
+                      ? "text-white bg-[#0084FF]/30"
                       : "text-gray-300 hover:text-white hover:bg-gray-800/30"
                   }`}
                   whileHover={{ y: -2 }}
@@ -225,14 +225,14 @@ export default function CosmicNavbar() {
                   {/* Active Indicator */}
                   {activeLink === item.name && (
                     <motion.div
-                      className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-indigo-400 rounded-full"
+                      className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#0084FF] rounded-full"
                       layoutId="activeIndicator"
                     />
                   )}
 
                   {/* Hover Effect */}
                   <motion.div
-                    className="absolute inset-0 rounded-xl border border-indigo-500/30 opacity-0 group-hover:opacity-100"
+                    className="absolute inset-0 rounded-xl border border-[#0084FF]/30 opacity-0 group-hover:opacity-100"
                     initial={false}
                     transition={{ duration: 0.2 }}
                   />
@@ -254,10 +254,10 @@ export default function CosmicNavbar() {
 
               {/* CTA Button */}
               <motion.button
-                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl text-white font-semibold text-sm hover:shadow-lg transition-all duration-300"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-xl text-white font-semibold text-sm hover:shadow-lg transition-all duration-300"
                 whileHover={{
                   scale: 1.05,
-                  boxShadow: "0 0 20px rgba(79, 70, 229, 0.4)",
+                  boxShadow: "0 0 20px rgba(0, 132, 255, 0.4)",
                 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -281,7 +281,7 @@ export default function CosmicNavbar() {
 
         {/* Scrolling Progress Bar */}
         <motion.div
-          className="h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400"
+          className="h-0.5 bg-gradient-to-r from-[#0084FF] to-[#0066CC]"
           initial={{ scaleX: 0 }}
           animate={{
             scaleX: isScrolled

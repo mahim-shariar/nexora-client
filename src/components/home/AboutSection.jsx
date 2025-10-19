@@ -1,567 +1,1053 @@
-import React from "react";
+import React, { memo, useMemo, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   FaPlay,
-  FaFilm,
-  FaMagic,
-  FaRocket,
-  FaAward,
+  FaChartLine,
   FaUsers,
-  FaGlobeAmericas,
+  FaRocket,
+  FaPause,
+  FaVolumeMute,
+  FaVolumeUp,
+  FaStar,
+  FaEye,
+  FaUserPlus,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
-import { HiSparkles, HiGlobeAlt } from "react-icons/hi";
+import { HiSparkles } from "react-icons/hi";
 
-// Enhanced Glitch Text Component
-const GlitchText = ({ text, className = "" }) => {
-  return (
-    <div className={`relative inline-block ${className}`}>
-      <motion.span
-        className="relative z-10"
-        initial={{ opacity: 1 }}
-        whileInView={{
-          opacity: [1, 0.8, 1, 0.9, 1],
-          x: [0, -2, 2, -1, 0],
-        }}
-        transition={{
-          duration: 0.3,
-          times: [0, 0.2, 0.4, 0.6, 1],
-        }}
-        viewport={{ once: true }}
-      >
-        {text}
-      </motion.span>
-      <motion.span
-        className="absolute top-0 left-0 text-indigo-400 opacity-70 z-0"
-        initial={{ opacity: 0, x: 0 }}
-        whileInView={{
-          opacity: [0, 0.6, 0],
-          x: [0, -3, 0],
-        }}
-        transition={{
-          duration: 0.4,
-          times: [0, 0.5, 1],
-          delay: 0.1,
-        }}
-        viewport={{ once: true }}
-      >
-        {text}
-      </motion.span>
-      <motion.span
-        className="absolute top-0 left-0 text-purple-400 opacity-70 z-0"
-        initial={{ opacity: 0, x: 0 }}
-        whileInView={{
-          opacity: [0, 0.5, 0],
-          x: [0, 3, 0],
-        }}
-        transition={{
-          duration: 0.4,
-          times: [0, 0.5, 1],
-          delay: 0.2,
-        }}
-        viewport={{ once: true }}
-      >
-        {text}
-      </motion.span>
-    </div>
-  );
-};
+// Enhanced Balloon Tag Component
+const BalloonTag = memo(({ text, delay = 0, direction }) => {
+  const positions = useMemo(() => {
+    const pos = {
+      topLeft: "top-2 left-2",
+      topRight: "top-2 right-2",
+      topCenter: "top-2 left-1/2 -translate-x-1/2",
+      bottomLeft: "bottom-2 left-2",
+      bottomRight: "bottom-2 right-2",
+      bottomCenter: "bottom-2 left-1/2 -translate-x-1/2",
+      middleLeft: "top-1/2 left-2 -translate-y-1/2",
+      middleRight: "top-1/2 right-2 -translate-y-1/2",
+    };
+    return pos[direction] || pos.topCenter;
+  }, [direction]);
 
-// Enhanced Animated Number Counter
-const AnimatedNumber = ({ value, suffix = "" }) => {
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.5 });
-  const [count, setCount] = React.useState(0);
+  const balloonVariants = useMemo(() => {
+    const baseVariants = {
+      topLeft: {
+        x: [0, -1, -2],
+        y: [0, -1, -2],
+        scale: [0, 1.1, 1],
+        opacity: [0, 1, 1],
+        rotateZ: [0, 5, 10],
+      },
+      topCenter: {
+        x: [0, 0, 0],
+        y: [0, -2, -3],
+        scale: [0, 1.1, 1],
+        opacity: [0, 1, 1],
+        rotateZ: [0, 0, 0],
+      },
+      topRight: {
+        x: [0, 1, 2],
+        y: [0, -1, -2],
+        scale: [0, 1.1, 1],
+        opacity: [0, 1, 1],
+        rotateZ: [0, -5, -10],
+      },
+      bottomLeft: {
+        x: [0, -1, -2],
+        y: [0, 1, 2],
+        scale: [0, 1.1, 1],
+        opacity: [0, 1, 1],
+        rotateZ: [0, -5, -10],
+      },
+      bottomCenter: {
+        x: [0, 0, 0],
+        y: [0, 2, 3],
+        scale: [0, 1.1, 1],
+        opacity: [0, 1, 1],
+        rotateZ: [0, 0, 0],
+      },
+      bottomRight: {
+        x: [0, 1, 2],
+        y: [0, 1, 2],
+        scale: [0, 1.1, 1],
+        opacity: [0, 1, 1],
+        rotateZ: [0, 5, 10],
+      },
+      middleLeft: {
+        x: [0, -2, -3],
+        y: [0, 0, 0],
+        scale: [0, 1.1, 1],
+        opacity: [0, 1, 1],
+        rotateZ: [0, -3, -5],
+      },
+      middleRight: {
+        x: [0, 2, 3],
+        y: [0, 0, 0],
+        scale: [0, 1.1, 1],
+        opacity: [0, 1, 1],
+        rotateZ: [0, 3, 5],
+      },
+    };
+    return baseVariants[direction] || baseVariants.topCenter;
+  }, [direction]);
 
-  React.useEffect(() => {
-    if (inView) {
-      const duration = 2000;
-      const steps = 60;
-      const stepValue = value / steps;
-      let current = 0;
+  const stringVariants = {
+    hidden: { pathLength: 0 },
+    visible: {
+      pathLength: 1,
+      transition: {
+        duration: 0.4,
+        delay: delay + 0.1,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    },
+  };
 
-      const timer = setInterval(() => {
-        current += stepValue;
-        if (current >= value) {
-          setCount(value);
-          clearInterval(timer);
-        } else {
-          setCount(Math.floor(current));
-        }
-      }, duration / steps);
+  const getStringPath = () => {
+    let endX = 0;
+    let endY = 0;
 
-      return () => clearInterval(timer);
+    switch (direction) {
+      case "topLeft":
+        endX = -15;
+        endY = -15;
+        break;
+      case "topCenter":
+        endX = 0;
+        endY = -20;
+        break;
+      case "topRight":
+        endX = 15;
+        endY = -15;
+        break;
+      case "bottomLeft":
+        endX = -15;
+        endY = 15;
+        break;
+      case "bottomCenter":
+        endX = 0;
+        endY = 20;
+        break;
+      case "bottomRight":
+        endX = 15;
+        endY = 15;
+        break;
+      case "middleLeft":
+        endX = -25;
+        endY = 0;
+        break;
+      case "middleRight":
+        endX = 25;
+        endY = 0;
+        break;
+      default:
+        endX = 0;
+        endY = -20;
     }
-  }, [inView, value]);
+
+    return `M 0 0 Q ${endX / 2} ${endY / 2} ${endX} ${endY}`;
+  };
 
   return (
-    <motion.span
-      ref={ref}
-      className="font-bold "
-      whileInView={{ scale: [0.8, 1.1, 1] }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      viewport={{ once: true }}
+    <motion.div
+      className={`absolute ${positions} z-20`}
+      initial={{
+        opacity: 0,
+        x: balloonVariants.x[0],
+        y: balloonVariants.y[0],
+        scale: balloonVariants.scale[0],
+        rotateZ: balloonVariants.rotateZ[0],
+      }}
+      whileInView={{
+        opacity: balloonVariants.opacity[2],
+        x: balloonVariants.x[2],
+        y: balloonVariants.y[2],
+        scale: balloonVariants.scale[2],
+        rotateZ: balloonVariants.rotateZ[2],
+      }}
+      whileHover={{
+        scale: 1.1,
+        y: balloonVariants.y[2] - 0.5,
+        rotateZ: balloonVariants.rotateZ[2] + 2,
+        transition: {
+          duration: 0.3,
+          ease: [0.25, 0.46, 0.45, 0.94],
+        },
+      }}
+      transition={{
+        duration: 0.8,
+        delay,
+        type: "spring",
+        stiffness: 60,
+        damping: 12,
+        mass: 0.8,
+      }}
+      viewport={{ once: true, margin: "-50px" }}
       style={{
-        background: "linear-gradient(45deg, #4f46e5, #7c3aed, #0369a1)",
-        backgroundSize: "200% 200%",
-        backgroundClip: "text",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
+        willChange: "transform",
+        transformStyle: "preserve-3d",
       }}
     >
-      {count}
-      {suffix}
-    </motion.span>
+      <svg
+        className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full pointer-events-none"
+        width="30"
+        height="30"
+        style={{ marginTop: "-1px" }}
+      >
+        <motion.path
+          d={getStringPath()}
+          stroke="rgba(0, 132, 255, 0.3)"
+          strokeWidth="1"
+          fill="none"
+          strokeDasharray="2,2"
+          variants={stringVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        />
+      </svg>
+
+      <motion.div
+        className="px-4 py-2 rounded-full bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 backdrop-blur-sm border border-[#0084FF]/30 text-white font-medium text-sm shadow-lg"
+        whileHover={{
+          background:
+            "linear-gradient(135deg, rgba(0, 132, 255, 0.25), rgba(0, 102, 204, 0.25))",
+          borderColor: "rgba(0, 132, 255, 0.5)",
+          boxShadow: "0 6px 20px rgba(0, 132, 255, 0.25)",
+          transition: {
+            duration: 0.3,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          },
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              y: [0, -1, 0],
+            }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              delay: Math.random() * 1.5,
+              ease: "easeInOut",
+            }}
+            className="w-1.5 h-1.5 bg-[#0084FF] rounded-full"
+          />
+          <span className="text-sm font-semibold whitespace-nowrap">
+            {text}
+          </span>
+        </div>
+      </motion.div>
+    </motion.div>
   );
-};
+});
 
-// Cosmic Floating Element
-const CosmicFloatingElement = ({ children, delay = 0, className = "" }) => (
-  <motion.div
-    initial={{ y: 0 }}
-    animate={{
-      y: [-15, 15, -15],
-      rotateZ: [0, 2, 0],
-    }}
-    transition={{
-      duration: 6,
-      repeat: Infinity,
-      repeatType: "reverse",
-      delay: delay,
-      ease: "easeInOut",
-    }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
+// Enhanced Compact Stat Cards
+const StatCard = memo(({ icon: Icon, number, caption, delay = 0 }) => {
+  return (
+    <motion.div
+      className="group relative p-5 rounded-xl bg-gradient-to-br from-gray-900/80 to-gray-800/60 backdrop-blur-lg border border-gray-700/50 hover:border-[#0084FF]/50 transition-all duration-500"
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{
+        y: -2,
+        transition: {
+          duration: 0.3,
+          ease: [0.25, 0.46, 0.45, 0.94],
+        },
+      }}
+      transition={{
+        duration: 0.6,
+        delay,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      }}
+      viewport={{ once: true, margin: "-50px" }}
+    >
+      <div className="flex items-center gap-3">
+        <motion.div
+          className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 border border-[#0084FF]/30 flex items-center justify-center group-hover:from-[#0084FF]/30 group-hover:to-[#0066CC]/30 transition-all duration-300"
+          whileHover={{
+            scale: 1.05,
+            rotate: 5,
+            transition: {
+              duration: 0.3,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            },
+          }}
+        >
+          <Icon className="w-4 h-4 text-[#0084FF] group-hover:text-[#66B5FF] transition-colors duration-300" />
+        </motion.div>
 
-// Particle Orb
-const ParticleOrb = ({ size = 100, color = "indigo", delay = 0 }) => (
-  <motion.div
-    className={`absolute rounded-full bg-gradient-to-br from-${color}-500/20 to-${color}-400/10 blur-[40px]`}
-    style={{ width: size, height: size }}
-    animate={{
-      scale: [1, 1.3, 1],
-      opacity: [0.3, 0.6, 0.3],
-    }}
-    transition={{
-      duration: 4,
-      repeat: Infinity,
-      repeatType: "reverse",
-      delay: delay,
-    }}
-  />
-);
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base font-bold text-white mb-0.5">{number}</h3>
+          <p className="text-gray-400 text-xs transition-colors duration-300 group-hover:text-gray-300">
+            {caption}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+});
 
-const AboutSection = () => {
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+// Enhanced Single Customer Review Card Component
+const CustomerReviewCard = memo(({ review, isActive, onPlayToggle }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
-  const stats = [
-    { icon: FaFilm, number: 500, suffix: "+", label: "Projects Completed" },
-    { icon: FaAward, number: 50, suffix: "+", label: "Industry Awards" },
-    { icon: FaUsers, number: 100, suffix: "+", label: "Creative Experts" },
-    {
-      icon: FaGlobeAmericas,
-      number: 25,
-      suffix: "+",
-      label: "Countries Served",
-    },
-  ];
+  const togglePlay = useCallback(() => {
+    setIsPlaying(!isPlaying);
+    onPlayToggle && onPlayToggle(!isPlaying);
+  }, [isPlaying, onPlayToggle]);
 
-  const values = [
-    {
-      icon: FaMagic,
-      title: "Innovation First",
-      description:
-        "Pushing boundaries with cutting-edge technology and creative solutions.",
-      color: "from-indigo-500 to-blue-500",
-    },
-    {
-      icon: FaRocket,
-      title: "Lightning Fast",
-      description: "Delivering exceptional quality at unprecedented speeds.",
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      icon: HiSparkles,
-      title: "Pixel Perfect",
-      description: "Meticulous attention to detail in every frame we produce.",
-      color: "from-cyan-500 to-blue-500",
-    },
-  ];
+  const toggleMute = useCallback(() => {
+    setIsMuted(!isMuted);
+  }, [isMuted]);
 
   return (
-    <section id="about" className="relative py-32 px-4 overflow-hidden">
-      {/* Enhanced Cosmic Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Galactic Core */}
-        <motion.div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-indigo-600/10 via-purple-600/15 to-blue-600/20 blur-[120px]"
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            repeatType: "loop",
-          }}
-        />
+    <motion.div
+      className={`bg-gradient-to-br from-gray-900 to-black backdrop-blur-lg border border-gray-800 rounded-2xl overflow-hidden hover:border-gray-700 transition-all duration-500 ${
+        isActive ? "scale-100 opacity-100" : "scale-95 opacity-60"
+      }`}
+      whileHover={{
+        scale: 1.02,
+        transition: {
+          duration: 0.4,
+          ease: [0.25, 0.46, 0.45, 0.94],
+        },
+      }}
+      layout
+      transition={{
+        type: "spring",
+        stiffness: 200,
+        damping: 25,
+      }}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        {/* Reel-sized Video Section */}
+        <div className="relative p-6 flex items-center justify-center">
+          <motion.div
+            className="relative rounded-2xl overflow-hidden bg-black border-2 border-gray-700"
+            style={{ width: "280px", height: "500px" }}
+            whileHover={{
+              borderColor: "rgba(0, 132, 255, 0.5)",
+              transition: { duration: 0.3 },
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+              {isPlaying && (
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-center bg-black/80"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{
+                    duration: 0.4,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                  }}
+                >
+                  <div className="text-center text-white">
+                    <motion.div
+                      className="w-16 h-16 bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 rounded-2xl flex items-center justify-center mb-3 mx-auto border border-[#0084FF]/30"
+                      animate={{ rotateY: [0, 360] }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                    >
+                      <span className="text-2xl">🎬</span>
+                    </motion.div>
+                    <p className="text-sm font-semibold">Success Story</p>
+                  </div>
+                </motion.div>
+              )}
 
-        {/* Floating Particle Orbs */}
-        <CosmicFloatingElement delay={0} className="absolute top-20 left-10">
-          <ParticleOrb size={120} color="indigo" />
-        </CosmicFloatingElement>
+              {!isPlaying && (
+                <motion.div
+                  className="text-center text-white cursor-pointer flex flex-col items-center justify-center"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 0.4,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                  }}
+                >
+                  <motion.button
+                    onClick={togglePlay}
+                    className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl hover:bg-gray-100 transition-all duration-300"
+                    whileHover={{
+                      scale: 1.1,
+                      transition: {
+                        duration: 0.3,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      },
+                    }}
+                    whileTap={{
+                      scale: 0.95,
+                      transition: {
+                        duration: 0.1,
+                      },
+                    }}
+                  >
+                    <FaPlay className="w-4 h-4 text-black ml-0.5" />
+                  </motion.button>
+                  <p className="text-xs text-gray-300 mt-3">Watch story</p>
+                </motion.div>
+              )}
+            </div>
 
-        <CosmicFloatingElement
-          delay={2}
-          className="absolute bottom-32 right-16"
-        >
-          <ParticleOrb size={80} color="purple" />
-        </CosmicFloatingElement>
+            <motion.div
+              className="absolute bottom-3 left-3 right-3 flex items-center justify-between"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.4,
+                delay: 0.2,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
+            >
+              <motion.button
+                onClick={togglePlay}
+                className="w-10 h-10 bg-black/80 rounded-xl flex items-center justify-center border border-white/20 hover:bg-black transition-all duration-300"
+                whileHover={{
+                  scale: 1.05,
+                  transition: {
+                    duration: 0.2,
+                  },
+                }}
+                whileTap={{
+                  scale: 0.9,
+                  transition: {
+                    duration: 0.1,
+                  },
+                }}
+              >
+                {isPlaying ? (
+                  <FaPause className="w-3 h-3 text-white" />
+                ) : (
+                  <FaPlay className="w-3 h-3 text-white ml-0.5" />
+                )}
+              </motion.button>
 
-        <CosmicFloatingElement delay={4} className="absolute top-40 right-1/4">
-          <ParticleOrb size={60} color="cyan" />
-        </CosmicFloatingElement>
+              <motion.button
+                onClick={toggleMute}
+                className="w-10 h-10 bg-black/80 rounded-xl flex items-center justify-center border border-white/20 hover:bg-black transition-all duration-300"
+                whileHover={{
+                  scale: 1.05,
+                  transition: {
+                    duration: 0.2,
+                  },
+                }}
+                whileTap={{
+                  scale: 0.9,
+                  transition: {
+                    duration: 0.1,
+                  },
+                }}
+              >
+                {isMuted ? (
+                  <FaVolumeMute className="w-3 h-3 text-white" />
+                ) : (
+                  <FaVolumeUp className="w-3 h-3 text-white" />
+                )}
+              </motion.button>
+            </motion.div>
 
-        {/* Animated Grid */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div className="grid grid-cols-12 gap-6 h-full">
-            {Array.from({ length: 144 }).map((_, i) => (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-800">
               <motion.div
-                key={i}
-                className="border border-indigo-500 rounded-lg"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: i * 0.02 }}
-                viewport={{ once: true }}
+                className="h-full bg-gradient-to-r from-[#0084FF] to-[#0066CC]"
+                animate={{ width: isPlaying ? "70%" : "0%" }}
+                transition={{
+                  duration: isPlaying ? 10 : 0.3,
+                  ease: "linear",
+                }}
               />
-            ))}
-          </div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Scanning Laser Effect */}
+        {/* Compact Review Content */}
+        <div className="p-6 flex flex-col justify-center">
+          {/* Customer Info - Compact */}
+          <motion.div
+            className="flex items-center gap-3 mb-4"
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{
+              duration: 0.5,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            <motion.div
+              className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0084FF] to-[#0066CC] flex items-center justify-center text-white font-bold text-sm border border-[#0084FF]/30"
+              whileHover={{
+                scale: 1.05,
+                rotate: 5,
+                transition: {
+                  duration: 0.3,
+                },
+              }}
+            >
+              {review.initials}
+            </motion.div>
+            <div>
+              <h3 className="font-bold text-white text-base mb-0.5">
+                {review.name}
+              </h3>
+              <p className="text-gray-400 text-xs">{review.position}</p>
+              <div className="flex items-center gap-1 mt-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    whileHover={{
+                      scale: 1.2,
+                      transition: { duration: 0.2 },
+                    }}
+                  >
+                    <FaStar className="w-2.5 h-2.5 text-yellow-400 fill-current" />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Review Text - Compact */}
+          <motion.blockquote
+            className="text-gray-200 leading-relaxed mb-4 text-sm"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{
+              duration: 0.6,
+              delay: 0.3,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {review.quote}
+          </motion.blockquote>
+
+          {/* Compact Metrics - Small and Attractive */}
+          <motion.div
+            className="flex items-center gap-3 py-3 border-t border-gray-800"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.6,
+              delay: 0.4,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {/* Views */}
+            <motion.div
+              className="flex items-center gap-2"
+              whileHover={{
+                scale: 1.05,
+                transition: { duration: 0.2 },
+              }}
+            >
+              <div className="w-8 h-8 rounded-lg bg-[#0084FF]/10 flex items-center justify-center border border-[#0084FF]/20">
+                <FaEye className="w-3 h-3 text-[#0084FF]" />
+              </div>
+              <div>
+                <div className="text-white font-bold text-sm">
+                  {review.views}
+                </div>
+                <div className="text-gray-400 text-xs">Views</div>
+              </div>
+            </motion.div>
+
+            {/* Subscribers */}
+            <motion.div
+              className="flex items-center gap-2"
+              whileHover={{
+                scale: 1.05,
+                transition: { duration: 0.2 },
+              }}
+            >
+              <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                <FaUserPlus className="w-3 h-3 text-green-400" />
+              </div>
+              <div>
+                <div className="text-white font-bold text-sm">
+                  {review.subscribers}
+                </div>
+                <div className="text-gray-400 text-xs">Subscribers</div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Timeline - Compact */}
+          <motion.div
+            className="flex items-center justify-between text-xs text-gray-500 mt-3"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{
+              duration: 0.6,
+              delay: 0.6,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            <span>Joined: {review.joined}</span>
+            <span>Results: {review.results}</span>
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
+  );
+});
+
+// Enhanced Customer Reviews Carousel Component
+const CustomerReviewsCarousel = memo(() => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  const reviews = useMemo(
+    () => [
+      {
+        id: 1,
+        name: "John Smith",
+        initials: "JS",
+        position: "Creative Agency",
+        quote:
+          "This service completely transformed our content strategy. We went from struggling to get views to consistently going viral!",
+        views: "1M+",
+        subscribers: "50K+",
+        joined: "Mar 2024",
+        results: "3 months",
+      },
+      {
+        id: 2,
+        name: "Sarah Johnson",
+        initials: "SJ",
+        position: "Media Company",
+        quote:
+          "The viral editing techniques helped us grow our audience exponentially. Best investment we've made!",
+        views: "2.5M+",
+        subscribers: "75K+",
+        joined: "Feb 2024",
+        results: "4 months",
+      },
+      {
+        id: 3,
+        name: "Mike Chen",
+        initials: "MC",
+        position: "Tech Startup",
+        quote:
+          "Our engagement rates skyrocketed after implementing their strategies. Absolutely phenomenal results!",
+        views: "3.2M+",
+        subscribers: "120K+",
+        joined: "Jan 2024",
+        results: "5 months",
+      },
+    ],
+    []
+  );
+
+  const nextSlide = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setCurrentIndex((prev) => (prev + 1) % reviews.length);
+    setTimeout(() => setIsAnimating(false), 500);
+  }, [isAnimating, reviews.length]);
+
+  const prevSlide = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+    setTimeout(() => setIsAnimating(false), 500);
+  }, [isAnimating, reviews.length]);
+
+  const goToSlide = useCallback(
+    (index) => {
+      if (isAnimating) return;
+      setIsAnimating(true);
+      setCurrentIndex(index);
+      setTimeout(() => setIsAnimating(false), 500);
+    },
+    [isAnimating]
+  );
+
+  return (
+    <motion.div
+      ref={ref}
+      className="mx-auto max-w-6xl"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.8,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      }}
+      viewport={{ once: true, margin: "-50px" }}
+    >
+      {/* Section Title */}
+      <motion.div
+        className="text-center mb-12"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.8,
+          delay: 0.3,
+          ease: [0.25, 0.46, 0.45, 0.94],
+        }}
+        viewport={{ once: true, margin: "-50px" }}
+      >
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          Hear what they're Saying about us
+        </h2>
+        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          See how businesses like yours achieved incredible results with our
+          viral content strategies
+        </p>
+      </motion.div>
+
+      {/* Carousel Container */}
+      <div className="relative">
+        {/* Navigation Buttons */}
+        <motion.button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center border border-gray-600 hover:bg-black/70 transition-all duration-300"
+          whileHover={{
+            scale: 1.1,
+            backgroundColor: "rgba(0,0,0,0.7)",
+            transition: {
+              duration: 0.3,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            },
+          }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <FaChevronLeft className="w-4 h-4 text-white" />
+        </motion.button>
+
+        <motion.button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center border border-gray-600 hover:bg-black/70 transition-all duration-300"
+          whileHover={{
+            scale: 1.1,
+            backgroundColor: "rgba(0,0,0,0.7)",
+            transition: {
+              duration: 0.3,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            },
+          }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <FaChevronRight className="w-4 h-4 text-white" />
+        </motion.button>
+
+        {/* Carousel Slides */}
+        <div className="overflow-hidden">
+          <motion.div
+            className="flex"
+            animate={{ x: `-${currentIndex * 100}%` }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+              mass: 0.8,
+            }}
+          >
+            {reviews.map((review, index) => (
+              <div key={review.id} className="w-full flex-shrink-0 px-4">
+                <CustomerReviewCard
+                  review={review}
+                  isActive={index === currentIndex}
+                />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Enhanced Dots Indicator */}
+        <div className="flex justify-center mt-8 space-x-2">
+          {reviews.map((_, index) => (
+            <motion.button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentIndex
+                  ? "bg-[#0084FF]"
+                  : "bg-gray-600 hover:bg-gray-500"
+              }`}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+              animate={{
+                scale: index === currentIndex ? 1.2 : 1,
+                opacity: index === currentIndex ? 1 : 0.7,
+              }}
+              transition={{
+                duration: 0.3,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+});
+
+const AboutSection = memo(() => {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  const balloons = useMemo(
+    () => [
+      { text: "Podcast", direction: "topLeft", delay: 0.2 },
+      { text: "Short Form", direction: "topRight", delay: 0.3 },
+      { text: "Social Media", direction: "bottomLeft", delay: 0.4 },
+      { text: "Viral Edits", direction: "bottomRight", delay: 0.5 },
+    ],
+    []
+  );
+
+  // Compact stats
+  const stats = useMemo(
+    () => [
+      {
+        icon: FaChartLine,
+        number: "200% Growth",
+        caption: "Engagement",
+        delay: 0.8,
+      },
+      {
+        icon: FaUserPlus,
+        number: "5x More Reach",
+        caption: "Strategic Distribution",
+        delay: 0.7,
+      },
+      {
+        icon: FaEye,
+        number: "50% More Leads",
+        caption: "Automated Systems",
+        delay: 0.6,
+      },
+    ],
+    []
+  );
+
+  return (
+    <section
+      id="about"
+      className="relative py-20 px-4 overflow-hidden min-h-screen flex items-center"
+    >
+      {/* Enhanced Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/8 to-transparent"
-          animate={{ y: ["-100%", "200%"] }}
-          transition={{ duration: 3, repeat: Infinity, repeatType: "loop" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#0084FF]/10 rounded-full blur-[60px]"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute top-1/4 left-1/4 w-32 h-32 bg-[#0066CC]/5 rounded-full blur-[40px]"
+          animate={{
+            scale: [1, 1.5, 1],
+            x: [0, 20, 0],
+            y: [0, -20, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         />
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Enhanced Header Section */}
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          viewport={{ once: true }}
-          className="text-center mb-24"
-        >
+      <div className="mx-auto max-w-6xl relative z-10 w-full">
+        <div className="relative flex items-center justify-center mb-16">
+          {balloons.map((balloon, index) => (
+            <BalloonTag
+              key={index}
+              text={balloon.text}
+              direction={balloon.direction}
+              delay={balloon.delay}
+            />
+          ))}
+
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            ref={ref}
+            className="text-center relative z-30 mx-auto"
+            initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gray-900/50 backdrop-blur-xl border border-indigo-500/30 mb-8"
+            transition={{
+              duration: 0.8,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            viewport={{ once: true, margin: "-50px" }}
           >
             <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            >
-              <HiSparkles className="w-6 h-6 text-indigo-400" />
-            </motion.div>
-            <span className="text-indigo-300 font-medium tracking-widest text-sm">
-              THE NEXORA DIFFERENCE
-            </span>
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            >
-              <HiSparkles className="w-6 h-6 text-indigo-400" />
-            </motion.div>
-          </motion.div>
-
-          <motion.h2
-            className="text-6xl md:text-8xl font-black text-white mb-8 tracking-tighter"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            Redefining{" "}
-            <span
-              style={{
-                background: "linear-gradient(45deg, #4f46e5, #7c3aed, #0369a1)",
-                backgroundSize: "200% 200%",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              Video
-            </span>{" "}
-            Excellence
-          </motion.h2>
-
-          <motion.div
-            className="w-32 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto mb-12 rounded-full"
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            viewport={{ once: true }}
-          />
-        </motion.div>
-
-        {/* Enhanced Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-28">
-          {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
-            <motion.h3
-              className="text-4xl md:text-5xl font-bold text-white mb-6"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              viewport={{ once: true }}
-            >
-              Where{" "}
-              <span
-                style={{
-                  background:
-                    "linear-gradient(45deg, #4f46e5, #7c3aed, #0369a1)",
-                  backgroundSize: "200% 200%",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                Creativity
-              </span>{" "}
-              Meets <span className="text-purple-400">Technology</span>
-            </motion.h3>
-
-            <motion.p
-              className="text-xl text-gray-300 leading-relaxed"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              viewport={{ once: true }}
-            >
-              At <span className="text-indigo-300 font-semibold">Nexora</span>,
-              we're not just video editors—we're visual architects powered by
-              next-generation AI and decades of cinematic mastery. We transform
-              your vision into immersive visual experiences that captivate and
-              convert.
-            </motion.p>
-
-            <motion.p
-              className="text-lg text-gray-400 leading-relaxed"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              viewport={{ once: true }}
-            >
-              Our mission is to democratize professional-grade video production,
-              making studio-quality content accessible to brands, creators, and
-              businesses worldwide. Through innovative technology and artistic
-              mastery, we're shaping the future of visual storytelling.
-            </motion.p>
-
-            {/* Mission Highlight */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/50 backdrop-blur-sm border border-[#0084FF]/20 mb-6"
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9 }}
-              viewport={{ once: true }}
-              className="relative p-8 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-800/40 backdrop-blur-xl border border-indigo-500/20 overflow-hidden"
+              transition={{
+                duration: 0.6,
+                delay: 0.1,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
+              viewport={{ once: true, margin: "-50px" }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5" />
-              <p className="text-white text-xl font-medium italic relative z-10">
-                "Transforming ideas into immersive visual narratives that
-                inspire action and drive measurable results."
-              </p>
-            </motion.div>
-          </motion.div>
-
-          {/* Enhanced Stats Grid */}
-          <motion.div
-            initial={{ opacity: 0, x: 60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            viewport={{ once: true }}
-            className="grid grid-cols-2 gap-6"
-          >
-            {stats.map((stat, index) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.8, y: 30 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{
-                  y: -8,
-                  scale: 1.05,
-                  borderColor: "rgba(99, 102, 241, 0.5)",
+                animate={{
+                  rotate: [0, 10, -10, 0],
                 }}
-                className="relative p-6 rounded-2xl bg-gray-900/60 backdrop-blur-xl border border-gray-700 text-center group hover:border-indigo-500/50 transition-all duration-500 overflow-hidden"
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
-                {/* Hover Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 via-purple-500/0 to-cyan-500/0 group-hover:from-indigo-500/10 group-hover:via-purple-500/5 group-hover:to-cyan-500/10 transition-all duration-500" />
-
-                <div className="flex justify-center mb-4 relative z-10">
-                  <motion.div
-                    className="p-4 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all duration-300"
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    <stat.icon className="w-8 h-8 text-indigo-300" />
-                  </motion.div>
-                </div>
-                <div className="text-4xl font-black mb-2 relative z-10">
-                  <AnimatedNumber value={stat.number} suffix={stat.suffix} />
-                </div>
-                <div className="text-gray-400 text-sm font-medium relative z-10">
-                  {stat.label}
-                </div>
+                <HiSparkles className="w-4 h-4 text-[#0084FF]" />
               </motion.div>
-            ))}
+              <span className="text-[#0084FF] font-medium text-sm">
+                EXPLODE YOUR REACH
+              </span>
+            </motion.div>
+
+            <motion.h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              <motion.span
+                className="block"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.8,
+                  delay: 0.2,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                viewport={{ once: true, margin: "-50px" }}
+              >
+                Tired of boring video content
+              </motion.span>
+              <motion.span
+                className="block bg-gradient-to-r from-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.8,
+                  delay: 0.3,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                viewport={{ once: true, margin: "-50px" }}
+              >
+                that doesn't stand out?
+              </motion.span>
+            </motion.h1>
+
+            <motion.p
+              className="text-xl text-gray-300 mb-8 font-light"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{
+                duration: 0.8,
+                delay: 0.4,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
+              viewport={{ once: true, margin: "-50px" }}
+            >
+              It's time to{" "}
+              <span className="text-[#0084FF] font-semibold">
+                upgrade the game
+              </span>{" "}
+              with us!
+            </motion.p>
           </motion.div>
         </div>
 
-        {/* Enhanced Vision Section */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 py-8 border-b-2 border-b-[#0084FF]/30"
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-24"
+          transition={{
+            duration: 0.8,
+            delay: 0.6,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          }}
+          viewport={{ once: true, margin: "-50px" }}
         >
-          <motion.h3
-            className="text-5xl md:text-7xl font-black text-white mb-12"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 1.0 }}
-            viewport={{ once: true }}
-          >
-            <GlitchText
-              text="Our Vision"
-              className="bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent"
-            />
-          </motion.h3>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.2 }}
-            viewport={{ once: true }}
-            className="text-2xl md:text-3xl text-gray-300 max-w-5xl mx-auto leading-relaxed font-light"
-          >
-            To create a world where every brand, creator, and storyteller can
-            produce{" "}
-            <span className="bg-gradient-to-r from-indigo-300 to-purple-300 bg-clip-text text-transparent font-semibold">
-              cinematic-quality content
-            </span>{" "}
-            with the power of AI and the touch of human creativity.
-          </motion.p>
-        </motion.div>
-
-        {/* Enhanced Values Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.0 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20"
-        >
-          {values.map((value, index) => (
-            <motion.div
+          {stats.map((stat, index) => (
+            <StatCard
               key={index}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.2 + index * 0.2 }}
-              viewport={{ once: true }}
-              whileHover={{
-                y: -12,
-                scale: 1.03,
-                transition: { duration: 0.3 },
-              }}
-              className="relative group"
-            >
-              <div className="relative p-8 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-800/40 backdrop-blur-xl border border-gray-700 h-full transition-all duration-500 group-hover:border-indigo-500/50 overflow-hidden">
-                {/* Animated Background Gradient */}
-                <div
-                  className={`absolute inset-0  bg-gradient-to-br from-indigo-500/0 via-purple-500/0 to-cyan-500/0 group-hover:from-indigo-500/10 group-hover:via-purple-500/5 group-hover:to-cyan-500/10 transition-all duration-500`}
-                />
-
-                {/* Floating Icon */}
-                <motion.div
-                  className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 mb-8 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all duration-300 relative z-10"
-                  whileHover={{ rotate: 360, scale: 1.1 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <value.icon className="w-10 h-10 text-indigo-300" />
-                </motion.div>
-
-                <h4 className="text-2xl font-bold text-white mb-4 relative z-10">
-                  {value.title}
-                </h4>
-                <p className="text-gray-400 leading-relaxed relative z-10">
-                  {value.description}
-                </p>
-
-                {/* Hover Effect Line */}
-                <motion.div
-                  className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-500"
-                  initial={false}
-                />
-              </div>
-            </motion.div>
+              icon={stat.icon}
+              number={stat.number}
+              caption={stat.caption}
+              delay={stat.delay}
+            />
           ))}
         </motion.div>
 
-        {/* Enhanced CTA */}
+        {/* Customer Reviews Carousel */}
+        <div className="mb-12">
+          <CustomerReviewsCarousel />
+        </div>
+
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.4 }}
-          viewport={{ once: true }}
           className="text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.8,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          }}
+          viewport={{ once: true, margin: "-50px" }}
         >
           <motion.button
             whileHover={{
-              scale: 1.05,
-              boxShadow: "0 0 60px rgba(79, 70, 229, 0.6)",
+              scale: 1.02,
+              background: "linear-gradient(135deg, #0084FF, #0066CC)",
+              boxShadow: "0 10px 30px rgba(0, 132, 255, 0.3)",
+              transition: {
+                duration: 0.4,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              },
             }}
-            whileTap={{ scale: 0.95 }}
-            className="relative px-12 py-6 bg-gradient-to-r from-indigo-700 to-purple-700 rounded-2xl text-white font-bold text-xl hover:shadow-2xl transition-all group overflow-hidden"
+            whileTap={{
+              scale: 0.98,
+              transition: {
+                duration: 0.1,
+              },
+            }}
+            className="px-6 py-2.5 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-lg text-white font-semibold hover:shadow-lg transition-all duration-300 flex items-center gap-2 mx-auto text-base border border-[#0084FF]/30"
           >
-            <span className="relative z-10 flex items-center gap-3">
-              <FaPlay className="w-5 h-5" />
-              See Our Work in Action
-              <motion.span
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                <HiSparkles className="w-5 h-5" />
-              </motion.span>
-            </span>
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600"
-              initial={{ x: "-100%" }}
-              whileHover={{ x: 0 }}
-              transition={{ duration: 0.4 }}
-            />
+              animate={{
+                x: [0, 2, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <FaPlay className="w-3 h-3" />
+            </motion.div>
+            Start Your Transformation
           </motion.button>
         </motion.div>
       </div>
     </section>
   );
-};
+});
+
+AboutSection.displayName = "AboutSection";
 
 export default AboutSection;

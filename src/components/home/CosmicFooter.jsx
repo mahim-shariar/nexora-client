@@ -39,7 +39,7 @@ const BackToTop = () => {
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0 }}
       onClick={scrollToTop}
-      className="fixed bottom-6 right-6 z-50 p-3 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl text-white shadow-2xl backdrop-blur-sm border border-indigo-500/30"
+      className="fixed bottom-6 right-6 z-50 p-3 bg-gradient-to-br from-[#0084FF] to-[#0066CC] rounded-xl text-white shadow-2xl backdrop-blur-sm border border-[#0084FF]/30"
       whileHover={{ scale: 1.1, y: -2 }}
       whileTap={{ scale: 0.9 }}
     >
@@ -81,13 +81,13 @@ export default function CosmicFooter() {
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900/50 to-black" />
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#0084FF]/50 to-transparent" />
 
         {/* Floating Particles */}
         {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-indigo-400/30 rounded-full"
+            className="absolute w-1 h-1 bg-[#0084FF]/30 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               bottom: `${Math.random() * 50}%`,
@@ -118,13 +118,13 @@ export default function CosmicFooter() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center"
+                className="w-10 h-10 bg-gradient-to-br from-[#0084FF] to-[#0066CC] rounded-xl flex items-center justify-center"
               >
                 <FaRocket className="w-5 h-5 text-white" />
               </motion.div>
               <div>
                 <h3 className="text-xl font-black text-white">COSMIC</h3>
-                <p className="text-indigo-300 text-sm">STUDIO</p>
+                <p className="text-[#0084FF] text-sm">STUDIO</p>
               </div>
             </motion.div>
 
@@ -162,7 +162,7 @@ export default function CosmicFooter() {
             className="space-y-4"
           >
             <h4 className="text-white font-semibold flex items-center gap-2">
-              <HiSparkles className="w-4 h-4 text-indigo-400" />
+              <HiSparkles className="w-4 h-4 text-[#0084FF]" />
               Explore
             </h4>
             <div className="grid grid-cols-2 gap-2">
@@ -173,7 +173,7 @@ export default function CosmicFooter() {
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + index * 0.05 }}
-                  className="text-gray-400 hover:text-indigo-300 text-sm transition-colors duration-300"
+                  className="text-gray-400 hover:text-[#0084FF] text-sm transition-colors duration-300"
                   whileHover={{ x: 5 }}
                 >
                   {link.name}
@@ -190,7 +190,7 @@ export default function CosmicFooter() {
             className="space-y-4"
           >
             <h4 className="text-white font-semibold flex items-center gap-2">
-              <HiMail className="w-4 h-4 text-indigo-400" />
+              <HiMail className="w-4 h-4 text-[#0084FF]" />
               Stay Updated
             </h4>
 
@@ -201,13 +201,13 @@ export default function CosmicFooter() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email"
-                  className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white placeholder-gray-400 outline-none focus:border-indigo-500 transition-all duration-300"
+                  className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white placeholder-gray-400 outline-none focus:border-[#0084FF] transition-all duration-300"
                   required
                 />
               </div>
               <motion.button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:shadow-lg transition-all duration-300"
+                className="w-full py-3 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:shadow-lg transition-all duration-300"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -224,10 +224,10 @@ export default function CosmicFooter() {
             <div className="flex items-center gap-4">
               <span>© {currentYear} Cosmic Studio</span>
               <div className="flex gap-4">
-                <a href="#" className="hover:text-indigo-300 transition-colors">
+                <a href="#" className="hover:text-[#0084FF] transition-colors">
                   Privacy
                 </a>
-                <a href="#" className="hover:text-indigo-300 transition-colors">
+                <a href="#" className="hover:text-[#0084FF] transition-colors">
                   Terms
                 </a>
               </div>
@@ -246,7 +246,7 @@ export default function CosmicFooter() {
 
       {/* Floating Accents */}
       <motion.div
-        className="absolute bottom-1/4 left-10 w-2 h-2 bg-indigo-400/40 rounded-full blur-sm"
+        className="absolute bottom-1/4 left-10 w-2 h-2 bg-[#0084FF]/40 rounded-full blur-sm"
         animate={{
           scale: [1, 1.5, 1],
           opacity: [0.5, 1, 0.5],
@@ -257,7 +257,7 @@ export default function CosmicFooter() {
         }}
       />
       <motion.div
-        className="absolute top-1/3 right-20 w-1 h-1 bg-purple-400/30 rounded-full blur-sm"
+        className="absolute top-1/3 right-20 w-1 h-1 bg-[#0066CC]/30 rounded-full blur-sm"
         animate={{
           scale: [1, 2, 1],
           opacity: [0.3, 0.8, 0.3],
