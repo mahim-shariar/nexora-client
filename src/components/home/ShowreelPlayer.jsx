@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import {
   FaPlay,
   FaPause,
@@ -10,206 +11,311 @@ import {
   FaMobile,
   FaChartLine,
   FaShoppingCart,
+  FaUser,
+  FaFileAlt,
 } from "react-icons/fa";
+import { useVideo } from "../../hook/useVideo";
 
-// Video data organized by categories
+// YouTube URL handler for both regular videos and Shorts
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return null;
+
+  try {
+    const regex =
+      /(?:youtube\.com\/(?:shorts\/|watch\?v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+
+    if (match && match[1]) {
+      const videoId = match[1];
+      return `https://www.youtube.com/embed/${videoId}?autoplay=0&controls=1&modestbranding=1&rel=0`;
+    }
+  } catch (error) {
+    console.error("Error extracting YouTube embed URL:", error);
+  }
+
+  return null;
+};
+
+const isYouTubeShorts = (url) => {
+  return url && (url.includes("/shorts/") || url.includes("youtu.be/"));
+};
+
+const isYouTubeUrl = (url) => {
+  return url && (url.includes("youtube.com") || url.includes("youtu.be"));
+};
+
+// Category configuration
 const videoCategories = [
   {
     id: "youtube",
     name: "YouTube",
     icon: FaYoutube,
     accentColor: "from-[#0084FF] to-[#0066CC]",
-    videos: [
-      {
-        id: 1,
-        videoUrl: "/videos/youtube-1.mp4",
-        aspect: "horizontal",
-        duration: "2:45",
-      },
-      {
-        id: 2,
-        videoUrl: "/videos/youtube-2.mp4",
-        aspect: "horizontal",
-        duration: "4:20",
-      },
-      {
-        id: 3,
-        videoUrl: "/videos/youtube-3.mp4",
-        aspect: "horizontal",
-        duration: "3:15",
-      },
-      {
-        id: 4,
-        videoUrl: "/videos/youtube-4.mp4",
-        aspect: "horizontal",
-        duration: "5:30",
-      },
-    ],
+    aspect: "horizontal",
   },
   {
     id: "shorts",
     name: "Shorts",
     icon: FaMobile,
     accentColor: "from-[#0084FF] to-[#0066CC]",
-    videos: [
-      {
-        id: 5,
-        videoUrl: "/videos/short-1.mp4",
-        aspect: "vertical",
-        duration: "0:45",
-      },
-      {
-        id: 6,
-        videoUrl: "/videos/short-2.mp4",
-        aspect: "vertical",
-        duration: "0:58",
-      },
-      {
-        id: 7,
-        videoUrl: "/videos/short-3.mp4",
-        aspect: "vertical",
-        duration: "0:52",
-      },
-    ],
+    aspect: "vertical",
   },
   {
     id: "saas",
     name: "SaaS",
     icon: FaChartLine,
     accentColor: "from-[#0084FF] to-[#0066CC]",
-    videos: [
-      {
-        id: 8,
-        videoUrl: "/videos/saas-1.mp4",
-        aspect: "horizontal",
-        duration: "1:30",
-      },
-      {
-        id: 9,
-        videoUrl: "/videos/saas-2.mp4",
-        aspect: "horizontal",
-        duration: "2:15",
-      },
-      {
-        id: 10,
-        videoUrl: "/videos/saas-3.mp4",
-        aspect: "horizontal",
-        duration: "3:45",
-      },
-      {
-        id: 11,
-        videoUrl: "/videos/saas-4.mp4",
-        aspect: "horizontal",
-        duration: "4:20",
-      },
-    ],
+    aspect: "horizontal",
   },
   {
     id: "ads-vsl",
     name: "Ads & VSL",
     icon: FaShoppingCart,
     accentColor: "from-[#0084FF] to-[#0066CC]",
-    videos: [
-      {
-        id: 12,
-        videoUrl: "/videos/ad-1.mp4",
-        aspect: "horizontal",
-        duration: "0:30",
-      },
-      {
-        id: 13,
-        videoUrl: "/videos/ad-2.mp4",
-        aspect: "horizontal",
-        duration: "0:45",
-      },
-      {
-        id: 14,
-        videoUrl: "/videos/vsl-1.mp4",
-        aspect: "horizontal",
-        duration: "8:15",
-      },
-      {
-        id: 15,
-        videoUrl: "/videos/vsl-2.mp4",
-        aspect: "horizontal",
-        duration: "12:30",
-      },
-    ],
+    aspect: "horizontal",
   },
 ];
 
-// Custom Video Player Component
-const CustomVideoPlayer = ({ video, category, isShort = false }) => {
+// Balloon Tag Component
+// Balloon Tag Component - Restored original positioning
+const BalloonTag = ({ text, delay = 0, direction }) => {
+  const positions =
+    {
+      topLeft: "top-2 left-2",
+      topRight: "top-2 right-2",
+      topCenter: "top-2 left-1/2 -translate-x-1/2",
+      bottomLeft: "bottom-2 left-2",
+      bottomRight: "bottom-2 right-2",
+      bottomCenter: "bottom-2 left-1/2 -translate-x-1/2",
+      middleLeft: "top-1/2 left-2 -translate-y-1/2",
+      middleRight: "top-1/2 right-2 -translate-y-1/2",
+    }[direction] || "top-2 left-1/2 -translate-x-1/2";
+
+  const balloonVariants = {
+    topLeft: {
+      x: [0, -1, -2],
+      y: [0, -1, -2],
+      scale: [0, 1.1, 1],
+      opacity: [0, 1, 1],
+      rotateZ: [0, 5, 10],
+    },
+    topCenter: {
+      x: [0, 0, 0],
+      y: [0, -2, -3],
+      scale: [0, 1.1, 1],
+      opacity: [0, 1, 1],
+      rotateZ: [0, 0, 0],
+    },
+    topRight: {
+      x: [0, 1, 2],
+      y: [0, -1, -2],
+      scale: [0, 1.1, 1],
+      opacity: [0, 1, 1],
+      rotateZ: [0, -5, -10],
+    },
+    bottomLeft: {
+      x: [0, -1, -2],
+      y: [0, 1, 2],
+      scale: [0, 1.1, 1],
+      opacity: [0, 1, 1],
+      rotateZ: [0, -5, -10],
+    },
+    bottomCenter: {
+      x: [0, 0, 0],
+      y: [0, 2, 3],
+      scale: [0, 1.1, 1],
+      opacity: [0, 1, 1],
+      rotateZ: [0, 0, 0],
+    },
+    bottomRight: {
+      x: [0, 1, 2],
+      y: [0, 1, 2],
+      scale: [0, 1.1, 1],
+      opacity: [0, 1, 1],
+      rotateZ: [0, 5, 10],
+    },
+    middleLeft: {
+      x: [0, -2, -3],
+      y: [0, 0, 0],
+      scale: [0, 1.1, 1],
+      opacity: [0, 1, 1],
+      rotateZ: [0, -3, -5],
+    },
+    middleRight: {
+      x: [0, 2, 3],
+      y: [0, 0, 0],
+      scale: [0, 1.1, 1],
+      opacity: [0, 1, 1],
+      rotateZ: [0, 3, 5],
+    },
+  }[direction] || {
+    x: [0, 0, 0],
+    y: [0, -2, -3],
+    scale: [0, 1.1, 1],
+    opacity: [0, 1, 1],
+    rotateZ: [0, 0, 0],
+  };
+
+  return (
+    <motion.div
+      className={`absolute ${positions} z-20`}
+      initial={{
+        opacity: 0,
+        x: balloonVariants.x[0],
+        y: balloonVariants.y[0],
+        scale: balloonVariants.scale[0],
+        rotateZ: balloonVariants.rotateZ[0],
+      }}
+      whileInView={{
+        opacity: balloonVariants.opacity[2],
+        x: balloonVariants.x[2],
+        y: balloonVariants.y[2],
+        scale: balloonVariants.scale[2],
+        rotateZ: balloonVariants.rotateZ[2],
+      }}
+      whileHover={{
+        scale: 1.1,
+        y: balloonVariants.y[2] - 0.5,
+        rotateZ: balloonVariants.rotateZ[2] + 2,
+        transition: {
+          duration: 0.3,
+          ease: [0.25, 0.46, 0.45, 0.94],
+        },
+      }}
+      transition={{
+        duration: 0.8,
+        delay,
+        type: "spring",
+        stiffness: 60,
+        damping: 12,
+        mass: 0.8,
+      }}
+      viewport={{ once: true, margin: "-50px" }}
+    >
+      <motion.div
+        className="px-4 py-2 rounded-full bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 backdrop-blur-sm border border-[#0084FF]/30 text-white font-medium text-sm shadow-lg"
+        whileHover={{
+          background:
+            "linear-gradient(135deg, rgba(0, 132, 255, 0.25), rgba(0, 102, 204, 0.25))",
+          borderColor: "rgba(0, 132, 255, 0.5)",
+          boxShadow: "0 6px 20px rgba(0, 132, 255, 0.25)",
+          transition: {
+            duration: 0.3,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          },
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              y: [0, -1, 0],
+            }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              delay: Math.random() * 1.5,
+              ease: "easeInOut",
+            }}
+            className="w-1.5 h-1.5 bg-[#0084FF] rounded-full"
+          />
+          <span className="text-sm font-semibold whitespace-nowrap">
+            {text}
+          </span>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+// Custom Video Player Component with YouTube support
+const CustomVideoPlayer = ({ video, category }) => {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Comprehensive download protection
+  // Check if it's a YouTube URL
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(video.videoUrl);
+  const isShorts = isYouTubeShorts(video.videoUrl);
+  const isYouTube = isYouTubeUrl(video.videoUrl);
+
+  // For YouTube videos, use iframe
+  if (youtubeEmbedUrl) {
+    return (
+      <motion.div
+        className={`relative cursor-pointer ${
+          category.aspect === "vertical" ? "aspect-[9/16]" : "aspect-video"
+        } rounded-xl overflow-hidden border border-white/10 bg-black group select-none`}
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        {/* YouTube Embed */}
+        <div className="w-full h-full">
+          <iframe
+            src={youtubeEmbedUrl}
+            className="w-full h-full"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={`${video.title} - YouTube ${isShorts ? "Short" : "Video"}`}
+            onLoad={() => setIsLoading(false)}
+            style={{
+              display: "block",
+              border: "none",
+              borderRadius: "12px",
+            }}
+          />
+        </div>
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+            <div className="w-8 h-8 border-2 border-[#0084FF] border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
+        {/* YouTube Shorts Badge */}
+        {isShorts && (
+          <div className="absolute top-3 left-3">
+            <div className="flex items-center gap-1 px-2 py-1 bg-purple-600 rounded-md">
+              <span className="text-xs font-bold text-white">SHORTS</span>
+            </div>
+          </div>
+        )}
+
+        {/* YouTube Badge */}
+        {isYouTube && !isShorts && (
+          <div className="absolute top-3 left-3">
+            <div className="flex items-center gap-1 px-2 py-1 bg-red-600 rounded-md">
+              <FaYoutube className="w-3 h-3 text-white" />
+              <span className="text-xs font-bold text-white">YouTube</span>
+            </div>
+          </div>
+        )}
+
+        {/* Video Info */}
+      </motion.div>
+    );
+  }
+
+  // For regular video files, use the video element
   useEffect(() => {
     const videoElement = videoRef.current;
     if (!videoElement) return;
 
-    const handleContextMenu = (e) => {
-      e.preventDefault();
-      return false;
-    };
-
-    const handleDragStart = (e) => {
-      e.preventDefault();
-      return false;
-    };
-
-    const handleKeyDown = (e) => {
-      if (e.ctrlKey || e.metaKey) {
-        if (e.key === "s" || e.key === "p" || e.key === "o" || e.key === "u") {
-          e.preventDefault();
-          return false;
-        }
-      }
-
-      if (e.key === "F12") {
-        e.preventDefault();
-        return false;
-      }
-    };
-
-    videoElement.controls = false;
-    videoElement.setAttribute(
-      "controlsList",
-      "nodownload nofullscreen noremoteplayback"
-    );
-    videoElement.setAttribute("disablePictureInPicture", "true");
-    videoElement.setAttribute("disableRemotePlayback", "true");
+    // Basic protection
+    const handleContextMenu = (e) => e.preventDefault();
+    const handleDragStart = (e) => e.preventDefault();
 
     videoElement.addEventListener("contextmenu", handleContextMenu);
     videoElement.addEventListener("dragstart", handleDragStart);
-    document.addEventListener("keydown", handleKeyDown);
-
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === "attributes" &&
-          mutation.attributeName === "controls"
-        ) {
-          if (videoElement.controls) {
-            videoElement.controls = false;
-          }
-        }
-      });
-    });
-
-    observer.observe(videoElement, {
-      attributes: true,
-      attributeFilter: ["controls"],
-    });
 
     return () => {
       videoElement.removeEventListener("contextmenu", handleContextMenu);
       videoElement.removeEventListener("dragstart", handleDragStart);
-      document.removeEventListener("keydown", handleKeyDown);
-      observer.disconnect();
     };
   }, []);
 
@@ -248,6 +354,10 @@ const CustomVideoPlayer = ({ video, category, isShort = false }) => {
     }
   };
 
+  const handleLoadedData = () => {
+    setIsLoading(false);
+  };
+
   const seekVideo = (e) => {
     if (videoRef.current) {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -267,37 +377,44 @@ const CustomVideoPlayer = ({ video, category, isShort = false }) => {
     }
   };
 
+  const getAspectClass = () => {
+    return category.aspect === "vertical" ? "aspect-[9/16]" : "aspect-video";
+  };
+
   return (
     <motion.div
       ref={containerRef}
-      className={`relative cursor-pointer ${
-        video.aspect === "vertical" ? "aspect-[9/16]" : "aspect-video"
-      } rounded-xl overflow-hidden border border-white/10 bg-black group select-none`}
+      className={`relative cursor-pointer ${getAspectClass()} rounded-xl overflow-hidden border border-white/10 bg-black group select-none`}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
       onContextMenu={(e) => e.preventDefault()}
     >
-      {/* Video Element with comprehensive protection */}
+      {/* Loading State */}
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+          <div className="w-8 h-8 border-2 border-[#0084FF] border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+
+      {/* Video Element */}
       <video
         ref={videoRef}
-        className="w-full h-full object-cover pointer-events-none"
+        className="object-cover w-full h-full pointer-events-none"
         muted={isMuted}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleVideoEnd}
+        onLoadedData={handleLoadedData}
         loop={false}
         preload="metadata"
         onClick={togglePlay}
         controls={false}
-        disablePictureInPicture
-        disableRemotePlayback
-        controlsList="nodownload nofullscreen noremoteplayback"
         style={{ userSelect: "none", WebkitUserSelect: "none" }}
       >
         <source src={video.videoUrl} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
-      {/* Progress Bar - Always Visible */}
+      {/* Progress Bar */}
       <div
         className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/20 cursor-pointer"
         onClick={seekVideo}
@@ -308,113 +425,157 @@ const CustomVideoPlayer = ({ video, category, isShort = false }) => {
         />
       </div>
 
-      {/* Controls Overlay - Always Visible */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none">
+      {/* Controls Overlay */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/40 via-transparent to-transparent">
         {/* Central Play/Pause Button */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <motion.button
+          <button
             onClick={togglePlay}
-            className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 pointer-events-auto"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            initial={{ opacity: 0.8 }}
-            animate={{ opacity: isPlaying ? 0 : 0.8 }}
-            transition={{ duration: 0.2 }}
+            className="flex items-center justify-center w-12 h-12 text-white border rounded-full pointer-events-auto bg-white/20 backdrop-blur-md border-white/30"
           >
             {isPlaying ? (
               <FaPause className="w-4 h-4" />
             ) : (
               <FaPlay className="w-4 h-4 ml-0.5" />
             )}
-          </motion.button>
+          </button>
         </div>
 
         {/* Bottom Control Buttons */}
-        <div className="absolute bottom-3 right-3 flex items-center gap-2 pointer-events-none">
-          <motion.button
+        <div className="absolute flex items-center gap-2 pointer-events-none bottom-3 right-3">
+          <button
             onClick={toggleMute}
-            className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center text-white border border-white/20 pointer-events-auto"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            className="flex items-center justify-center w-8 h-8 text-white border rounded-full pointer-events-auto bg-black/60 border-white/20"
           >
             {isMuted ? (
               <FaVolumeMute className="w-3 h-3" />
             ) : (
               <FaVolumeUp className="w-3 h-3" />
             )}
-          </motion.button>
+          </button>
 
-          <motion.button
+          <button
             onClick={handleFullscreen}
-            className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center text-white border border-white/20 pointer-events-auto"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            className="flex items-center justify-center w-8 h-8 text-white border rounded-full pointer-events-auto bg-black/60 border-white/20"
           >
             <FaExpand className="w-3 h-3" />
-          </motion.button>
+          </button>
+        </div>
+      </div>
+
+      {/* Video Info */}
+      <div className="absolute pointer-events-none top-3 left-3 right-3">
+        <div className="p-3 border rounded-lg bg-black/60 backdrop-blur-sm border-white/10">
+          <h3 className="mb-1 text-sm font-semibold text-white">
+            {video.title}
+          </h3>
+          {video.description && (
+            <p className="text-xs text-gray-300 line-clamp-2">
+              {video.description}
+            </p>
+          )}
         </div>
       </div>
 
       {/* Play Indicator */}
       {isPlaying && (
-        <motion.div
-          className="absolute top-3 left-3 px-2 py-1 rounded-full bg-black/60 border border-[#0084FF]/30"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
+        <div className="absolute top-3 left-3 px-2 py-1 rounded-full bg-black/60 border border-[#0084FF]/30">
           <div className="flex items-center gap-1 text-[#0084FF] text-xs">
             <div className="w-1.5 h-1.5 bg-[#0084FF] rounded-full animate-pulse" />
             <span>PLAYING</span>
           </div>
-        </motion.div>
+        </div>
       )}
-
-      {/* Protection Overlay */}
-      <div
-        className="absolute inset-0 z-10"
-        style={{
-          pointerEvents: "none",
-          background: "transparent",
-        }}
-      />
     </motion.div>
   );
 };
 
-// Category Section Component
-const CategorySection = ({ category }) => {
+// Video Grid Component
+const VideoGrid = ({ category, videos, loading }) => {
   const isShort = category.id === "shorts";
 
+  if (loading) {
+    return (
+      <div className="mb-16">
+        <div
+          className={`grid grid-cols-1 ${
+            isShort ? "md:grid-cols-2 lg:grid-cols-3" : "md:grid-cols-2"
+          } gap-6`}
+        >
+          {[...Array(isShort ? 3 : 4)].map((_, index) => (
+            <div
+              key={index}
+              className={`${
+                category.aspect === "vertical"
+                  ? "aspect-[9/16]"
+                  : "aspect-video"
+              } rounded-xl bg-gray-800/50 animate-pulse border border-white/10`}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state when no videos are found
+  if (!videos || videos.length === 0) {
+    return (
+      <div className="py-16 mb-16 text-center">
+        <div className="max-w-md mx-auto">
+          <div className="flex items-center justify-center w-24 h-24 mx-auto mb-6 border rounded-full bg-gray-800/50 border-white/10">
+            <FaYoutube className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="mb-3 text-xl font-semibold text-white">
+            No Videos Available
+          </h3>
+          <p className="mb-6 text-gray-400">
+            There are no videos in the {category.name} category yet.
+          </p>
+          <div className="text-sm text-gray-500">
+            Check back later for new content.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <motion.section
-      className="mb-16"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-    >
-      {/* Videos Grid */}
+    <div className="mb-16">
       <div
         className={`grid grid-cols-1 ${
           isShort ? "md:grid-cols-2 lg:grid-cols-3" : "md:grid-cols-2"
         } gap-6`}
       >
-        {category.videos.map((video) => (
+        {videos.map((video) => (
           <CustomVideoPlayer
-            key={video.id}
+            key={video._id}
             video={video}
             category={category}
-            isShort={isShort}
           />
         ))}
       </div>
-    </motion.section>
+    </div>
   );
 };
 
 // Main Component
 const ProtectedVideoShowcase = () => {
   const [activeCategory, setActiveCategory] = useState("youtube");
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  // Use the custom hook to fetch videos for the active category
+  const { videos, loading, error } = useVideo(activeCategory);
+
+  // Balloon tags for the header
+  const balloons = [
+    { text: "YouTube", direction: "topLeft", delay: 0.2 },
+    { text: "Shorts", direction: "topRight", delay: 0.3 },
+    { text: "SaaS", direction: "bottomLeft", delay: 0.4 },
+    { text: "Ads & VSL", direction: "bottomRight", delay: 0.5 },
+  ];
 
   // Additional global protection
   useEffect(() => {
@@ -436,87 +597,99 @@ const ProtectedVideoShowcase = () => {
     };
   }, []);
 
+  const currentCategory = videoCategories.find(
+    (cat) => cat.id === activeCategory
+  );
+
   return (
     <section
-      className="py-20 px-4 select-none"
+      id="showreel"
+      className="px-4 py-20 select-none"
       onContextMenu={(e) => e.preventDefault()}
     >
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+      <div className="mx-auto max-w-7xl">
+        {/* Header with Balloon Tags */}
+        <div
+          ref={ref}
+          className="relative flex items-center justify-center mb-16"
         >
-          <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900/80 backdrop-blur-sm border border-[#0084FF]/30 mb-6"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-          >
-            <span className="text-[#0084FF] font-medium text-sm">OUR WORK</span>
-          </motion.div>
+          {/* Balloon Tags */}
+          {balloons.map((balloon, index) => (
+            <BalloonTag
+              key={index}
+              text={balloon.text}
+              direction={balloon.direction}
+              delay={balloon.delay}
+            />
+          ))}
 
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Some of our
-            <br />
-            <span className="bg-gradient-to-r from-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent">
-              featured projects
-            </span>
-          </h2>
-        </motion.div>
+          {/* Main Header Content */}
+          <div className="relative z-30 mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900/80 backdrop-blur-sm border border-[#0084FF]/30 mb-6">
+              <span className="text-[#0084FF] font-medium text-sm">
+                OUR WORK
+              </span>
+            </div>
 
-        {/* Simplified Category Navigation */}
-        <motion.div
-          className="flex justify-center mb-12"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <div className="flex bg-gray-900/50 backdrop-blur-sm rounded-xl p-1 border border-white/10">
+            <h2 className="mb-6 text-4xl font-bold text-white md:text-6xl">
+              Some of our
+              <br />
+              <span className="bg-gradient-to-r from-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent">
+                featured projects
+              </span>
+            </h2>
+
+            <p className="max-w-2xl mx-auto text-lg text-gray-300">
+              Explore our work across different platforms and formats
+            </p>
+          </div>
+        </div>
+
+        {/* Category Navigation */}
+        <div className="flex justify-center mb-12">
+          <div className="flex flex-wrap justify-center max-w-4xl gap-2 p-1 border bg-gray-900/50 backdrop-blur-sm rounded-xl border-white/10">
             {videoCategories.map((category) => (
-              <motion.button
+              <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`relative px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+                className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
                   activeCategory === category.id
                     ? "text-white"
                     : "text-gray-400 hover:text-gray-300"
                 }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 {activeCategory === category.id && (
-                  <motion.div
+                  <div
                     className={`absolute inset-0 rounded-lg bg-gradient-to-r ${category.accentColor}`}
-                    layoutId="activeTab"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
                 <span className="relative z-10 flex items-center gap-2">
                   <category.icon className="w-4 h-4" />
                   {category.name}
                 </span>
-              </motion.button>
+              </button>
             ))}
           </div>
-        </motion.div>
+        </div>
+
+        {/* Error State */}
+        {error && (
+          <div className="mb-8 text-center">
+            <p className="text-gray-400">Showing demo content</p>
+          </div>
+        )}
 
         {/* Category Content */}
         <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            {videoCategories.map((category) =>
-              activeCategory === category.id ? (
-                <CategorySection key={category.id} category={category} />
-              ) : null
+          <div key={activeCategory}>
+            {currentCategory && (
+              <VideoGrid
+                category={currentCategory}
+                videos={videos}
+                loading={loading}
+              />
             )}
-          </motion.div>
+          </div>
         </AnimatePresence>
       </div>
     </section>

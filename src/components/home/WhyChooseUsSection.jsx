@@ -5,11 +5,22 @@ import { RxCross2 } from "react-icons/rx";
 import { GoCheck } from "react-icons/go";
 
 const WhyChooseUs = () => {
+  // Scroll to contact function
+  const scrollToContact = () => {
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      contactSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8">
+    <section id="why-choose" className="px-4 py-16 sm:px-6 lg:px-8">
       <div className="max-w-[1150px] mx-auto">
         {/* Header Section - Adopted from video showcase */}
-        <div className="text-center mb-12">
+        <div className="mb-12 text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900/80 backdrop-blur-sm border border-[#0084FF]/30 mb-6">
             <span className="text-[#0084FF] font-medium text-sm">
@@ -18,7 +29,7 @@ const WhyChooseUs = () => {
           </div>
 
           {/* Main Title */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h1 className="mb-6 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
             Know what
             <br />
             <span className="bg-gradient-to-r from-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent">
@@ -27,26 +38,26 @@ const WhyChooseUs = () => {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl text-gray-300 mb-8">
+          <p className="mb-8 text-xl text-gray-300">
             From Videos to High-Ticket Leads
           </p>
 
           {/* Pill Badges */}
-          <div className="flex justify-center flex-wrap gap-3 mb-8">
-            <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-500/10 text-green-400 border border-green-500/20">
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <span className="inline-flex items-center px-4 py-2 text-sm font-medium text-green-400 border rounded-full bg-green-500/10 border-green-500/20">
               ✅ 48-hour turnaround
             </span>
             <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#0084FF]/10 text-[#0084FF] border border-[#0084FF]/20">
               🎯 Results-driven
             </span>
-            <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+            <span className="inline-flex items-center px-4 py-2 text-sm font-medium text-yellow-400 border rounded-full bg-yellow-500/10 border-yellow-500/20">
               👥 20+ experts
             </span>
           </div>
         </div>
 
         {/* Main Content Card */}
-        <div className=" text-white rounded-3xl p-6 md:p-8  relative ">
+        <div className="relative p-6 text-white rounded-3xl md:p-8">
           {/* Light Effect on Top-Right Corner */}
           <img
             src={lightEffect}
@@ -55,19 +66,19 @@ const WhyChooseUs = () => {
             draggable="false"
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 relative z-10">
+          <div className="relative z-10 grid grid-cols-1 gap-8 mb-12 lg:grid-cols-2">
             {/* Left Column - Features */}
-            <div className=" bg-gradient-to-br from-gray-900 to-black rounded-2xl p-8 border border-white/10 backdrop-blur-sm relative overflow-hidden">
+            <div className="relative p-8 overflow-hidden border bg-gradient-to-br from-gray-900 to-black rounded-2xl border-white/10 backdrop-blur-sm">
               {/* Logo Section */}
               <div className="flex items-center gap-4 mb-6">
                 <img
                   src={logo}
                   alt="Company Logo"
-                  className="w-50 object-contain"
+                  className="object-contain w-50"
                 />
               </div>
 
-              <div className="space-y-4 relative z-10">
+              <div className="relative z-10 space-y-4">
                 {[
                   "Full-service content team of 20+ experts – From script to upload, we handle everything.",
                   "Results-driven approach – We focus on 10X watch time, viral growth, and high engagement.",
@@ -79,7 +90,7 @@ const WhyChooseUs = () => {
                 ].map((feature, index) => (
                   <div
                     key={index}
-                    className="flex items-start gap-3 group hover:bg-white/5 rounded-lg p-2 -mx-2 transition-colors"
+                    className="flex items-start gap-3 p-2 -mx-2 transition-colors rounded-lg group hover:bg-white/5"
                   >
                     <GoCheck className="w-5 h-5 text-[#0084FF] mt-1" />
                     <div className="flex-1 min-w-0">
@@ -96,7 +107,7 @@ const WhyChooseUs = () => {
               </div>
 
               {/* Micro-copy */}
-              <div className="mt-8 pt-6 border-t border-white/10 relative z-10">
+              <div className="relative z-10 pt-6 mt-8 border-t border-white/10">
                 <div className="flex flex-wrap gap-6 text-sm text-gray-300">
                   <span className="flex items-center gap-2">
                     <svg
@@ -147,8 +158,8 @@ const WhyChooseUs = () => {
             {/* Right Column - Comparison Cards */}
             <div className="space-y-6">
               {/* Other Agencies Card */}
-              <div className=" bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 border  border-white/10 backdrop-blur-sm">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <div className="p-6 border bg-gradient-to-br from-gray-900 to-black rounded-2xl border-white/10 backdrop-blur-sm">
+                <h3 className="flex items-center gap-2 mb-4 text-xl font-bold text-white">
                   <span className="text-red-400">⚠️</span>
                   Other Agencies
                 </h3>
@@ -166,7 +177,7 @@ const WhyChooseUs = () => {
                       key={index}
                       className="flex items-center gap-3 text-gray-300"
                     >
-                      <span className="flex-shrink-0 flex items-center w-5 h-5 text-white/30">
+                      <span className="flex items-center flex-shrink-0 w-5 h-5 text-white/30">
                         <RxCross2 />
                       </span>
                       <span>{issue}</span>
@@ -177,7 +188,7 @@ const WhyChooseUs = () => {
 
               {/* Bonuses Card - Moved below Other Agencies */}
               <div className="bg-white/5 rounded-2xl p-6 border border-[#0084FF]/30 backdrop-blur-sm">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <h3 className="flex items-center gap-2 mb-4 text-xl font-bold text-white">
                   <span className="text-[#0084FF]">🎁</span>
                   Bonuses You Get With Us
                 </h3>
@@ -199,16 +210,17 @@ const WhyChooseUs = () => {
               </div>
 
               {/* CTA Section */}
-              <div className="bg-white/5 rounded-2xl p-6 border border-green-500/30 backdrop-blur-sm">
+              <div className="p-6 border bg-white/5 rounded-2xl border-green-500/30 backdrop-blur-sm">
                 <div className="text-center">
                   <button
+                    onClick={scrollToContact}
                     className="w-full bg-gradient-to-r from-[#0084FF] to-[#0066CC] hover:from-[#0066CC] hover:to-[#0055AA] text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-[0_0_40px_#0084FF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0084FF] focus:ring-offset-2 focus:ring-offset-gray-900 mb-4"
                     aria-label="Get started with our video marketing services"
                   >
                     Get Started
                   </button>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <a
                       href="#"
                       className="text-[#0084FF] hover:text-[#66B5FF] font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[#0084FF] focus:ring-offset-2 focus:ring-offset-gray-900 rounded"

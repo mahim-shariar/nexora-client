@@ -7,8 +7,13 @@ import {
   FaInstagram,
   FaGithub,
   FaArrowUp,
+  FaUserShield,
+  FaSignOutAlt,
+  FaTachometerAlt,
 } from "react-icons/fa";
 import { HiSparkles, HiMail } from "react-icons/hi";
+import logo from "../../assets/main-log.png";
+import { useAuth } from "../../hook/useAuth";
 
 // ===== Back to Top Button =====
 const BackToTop = () => {
@@ -51,7 +56,7 @@ const BackToTop = () => {
 // ===== Simplified Cosmic Footer =====
 export default function CosmicFooter() {
   const currentYear = new Date().getFullYear();
-  const [email, setEmail] = useState("");
+  const { isAuthenticated, user, logout } = useAuth();
 
   const socials = [
     { icon: FaTwitter, href: "#", color: "#1DA1F2", label: "Twitter" },
@@ -61,19 +66,49 @@ export default function CosmicFooter() {
   ];
 
   const quickLinks = [
-    { name: "Home", href: "#" },
-    { name: "Services", href: "#" },
-    { name: "Work", href: "#" },
-    { name: "About", href: "#" },
-    { name: "Contact", href: "#" },
+    { name: "Home", href: "#home" },
+    { name: "Services", href: "#services" },
+    { name: "Work", href: "#showreel" },
+    { name: "About", href: "#about" },
+    { name: "Contact", href: "#contact" },
   ];
 
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (email) {
-      setEmail("");
-      // Add your subscription logic here
+  // Scroll to any section
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      const offsetTop =
+        section.getBoundingClientRect().top + window.pageYOffset;
+      const navbarHeight = 64; // Height of your navbar
+
+      window.scrollTo({
+        top: offsetTop - navbarHeight,
+        behavior: "smooth",
+      });
     }
+  };
+
+  // Handle quick link click
+  const handleQuickLinkClick = (href) => {
+    const sectionId = href.replace("#", "");
+    scrollToSection(sectionId);
+  };
+
+  // Handle admin login
+  const handleAdminLogin = () => {
+    // Navigate to login page - adjust based on your routing
+    window.location.href = "/login";
+  };
+
+  // Handle dashboard navigation
+  const handleDashboard = () => {
+    // Navigate to dashboard - adjust based on your routing
+    window.location.href = "/dashboard";
+  };
+
+  // Handle logout
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (
@@ -105,9 +140,9 @@ export default function CosmicFooter() {
         ))}
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-12">
+      <div className="container relative z-10 px-4 py-12 mx-auto">
         {/* Main Content */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-8">
+        <div className="grid gap-8 mb-8 lg:grid-cols-3">
           {/* Brand Section */}
           <div className="space-y-4">
             <motion.div
@@ -115,20 +150,10 @@ export default function CosmicFooter() {
               whileInView={{ opacity: 1, y: 0 }}
               className="flex items-center gap-3"
             >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="w-10 h-10 bg-gradient-to-br from-[#0084FF] to-[#0066CC] rounded-xl flex items-center justify-center"
-              >
-                <FaRocket className="w-5 h-5 text-white" />
-              </motion.div>
-              <div>
-                <h3 className="text-xl font-black text-white">COSMIC</h3>
-                <p className="text-[#0084FF] text-sm">STUDIO</p>
-              </div>
+              <img src={logo} alt="Logo" className="h-20 w-34" />
             </motion.div>
 
-            <p className="text-gray-400 text-sm">
+            <p className="text-sm text-gray-400">
               Next-generation video editing and creative solutions for the
               digital universe.
             </p>
@@ -139,11 +164,13 @@ export default function CosmicFooter() {
                 <motion.a
                   key={social.label}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   initial={{ opacity: 0, scale: 0 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.2, y: -2 }}
-                  className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-all duration-300"
+                  className="p-2 transition-all duration-300 rounded-lg bg-gray-800/50 hover:bg-gray-700/50"
                 >
                   <social.icon
                     className="w-4 h-4"
@@ -161,75 +188,114 @@ export default function CosmicFooter() {
             transition={{ delay: 0.2 }}
             className="space-y-4"
           >
-            <h4 className="text-white font-semibold flex items-center gap-2">
+            <h4 className="flex items-center gap-2 font-semibold text-white">
               <HiSparkles className="w-4 h-4 text-[#0084FF]" />
               Explore
             </h4>
             <div className="grid grid-cols-2 gap-2">
               {quickLinks.map((link, index) => (
-                <motion.a
+                <motion.button
                   key={link.name}
-                  href={link.href}
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + index * 0.05 }}
-                  className="text-gray-400 hover:text-[#0084FF] text-sm transition-colors duration-300"
+                  className="text-gray-400 hover:text-[#0084FF] text-sm transition-colors duration-300 text-left"
                   whileHover={{ x: 5 }}
+                  onClick={() => handleQuickLinkClick(link.href)}
                 >
                   {link.name}
-                </motion.a>
+                </motion.button>
               ))}
             </div>
           </motion.div>
 
-          {/* Newsletter */}
+          {/* Admin Access Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             className="space-y-4"
           >
-            <h4 className="text-white font-semibold flex items-center gap-2">
-              <HiMail className="w-4 h-4 text-[#0084FF]" />
-              Stay Updated
+            <h4 className="flex items-center gap-2 font-semibold text-white">
+              <FaUserShield className="w-4 h-4 text-[#0084FF]" />
+              {isAuthenticated ? "Admin Panel" : "Admin Access"}
             </h4>
 
-            <form onSubmit={handleSubscribe} className="space-y-3">
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Your email"
-                  className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white placeholder-gray-400 outline-none focus:border-[#0084FF] transition-all duration-300"
-                  required
-                />
+            {isAuthenticated ? (
+              // Logged In State
+              <div className="space-y-3">
+                {/* User Info */}
+                <div className="p-3 border rounded-lg bg-gray-800/30 border-gray-700/50">
+                  <p className="text-sm font-medium text-white truncate">
+                    {user?.name || user?.email || "User"}
+                  </p>
+                  <p className="text-xs text-gray-400 truncate">
+                    {user?.email || "Welcome back!"}
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-2">
+                  <motion.button
+                    onClick={handleDashboard}
+                    className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-300 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-lg hover:shadow-lg hover:shadow-blue-500/25"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <FaTachometerAlt className="w-4 h-4" />
+                    Dashboard
+                  </motion.button>
+
+                  <motion.button
+                    onClick={handleLogout}
+                    className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-red-500 to-red-600 hover:shadow-lg hover:shadow-red-500/25"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <FaSignOutAlt className="w-4 h-4" />
+                    Logout
+                  </motion.button>
+                </div>
               </div>
-              <motion.button
-                type="submit"
-                className="w-full py-3 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:shadow-lg transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <FaRocket className="w-4 h-4" />
-                Subscribe
-              </motion.button>
-            </form>
+            ) : (
+              // Logged Out State
+              <div className="space-y-3">
+                <p className="text-sm text-gray-400">
+                  Access the admin dashboard to manage your content and
+                  settings.
+                </p>
+                <motion.button
+                  onClick={handleAdminLogin}
+                  className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-medium text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-purple-600 to-purple-700 hover:shadow-lg hover:shadow-purple-500/25"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <FaUserShield className="w-4 h-4" />
+                  Admin Login
+                </motion.button>
+              </div>
+            )}
           </motion.div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800/50 pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+        <div className="pt-6 border-t border-gray-800/50">
+          <div className="flex flex-col items-center justify-between gap-4 text-sm text-gray-400 md:flex-row">
             <div className="flex items-center gap-4">
-              <span>© {currentYear} Cosmic Studio</span>
+              <span>© {currentYear} All rights reserved</span>
               <div className="flex gap-4">
-                <a href="#" className="hover:text-[#0084FF] transition-colors">
+                <button
+                  onClick={() => handleQuickLinkClick("#")}
+                  className="hover:text-[#0084FF] transition-colors"
+                >
                   Privacy
-                </a>
-                <a href="#" className="hover:text-[#0084FF] transition-colors">
+                </button>
+                <button
+                  onClick={() => handleQuickLinkClick("#")}
+                  className="hover:text-[#0084FF] transition-colors"
+                >
                   Terms
-                </a>
+                </button>
               </div>
             </div>
 

@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState, useRef, useCallback } from "react";
+import React, { memo, useMemo, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
@@ -6,9 +6,6 @@ import {
   FaChartLine,
   FaUsers,
   FaRocket,
-  FaPause,
-  FaVolumeMute,
-  FaVolumeUp,
   FaStar,
   FaEye,
   FaUserPlus,
@@ -16,6 +13,7 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
+import { useReviews } from "../../hook/useReview";
 
 // Enhanced Balloon Tag Component
 const BalloonTag = memo(({ text, delay = 0, direction }) => {
@@ -193,7 +191,7 @@ const BalloonTag = memo(({ text, delay = 0, direction }) => {
       }}
     >
       <svg
-        className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full pointer-events-none"
+        className="absolute top-0 -translate-x-1/2 -translate-y-full pointer-events-none left-1/2"
         width="30"
         height="30"
         style={{ marginTop: "-1px" }}
@@ -285,7 +283,7 @@ const StatCard = memo(({ icon: Icon, number, caption, delay = 0 }) => {
 
         <div className="flex-1 min-w-0">
           <h3 className="text-base font-bold text-white mb-0.5">{number}</h3>
-          <p className="text-gray-400 text-xs transition-colors duration-300 group-hover:text-gray-300">
+          <p className="text-xs text-gray-400 transition-colors duration-300 group-hover:text-gray-300">
             {caption}
           </p>
         </div>
@@ -294,19 +292,56 @@ const StatCard = memo(({ icon: Icon, number, caption, delay = 0 }) => {
   );
 });
 
-// Enhanced Single Customer Review Card Component
-const CustomerReviewCard = memo(({ review, isActive, onPlayToggle }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+// YouTube URL handler for both regular videos and Shorts
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return null;
 
-  const togglePlay = useCallback(() => {
-    setIsPlaying(!isPlaying);
-    onPlayToggle && onPlayToggle(!isPlaying);
-  }, [isPlaying, onPlayToggle]);
+  try {
+    // Extract video ID from various YouTube URL formats
+    // Supports:
+    // - youtu.be/Hjj5i_w6Iog (Shorts style)
+    // - youtube.com/shorts/Hjj5i_w6Iog (Shorts)
+    // - youtube.com/watch?v=Hjj5i_w6Iog (Regular)
+    const regex =
+      /(?:youtube\.com\/(?:shorts\/|watch\?v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
 
-  const toggleMute = useCallback(() => {
-    setIsMuted(!isMuted);
-  }, [isMuted]);
+    if (match && match[1]) {
+      const videoId = match[1];
+      // Use the same embed URL format for both Shorts and regular videos
+      // YouTube automatically handles the Shorts interface in embed
+      return `https://www.youtube.com/embed/${videoId}?autoplay=0&controls=1&modestbranding=1&rel=0`;
+    }
+  } catch (error) {
+    console.error("Error extracting YouTube embed URL:", error);
+  }
+
+  return null;
+};
+
+const isYouTubeShorts = (url) => {
+  return url && (url.includes("/shorts/") || url.includes("youtu.be/"));
+};
+
+// Simple Customer Review Card Component
+const CustomerReviewCard = memo(({ review, isActive }) => {
+  // Get initials from name
+  const getInitials = (name) => {
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const youtubeEmbedUrl = useMemo(() => {
+    return getYouTubeEmbedUrl(review.videoUrl);
+  }, [review.videoUrl]);
+
+  const isShorts = useMemo(() => {
+    return isYouTubeShorts(review.videoUrl);
+  }, [review.videoUrl]);
 
   return (
     <motion.div
@@ -327,151 +362,71 @@ const CustomerReviewCard = memo(({ review, isActive, onPlayToggle }) => {
         damping: 25,
       }}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-        {/* Reel-sized Video Section */}
-        <div className="relative p-6 flex items-center justify-center">
+      <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
+        {/* Video Section - Optimized for Shorts */}
+        <div className="relative flex items-center justify-center p-6">
           <motion.div
-            className="relative rounded-2xl overflow-hidden bg-black border-2 border-gray-700"
-            style={{ width: "280px", height: "500px" }}
+            className="relative overflow-hidden bg-black border-2 border-gray-700 rounded-2xl"
+            style={{
+              width: "280px",
+              height: "500px",
+              // Force vertical aspect ratio for Shorts-like appearance
+              aspectRatio: "9/16",
+            }}
             whileHover={{
               borderColor: "rgba(0, 132, 255, 0.5)",
               transition: { duration: 0.3 },
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-              {isPlaying && (
-                <motion.div
-                  className="absolute inset-0 flex items-center justify-center bg-black/80"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{
-                    duration: 0.4,
-                    ease: [0.25, 0.46, 0.45, 0.94],
+            {/* Direct YouTube Embed - Loads directly */}
+            {review.videoUrl && youtubeEmbedUrl ? (
+              <div className="w-full h-full">
+                <iframe
+                  src={youtubeEmbedUrl}
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={`${review.name}'s YouTube ${
+                    isShorts ? "Short" : "Video"
+                  }`}
+                  // Important for mobile responsiveness
+                  style={{
+                    display: "block",
+                    border: "none",
+                    borderRadius: "12px",
                   }}
-                >
-                  <div className="text-center text-white">
-                    <motion.div
-                      className="w-16 h-16 bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 rounded-2xl flex items-center justify-center mb-3 mx-auto border border-[#0084FF]/30"
-                      animate={{ rotateY: [0, 360] }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                    >
-                      <span className="text-2xl">🎬</span>
-                    </motion.div>
-                    <p className="text-sm font-semibold">Success Story</p>
-                  </div>
-                </motion.div>
-              )}
-
-              {!isPlaying && (
-                <motion.div
-                  className="text-center text-white cursor-pointer flex flex-col items-center justify-center"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{
-                    duration: 0.4,
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                  }}
-                >
-                  <motion.button
-                    onClick={togglePlay}
-                    className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl hover:bg-gray-100 transition-all duration-300"
-                    whileHover={{
-                      scale: 1.1,
-                      transition: {
-                        duration: 0.3,
-                        ease: [0.25, 0.46, 0.45, 0.94],
-                      },
-                    }}
-                    whileTap={{
-                      scale: 0.95,
-                      transition: {
-                        duration: 0.1,
-                      },
-                    }}
-                  >
-                    <FaPlay className="w-4 h-4 text-black ml-0.5" />
-                  </motion.button>
-                  <p className="text-xs text-gray-300 mt-3">Watch story</p>
-                </motion.div>
-              )}
-            </div>
-
-            <motion.div
-              className="absolute bottom-3 left-3 right-3 flex items-center justify-between"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.4,
-                delay: 0.2,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-            >
-              <motion.button
-                onClick={togglePlay}
-                className="w-10 h-10 bg-black/80 rounded-xl flex items-center justify-center border border-white/20 hover:bg-black transition-all duration-300"
-                whileHover={{
-                  scale: 1.05,
-                  transition: {
-                    duration: 0.2,
-                  },
-                }}
-                whileTap={{
-                  scale: 0.9,
-                  transition: {
-                    duration: 0.1,
-                  },
-                }}
-              >
-                {isPlaying ? (
-                  <FaPause className="w-3 h-3 text-white" />
-                ) : (
-                  <FaPlay className="w-3 h-3 text-white ml-0.5" />
+                />
+              </div>
+            ) : (
+              // Simple fallback when no video URL
+              <div className="flex flex-col items-center justify-center w-full h-full p-4 text-center text-white bg-gradient-to-br from-gray-900 to-black">
+                <FaPlay className="w-12 h-12 mb-4 text-[#0084FF]" />
+                <p className="text-sm font-semibold">Video Content</p>
+                {isShorts && (
+                  <p className="mt-1 text-xs text-gray-400">YouTube Short</p>
                 )}
-              </motion.button>
+              </div>
+            )}
 
-              <motion.button
-                onClick={toggleMute}
-                className="w-10 h-10 bg-black/80 rounded-xl flex items-center justify-center border border-white/20 hover:bg-black transition-all duration-300"
-                whileHover={{
-                  scale: 1.05,
-                  transition: {
-                    duration: 0.2,
-                  },
-                }}
-                whileTap={{
-                  scale: 0.9,
-                  transition: {
-                    duration: 0.1,
-                  },
-                }}
-              >
-                {isMuted ? (
-                  <FaVolumeMute className="w-3 h-3 text-white" />
-                ) : (
-                  <FaVolumeUp className="w-3 h-3 text-white" />
-                )}
-              </motion.button>
-            </motion.div>
-
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-800">
+            {/* YouTube Shorts Badge */}
+            {isShorts && (
               <motion.div
-                className="h-full bg-gradient-to-r from-[#0084FF] to-[#0066CC]"
-                animate={{ width: isPlaying ? "70%" : "0%" }}
-                transition={{
-                  duration: isPlaying ? 10 : 0.3,
-                  ease: "linear",
-                }}
-              />
-            </div>
+                className="absolute top-3 left-3"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex items-center gap-1 px-2 py-1 bg-purple-600 rounded-md">
+                  <span className="text-xs font-bold text-white">SHORTS</span>
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         </div>
 
         {/* Compact Review Content */}
-        <div className="p-6 flex flex-col justify-center">
+        <div className="flex flex-col justify-center p-6">
           {/* Customer Info - Compact */}
           <motion.div
             className="flex items-center gap-3 mb-4"
@@ -483,23 +438,38 @@ const CustomerReviewCard = memo(({ review, isActive, onPlayToggle }) => {
             }}
             viewport={{ once: true, margin: "-50px" }}
           >
-            <motion.div
-              className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0084FF] to-[#0066CC] flex items-center justify-center text-white font-bold text-sm border border-[#0084FF]/30"
-              whileHover={{
-                scale: 1.05,
-                rotate: 5,
-                transition: {
-                  duration: 0.3,
-                },
-              }}
-            >
-              {review.initials}
-            </motion.div>
+            {review.profileImage ? (
+              <motion.img
+                src={review.profileImage}
+                alt={review.name}
+                className="w-10 h-10 rounded-xl border border-[#0084FF]/30"
+                whileHover={{
+                  scale: 1.05,
+                  rotate: 5,
+                  transition: {
+                    duration: 0.3,
+                  },
+                }}
+              />
+            ) : (
+              <motion.div
+                className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0084FF] to-[#0066CC] flex items-center justify-center text-white font-bold text-sm border border-[#0084FF]/30"
+                whileHover={{
+                  scale: 1.05,
+                  rotate: 5,
+                  transition: {
+                    duration: 0.3,
+                  },
+                }}
+              >
+                {getInitials(review.name)}
+              </motion.div>
+            )}
             <div>
               <h3 className="font-bold text-white text-base mb-0.5">
                 {review.name}
               </h3>
-              <p className="text-gray-400 text-xs">{review.position}</p>
+              <p className="text-xs text-gray-400">{review.position}</p>
               <div className="flex items-center gap-1 mt-0.5">
                 {[...Array(5)].map((_, i) => (
                   <motion.div
@@ -518,7 +488,7 @@ const CustomerReviewCard = memo(({ review, isActive, onPlayToggle }) => {
 
           {/* Review Text - Compact */}
           <motion.blockquote
-            className="text-gray-200 leading-relaxed mb-4 text-sm"
+            className="mb-4 text-sm leading-relaxed text-gray-200"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{
@@ -531,7 +501,7 @@ const CustomerReviewCard = memo(({ review, isActive, onPlayToggle }) => {
             {review.quote}
           </motion.blockquote>
 
-          {/* Compact Metrics - Small and Attractive */}
+          {/* Compact Metrics */}
           <motion.div
             className="flex items-center gap-3 py-3 border-t border-gray-800"
             initial={{ opacity: 0, y: 10 }}
@@ -555,10 +525,10 @@ const CustomerReviewCard = memo(({ review, isActive, onPlayToggle }) => {
                 <FaEye className="w-3 h-3 text-[#0084FF]" />
               </div>
               <div>
-                <div className="text-white font-bold text-sm">
+                <div className="text-sm font-bold text-white">
                   {review.views}
                 </div>
-                <div className="text-gray-400 text-xs">Views</div>
+                <div className="text-xs text-gray-400">Views</div>
               </div>
             </motion.div>
 
@@ -570,21 +540,21 @@ const CustomerReviewCard = memo(({ review, isActive, onPlayToggle }) => {
                 transition: { duration: 0.2 },
               }}
             >
-              <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center border border-green-500/20">
+              <div className="flex items-center justify-center w-8 h-8 border rounded-lg bg-green-500/10 border-green-500/20">
                 <FaUserPlus className="w-3 h-3 text-green-400" />
               </div>
               <div>
-                <div className="text-white font-bold text-sm">
+                <div className="text-sm font-bold text-white">
                   {review.subscribers}
                 </div>
-                <div className="text-gray-400 text-xs">Subscribers</div>
+                <div className="text-xs text-gray-400">Subscribers</div>
               </div>
             </motion.div>
           </motion.div>
 
-          {/* Timeline - Compact */}
+          {/* Timeline */}
           <motion.div
-            className="flex items-center justify-between text-xs text-gray-500 mt-3"
+            className="flex items-center justify-between mt-3 text-xs text-gray-500"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{
@@ -612,12 +582,16 @@ const CustomerReviewsCarousel = memo(() => {
     threshold: 0.1,
   });
 
-  const reviews = useMemo(
+  // Use the custom hook to fetch reviews
+  const { reviews, loading, error } = useReviews();
+
+  // Fallback data with your actual YouTube Shorts URL
+  const fallbackReviews = useMemo(
     () => [
       {
         id: 1,
         name: "John Smith",
-        initials: "JS",
+        profileImage: "",
         position: "Creative Agency",
         quote:
           "This service completely transformed our content strategy. We went from struggling to get views to consistently going viral!",
@@ -625,11 +599,13 @@ const CustomerReviewsCarousel = memo(() => {
         subscribers: "50K+",
         joined: "Mar 2024",
         results: "3 months",
+        videoUrl: "https://youtu.be/Hjj5i_w6Iog?si=0sspqt-0XtpjIUZR", // Your YouTube Shorts URL
+        thumbnailUrl: "",
       },
       {
         id: 2,
         name: "Sarah Johnson",
-        initials: "SJ",
+        profileImage: "",
         position: "Media Company",
         quote:
           "The viral editing techniques helped us grow our audience exponentially. Best investment we've made!",
@@ -637,11 +613,13 @@ const CustomerReviewsCarousel = memo(() => {
         subscribers: "75K+",
         joined: "Feb 2024",
         results: "4 months",
+        videoUrl: "https://youtube.com/shorts/xyz789short", // Example YouTube Shorts URL
+        thumbnailUrl: "",
       },
       {
         id: 3,
         name: "Mike Chen",
-        initials: "MC",
+        profileImage: "",
         position: "Tech Startup",
         quote:
           "Our engagement rates skyrocketed after implementing their strategies. Absolutely phenomenal results!",
@@ -649,39 +627,75 @@ const CustomerReviewsCarousel = memo(() => {
         subscribers: "120K+",
         joined: "Jan 2024",
         results: "5 months",
+        videoUrl: "https://www.youtube.com/watch?v=regularvideoid", // Example regular YouTube URL
+        thumbnailUrl: "",
       },
     ],
     []
   );
 
+  // Use fetched reviews or fallback
+  const displayReviews = reviews.length > 0 ? reviews : fallbackReviews;
+
   const nextSlide = useCallback(() => {
-    if (isAnimating) return;
+    if (isAnimating || displayReviews.length === 0) return;
     setIsAnimating(true);
-    setCurrentIndex((prev) => (prev + 1) % reviews.length);
+    setCurrentIndex((prev) => (prev + 1) % displayReviews.length);
     setTimeout(() => setIsAnimating(false), 500);
-  }, [isAnimating, reviews.length]);
+  }, [isAnimating, displayReviews.length]);
 
   const prevSlide = useCallback(() => {
-    if (isAnimating) return;
+    if (isAnimating || displayReviews.length === 0) return;
     setIsAnimating(true);
-    setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+    setCurrentIndex(
+      (prev) => (prev - 1 + displayReviews.length) % displayReviews.length
+    );
     setTimeout(() => setIsAnimating(false), 500);
-  }, [isAnimating, reviews.length]);
+  }, [isAnimating, displayReviews.length]);
 
   const goToSlide = useCallback(
     (index) => {
-      if (isAnimating) return;
+      if (isAnimating || displayReviews.length === 0) return;
       setIsAnimating(true);
       setCurrentIndex(index);
       setTimeout(() => setIsAnimating(false), 500);
     },
-    [isAnimating]
+    [isAnimating, displayReviews.length]
   );
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center max-w-6xl py-20 mx-auto">
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <motion.div
+            className="w-16 h-16 mx-auto mb-4 border-4 border-[#0084FF] border-t-transparent rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          />
+          <p className="text-gray-400">Loading success stories...</p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error && reviews.length === 0) {
+    return (
+      <div className="max-w-6xl mx-auto text-center">
+        <p className="text-gray-400">Showing demo success stories</p>
+      </div>
+    );
+  }
 
   return (
     <motion.div
       ref={ref}
-      className="mx-auto max-w-6xl"
+      className="max-w-6xl mx-auto"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{
@@ -689,10 +703,11 @@ const CustomerReviewsCarousel = memo(() => {
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
       viewport={{ once: true, margin: "-50px" }}
+      id="about"
     >
       {/* Section Title */}
       <motion.div
-        className="text-center mb-12"
+        className="mb-12 text-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{
@@ -702,10 +717,10 @@ const CustomerReviewsCarousel = memo(() => {
         }}
         viewport={{ once: true, margin: "-50px" }}
       >
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+        <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">
           Hear what they're Saying about us
         </h2>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+        <p className="max-w-2xl mx-auto text-lg text-gray-400">
           See how businesses like yours achieved incredible results with our
           viral content strategies
         </p>
@@ -713,38 +728,42 @@ const CustomerReviewsCarousel = memo(() => {
 
       {/* Carousel Container */}
       <div className="relative">
-        {/* Navigation Buttons */}
-        <motion.button
-          onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center border border-gray-600 hover:bg-black/70 transition-all duration-300"
-          whileHover={{
-            scale: 1.1,
-            backgroundColor: "rgba(0,0,0,0.7)",
-            transition: {
-              duration: 0.3,
-              ease: [0.25, 0.46, 0.45, 0.94],
-            },
-          }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <FaChevronLeft className="w-4 h-4 text-white" />
-        </motion.button>
+        {/* Navigation Buttons - Only show if there are reviews */}
+        {displayReviews.length > 1 && (
+          <>
+            <motion.button
+              onClick={prevSlide}
+              className="absolute z-20 flex items-center justify-center w-10 h-10 transition-all duration-300 -translate-y-1/2 border border-gray-600 rounded-full left-4 top-1/2 bg-black/50 hover:bg-black/70"
+              whileHover={{
+                scale: 1.1,
+                backgroundColor: "rgba(0,0,0,0.7)",
+                transition: {
+                  duration: 0.3,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                },
+              }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FaChevronLeft className="w-4 h-4 text-white" />
+            </motion.button>
 
-        <motion.button
-          onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center border border-gray-600 hover:bg-black/70 transition-all duration-300"
-          whileHover={{
-            scale: 1.1,
-            backgroundColor: "rgba(0,0,0,0.7)",
-            transition: {
-              duration: 0.3,
-              ease: [0.25, 0.46, 0.45, 0.94],
-            },
-          }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <FaChevronRight className="w-4 h-4 text-white" />
-        </motion.button>
+            <motion.button
+              onClick={nextSlide}
+              className="absolute z-20 flex items-center justify-center w-10 h-10 transition-all duration-300 -translate-y-1/2 border border-gray-600 rounded-full right-4 top-1/2 bg-black/50 hover:bg-black/70"
+              whileHover={{
+                scale: 1.1,
+                backgroundColor: "rgba(0,0,0,0.7)",
+                transition: {
+                  duration: 0.3,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                },
+              }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FaChevronRight className="w-4 h-4 text-white" />
+            </motion.button>
+          </>
+        )}
 
         {/* Carousel Slides */}
         <div className="overflow-hidden">
@@ -758,8 +777,11 @@ const CustomerReviewsCarousel = memo(() => {
               mass: 0.8,
             }}
           >
-            {reviews.map((review, index) => (
-              <div key={review.id} className="w-full flex-shrink-0 px-4">
+            {displayReviews.map((review, index) => (
+              <div
+                key={review._id || review.id}
+                className="flex-shrink-0 w-full px-4"
+              >
                 <CustomerReviewCard
                   review={review}
                   isActive={index === currentIndex}
@@ -769,30 +791,32 @@ const CustomerReviewsCarousel = memo(() => {
           </motion.div>
         </div>
 
-        {/* Enhanced Dots Indicator */}
-        <div className="flex justify-center mt-8 space-x-2">
-          {reviews.map((_, index) => (
-            <motion.button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex
-                  ? "bg-[#0084FF]"
-                  : "bg-gray-600 hover:bg-gray-500"
-              }`}
-              whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.9 }}
-              animate={{
-                scale: index === currentIndex ? 1.2 : 1,
-                opacity: index === currentIndex ? 1 : 0.7,
-              }}
-              transition={{
-                duration: 0.3,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-            />
-          ))}
-        </div>
+        {/* Enhanced Dots Indicator - Only show if there are multiple reviews */}
+        {displayReviews.length > 1 && (
+          <div className="flex justify-center mt-8 space-x-2">
+            {displayReviews.map((_, index) => (
+              <motion.button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex
+                    ? "bg-[#0084FF]"
+                    : "bg-gray-600 hover:bg-gray-500"
+                }`}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+                animate={{
+                  scale: index === currentIndex ? 1.2 : 1,
+                  opacity: index === currentIndex ? 1 : 0.7,
+                }}
+                transition={{
+                  duration: 0.3,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -842,10 +866,10 @@ const AboutSection = memo(() => {
   return (
     <section
       id="about"
-      className="relative py-20 px-4 overflow-hidden min-h-screen flex items-center"
+      className="relative flex items-center min-h-screen px-4 py-20 overflow-hidden"
     >
       {/* Enhanced Background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#0084FF]/10 rounded-full blur-[60px]"
           animate={{
@@ -873,7 +897,7 @@ const AboutSection = memo(() => {
         />
       </div>
 
-      <div className="mx-auto max-w-6xl relative z-10 w-full">
+      <div className="relative z-10 w-full max-w-6xl mx-auto">
         <div className="relative flex items-center justify-center mb-16">
           {balloons.map((balloon, index) => (
             <BalloonTag
@@ -886,7 +910,7 @@ const AboutSection = memo(() => {
 
           <motion.div
             ref={ref}
-            className="text-center relative z-30 mx-auto"
+            className="relative z-30 mx-auto text-center"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{
@@ -923,7 +947,7 @@ const AboutSection = memo(() => {
               </span>
             </motion.div>
 
-            <motion.h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            <motion.h1 className="mb-6 text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
               <motion.span
                 className="block"
                 initial={{ opacity: 0, y: 30 }}
@@ -953,7 +977,7 @@ const AboutSection = memo(() => {
             </motion.h1>
 
             <motion.p
-              className="text-xl text-gray-300 mb-8 font-light"
+              className="mb-8 text-xl font-light text-gray-300"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{
@@ -1009,40 +1033,7 @@ const AboutSection = memo(() => {
             ease: [0.25, 0.46, 0.45, 0.94],
           }}
           viewport={{ once: true, margin: "-50px" }}
-        >
-          <motion.button
-            whileHover={{
-              scale: 1.02,
-              background: "linear-gradient(135deg, #0084FF, #0066CC)",
-              boxShadow: "0 10px 30px rgba(0, 132, 255, 0.3)",
-              transition: {
-                duration: 0.4,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              },
-            }}
-            whileTap={{
-              scale: 0.98,
-              transition: {
-                duration: 0.1,
-              },
-            }}
-            className="px-6 py-2.5 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-lg text-white font-semibold hover:shadow-lg transition-all duration-300 flex items-center gap-2 mx-auto text-base border border-[#0084FF]/30"
-          >
-            <motion.div
-              animate={{
-                x: [0, 2, 0],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <FaPlay className="w-3 h-3" />
-            </motion.div>
-            Start Your Transformation
-          </motion.button>
-        </motion.div>
+        ></motion.div>
       </div>
     </section>
   );

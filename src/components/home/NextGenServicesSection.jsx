@@ -1,11 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import {
-  FaLightbulb,
+  FaCrown,
   FaEdit,
   FaVideo,
   FaImage,
   FaRocket,
+  FaChartLine,
   FaArrowRight,
 } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
@@ -13,87 +14,102 @@ import { HiSparkles } from "react-icons/hi";
 const processSteps = [
   {
     id: 1,
-    title: "Discovery & Strategy",
-    icon: FaLightbulb,
+    title: "Positioning",
+    icon: FaCrown,
     description:
-      "We analyze your business goals and audience to create a winning content strategy that drives results",
+      "Craft authority-focused content to attract dream clients and make you the go-to expert.",
     features: [
-      "Market Research",
-      "Audience Analysis",
-      "Competitor Analysis",
-      "Strategy Development",
+      "Authority Content",
+      "Dream Client Targeting",
+      "Expert Positioning",
+      "Brand Messaging",
     ],
     color: "#0084FF",
-    duration: "2-3 days",
+    duration: "1-2 weeks",
   },
   {
     id: 2,
-    title: "Content Creation",
+    title: "Scripts",
     icon: FaEdit,
     description:
-      "Our team crafts engaging scripts and content frameworks optimized for maximum engagement",
+      "Write conversion-driven scripts blending storytelling, social proof, and subtle CTAs for leads.",
     features: [
-      "Script Writing",
-      "Content Planning",
-      "Storyboarding",
-      "Framework Setup",
+      "Storytelling Framework",
+      "Social Proof Integration",
+      "Subtle CTAs",
+      "Conversion Optimization",
     ],
     color: "#0066CC",
-    duration: "3-5 days",
+    duration: "2-3 days",
   },
   {
     id: 3,
-    title: "Video Production",
+    title: "Edits",
     icon: FaVideo,
     description:
-      "High-quality video production with cinematic techniques and professional editing",
+      "Create trending, attention-grabbing videos that hold viewers and convert them into buyers.",
     features: [
-      "4K Production",
-      "Motion Graphics",
-      "Color Grading",
-      "Sound Design",
+      "Trend Integration",
+      "Attention Hooks",
+      "Viewer Retention",
+      "Conversion Editing",
     ],
     color: "#0084FF",
-    duration: "4-6 days",
+    duration: "3-5 days",
   },
   {
     id: 4,
-    title: "Thumbnail Design",
+    title: "Thumbnails",
     icon: FaImage,
     description:
-      "Creating thumbnails that drive clicks and engagement through proven design principles",
+      "Design high-CTR thumbnails and titles that stand out and force clicks on every video.",
     features: [
-      "CTR Optimization",
+      "High CTR Design",
+      "Click Psychology",
       "A/B Testing",
-      "Design Principles",
-      "Emotional Triggers",
+      "Brand Consistency",
     ],
     color: "#0066CC",
     duration: "1-2 days",
   },
   {
     id: 5,
-    title: "Launch & Analytics",
+    title: "Publishing",
     icon: FaRocket,
     description:
-      "Strategic publishing and performance tracking to maximize your content's impact",
+      "Upload and distribute content strategically across platforms for maximum visibility and engagement.",
     features: [
-      "Multi-platform Publishing",
-      "Performance Analytics",
-      "ROI Tracking",
-      "Optimization",
+      "Multi-platform Strategy",
+      "Optimal Timing",
+      "Platform Optimization",
+      "Content Distribution",
     ],
     color: "#0084FF",
+    duration: "Ongoing",
+  },
+  {
+    id: 6,
+    title: "Optimization",
+    icon: FaChartLine,
+    description:
+      "Track, analyze, and improve every video to generate more qualified leads consistently.",
+    features: [
+      "Performance Analytics",
+      "Lead Tracking",
+      "Continuous Improvement",
+      "ROI Optimization",
+    ],
+    color: "#0066CC",
     duration: "Ongoing",
   },
 ];
 
 // Ultra-smooth easing curves
-const SMOOTH_EASE = [0.4, 0, 0.2, 1]; // Material Design's recommended easing
-const GENTLE_EASE = [0.25, 0.1, 0.25, 1]; // Even smoother for subtle animations
-const BOUNCE_EASE = [0.68, -0.55, 0.265, 1.55]; // Gentle bounce for icons
+const SMOOTH_EASE = [0.4, 0, 0.2, 1];
+const GENTLE_EASE = [0.25, 0.1, 0.25, 1];
+const BOUNCE_EASE = [0.68, -0.55, 0.265, 1.55];
 
-export default function ScrollDrivenProcess() {
+export default function ClientGettingProcess() {
   const containerRef = useRef(null);
   const [activeStep, setActiveStep] = useState(0);
   const [scrollDirection, setScrollDirection] = useState("down");
@@ -106,7 +122,7 @@ export default function ScrollDrivenProcess() {
     offset: ["start start", "end end"],
   });
 
-  // Smoother scroll direction tracking with throttling
+  // Smoother scroll direction tracking
   useEffect(() => {
     let ticking = false;
 
@@ -115,7 +131,6 @@ export default function ScrollDrivenProcess() {
         requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
           if (Math.abs(currentScrollY - lastScrollY) > 5) {
-            // Add threshold
             if (currentScrollY > lastScrollY) {
               setScrollDirection("down");
             } else if (currentScrollY < lastScrollY) {
@@ -136,8 +151,8 @@ export default function ScrollDrivenProcess() {
   // Smoother step progression
   const activeStepProgress = useTransform(
     scrollYProgress,
-    [0, 0.15, 0.35, 0.55, 0.75, 1],
-    [0, 1, 2, 3, 4, 4]
+    processSteps.map((_, index) => index / (processSteps.length - 1)),
+    processSteps.map((_, index) => index)
   );
 
   useEffect(() => {
@@ -157,7 +172,7 @@ export default function ScrollDrivenProcess() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Enhanced animation variants with ultra-smooth transitions
+  // Animation variants
   const containerVariants = {
     down: {
       hidden: {
@@ -306,7 +321,6 @@ export default function ScrollDrivenProcess() {
     },
   };
 
-  // Background glow variants
   const backgroundVariants = {
     inactive: {
       opacity: 0.1,
@@ -323,8 +337,11 @@ export default function ScrollDrivenProcess() {
   };
 
   return (
-    <section className="min-h-screen py-12 md:py-24 bg-black text-white relative overflow-hidden">
-      {/* Enhanced Background Elements */}
+    <section
+      id="proses"
+      className="relative min-h-screen py-12 overflow-hidden text-white bg-black md:py-24"
+    >
+      {/* Background Elements */}
       <motion.div
         className="absolute top-1/4 left-10 w-32 h-32 rounded-full bg-[#0084FF]/10 blur-3xl -z-10"
         animate={{
@@ -365,7 +382,7 @@ export default function ScrollDrivenProcess() {
       />
 
       {/* Fixed Progress Indicator */}
-      <div className="fixed top-1/2 right-8 transform -translate-y-1/2 z-30 hidden lg:block">
+      <div className="fixed z-30 hidden transform -translate-y-1/2 top-1/2 right-8 lg:block">
         <div className="flex flex-col items-center">
           {processSteps.map((step, index) => (
             <motion.div
@@ -418,12 +435,12 @@ export default function ScrollDrivenProcess() {
       </div>
 
       {/* Mobile Progress Bar */}
-      <div className="fixed top-4 left-4 right-4 z-30 lg:hidden">
+      <div className="fixed z-30 top-4 left-4 right-4 lg:hidden">
         <div className="flex items-center justify-between gap-2">
           {processSteps.map((step, index) => (
             <motion.div
               key={step.id}
-              className="flex-1 flex flex-col items-center"
+              className="flex flex-col items-center flex-1"
               initial={false}
               animate={{
                 scale: activeStep === index ? 1.2 : 1,
@@ -476,10 +493,10 @@ export default function ScrollDrivenProcess() {
         </div>
       </div>
 
-      <div ref={containerRef} className="container mx-auto px-4 relative z-20">
+      <div ref={containerRef} className="container relative z-20 px-4 mx-auto">
         {/* Header */}
         <motion.div
-          className="text-center mb-20 md:mb-32 pt-16"
+          className="pt-16 mb-20 text-center md:mb-32"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{
@@ -501,13 +518,13 @@ export default function ScrollDrivenProcess() {
           >
             <HiSparkles className="w-5 h-5 text-[#0084FF]" />
             <span className="text-[#0084FF] font-semibold tracking-widest text-sm uppercase">
-              Scroll to Explore
+              The Proven System
             </span>
             <HiSparkles className="w-5 h-5 text-[#0084FF]" />
           </motion.div>
 
           <motion.h2
-            className="text-3xl md:text-6xl font-bold text-white mb-6"
+            className="mb-6 text-3xl font-bold text-white md:text-6xl"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{
@@ -517,15 +534,15 @@ export default function ScrollDrivenProcess() {
             }}
             viewport={{ once: true }}
           >
-            <span className="text-gray-400">Watch our process</span>
+            <span className="text-gray-400">Our Strategy to get</span>
             <br />
             <span className="bg-gradient-to-r from-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent">
-              unfold as you scroll
+              You leads through content
             </span>
           </motion.h2>
 
           <motion.p
-            className="text-xl text-gray-400 max-w-3xl mx-auto"
+            className="max-w-3xl mx-auto text-xl text-gray-400"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{
@@ -535,8 +552,9 @@ export default function ScrollDrivenProcess() {
             }}
             viewport={{ once: true }}
           >
-            Scroll down to see each step of our content creation process come to
-            life. Scroll up to see them in reverse!
+            Scroll to explore our proven 6-step system that transforms coaches
+            into client-attracting powerhouses through strategic content
+            creation.
           </motion.p>
         </motion.div>
 
@@ -602,7 +620,7 @@ export default function ScrollDrivenProcess() {
                     {step.features.map((feature, featureIndex) => (
                       <motion.div
                         key={feature}
-                        className="flex items-center gap-3 p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors duration-300"
+                        className="flex items-center gap-3 p-4 transition-colors duration-300 border rounded-xl bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10"
                         variants={featureVariants}
                         initial="hidden"
                         whileInView="visible"
@@ -626,7 +644,7 @@ export default function ScrollDrivenProcess() {
                             ease: GENTLE_EASE,
                           }}
                         />
-                        <span className="text-white/90 text-sm">{feature}</span>
+                        <span className="text-sm text-white/90">{feature}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -660,7 +678,7 @@ export default function ScrollDrivenProcess() {
                 >
                   {/* Step Number */}
                   <motion.div
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm mb-6"
+                    className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm border rounded-full bg-white/5 border-white/10 text-white/60"
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{
@@ -686,7 +704,7 @@ export default function ScrollDrivenProcess() {
 
                   {/* Title */}
                   <motion.h3
-                    className="text-3xl md:text-5xl font-bold text-white mb-6"
+                    className="mb-6 text-3xl font-bold text-white md:text-5xl"
                     animate={{
                       color: activeStep === index ? "#FFFFFF" : "#666666",
                       x: activeStep === index ? [0, -2, 2, 0] : 0,
@@ -702,7 +720,7 @@ export default function ScrollDrivenProcess() {
 
                   {/* Description */}
                   <motion.p
-                    className="text-xl text-white/80 mb-8 leading-relaxed"
+                    className="mb-8 text-xl leading-relaxed text-white/80"
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{
@@ -715,9 +733,9 @@ export default function ScrollDrivenProcess() {
                     {step.description}
                   </motion.p>
 
-                  {/* Progress Indicator for this step */}
+                  {/* Progress Indicator */}
                   <motion.div
-                    className="w-full h-1 bg-white/10 rounded-full overflow-hidden mb-8"
+                    className="w-full h-1 mb-8 overflow-hidden rounded-full bg-white/10"
                     initial={{ opacity: 0, scaleX: 0 }}
                     whileInView={{ opacity: 1, scaleX: 1 }}
                     transition={{
@@ -746,7 +764,7 @@ export default function ScrollDrivenProcess() {
 
         {/* Final CTA */}
         <motion.div
-          className="text-center mt-32"
+          className="mt-32 text-center"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{
@@ -756,7 +774,7 @@ export default function ScrollDrivenProcess() {
           viewport={{ once: true, margin: "-50px" }}
         >
           <motion.h3
-            className="text-2xl md:text-4xl font-bold text-white mb-6"
+            className="mb-6 text-2xl font-bold text-white md:text-4xl"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{
@@ -766,40 +784,11 @@ export default function ScrollDrivenProcess() {
             }}
             viewport={{ once: true }}
           >
-            Ready to Start Your Journey?
+            Ready to Become a Client-Getting Machine?
           </motion.h3>
 
-          <motion.button
-            whileHover={{
-              scale: isMobile ? 1 : 1.05,
-              boxShadow: "0 0 50px rgba(0, 132, 255, 0.5)",
-              y: -2,
-            }}
-            whileTap={{ scale: 0.98, y: 0 }}
-            transition={{
-              duration: 0.3,
-              ease: GENTLE_EASE,
-            }}
-            className="px-12 py-4 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-2xl text-white font-bold text-lg hover:shadow-2xl transition-all duration-300 flex items-center gap-3 mx-auto mb-4"
-          >
-            <motion.span
-              initial={{ x: 0 }}
-              whileHover={{ x: 3 }}
-              transition={{ duration: 0.2 }}
-            >
-              Begin Your Project
-            </motion.span>
-            <motion.div
-              initial={{ x: 0 }}
-              whileHover={{ x: 5 }}
-              transition={{ duration: 0.2 }}
-            >
-              <FaArrowRight className="w-5 h-5" />
-            </motion.div>
-          </motion.button>
-
           <motion.p
-            className="text-gray-500 text-sm"
+            className="text-sm text-gray-500"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{
@@ -809,7 +798,7 @@ export default function ScrollDrivenProcess() {
             }}
             viewport={{ once: true }}
           >
-            Join 500+ creators who transformed their content strategy
+            Join 250+ coaches who transformed their client acquisition
           </motion.p>
         </motion.div>
       </div>

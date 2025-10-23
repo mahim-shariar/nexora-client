@@ -97,7 +97,10 @@ const CoreServices = () => {
   const marqueeServices = [...services, ...services];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-black">
+    <section
+      id="services"
+      className="relative px-4 py-20 overflow-hidden bg-black sm:px-6 lg:px-8"
+    >
       {/* Animated Background Elements */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-[#0084FF] rounded-full opacity-20 animate-pulse"></div>
@@ -107,7 +110,7 @@ const CoreServices = () => {
 
       <div className="max-w-[1200px] mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-20">
+        <div className="mb-20 text-center">
           {/* Enhanced Badge */}
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-gradient-to-r from-[#0084FF]/10 to-[#66B5FF]/10 backdrop-blur-sm border border-[#0084FF]/20 mb-8 shadow-lg shadow-[#0084FF]/5">
             <div className="w-1.5 h-1.5 bg-[#0084FF] rounded-full animate-pulse"></div>
@@ -118,7 +121,7 @@ const CoreServices = () => {
           </div>
 
           {/* Enhanced Main Title */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 tracking-tight">
+          <h1 className="mb-8 text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
             Video
             <span className="bg-gradient-to-r from-[#66B5FF] via-[#0084FF] to-[#66B5FF] bg-clip-text text-transparent bg-size-200 animate-gradient block mt-2">
               Excellence
@@ -126,29 +129,29 @@ const CoreServices = () => {
           </h1>
 
           {/* Enhanced Subtitle */}
-          <p className="text-lg text-gray-300/80 font-light tracking-wide max-w-2xl mx-auto leading-relaxed">
+          <p className="max-w-2xl mx-auto text-lg font-light leading-relaxed tracking-wide text-gray-300/80">
             Next-generation video solutions powered by cutting-edge technology
             and creative innovation
           </p>
         </div>
 
         {/* Marquee Section */}
-        <div className="relative overflow-hidden py-12">
+        <div className="relative py-12 overflow-hidden">
           {/* Top Marquee - Moving Right */}
           <div className="flex mb-6">
-            <div className="animate-marquee-right flex space-x-5">
+            <div className="flex space-x-5 animate-marquee-right">
               {marqueeServices.slice(0, 12).map((service, index) => (
                 <div key={index} className="flex-shrink-0 w-[380px]">
                   <div className="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-xl shadow-black/30 relative overflow-hidden h-full min-h-[220px] flex flex-col">
                     {/* New Card Layout - Centered Content */}
-                    <div className="relative z-10 flex flex-col h-full items-center text-center">
+                    <div className="relative z-10 flex flex-col items-center h-full text-center">
                       {/* Icon Container */}
                       <div className="p-4 bg-gradient-to-br from-[#0084FF]/20 to-[#66B5FF]/10 rounded-2xl shadow-lg shadow-[#0084FF]/5 mb-4">
                         <div className="text-[#66B5FF]">{service.icon}</div>
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-white font-bold text-xl mb-3 tracking-tight leading-tight">
+                      <h3 className="mb-3 text-xl font-bold leading-tight tracking-tight text-white">
                         {service.title}
                       </h3>
 
@@ -156,7 +159,7 @@ const CoreServices = () => {
                       <div className="w-16 h-1 bg-gradient-to-r from-[#0084FF] to-[#66B5FF] rounded-full mb-4"></div>
 
                       {/* Description */}
-                      <p className="text-gray-300/80 text-sm leading-relaxed font-light flex-1">
+                      <p className="flex-1 text-sm font-light leading-relaxed text-gray-300/80">
                         {service.description}
                       </p>
                     </div>
@@ -168,19 +171,19 @@ const CoreServices = () => {
 
           {/* Bottom Marquee - Moving Left */}
           <div className="flex">
-            <div className="animate-marquee-left flex space-x-5">
+            <div className="flex space-x-5 animate-marquee-left">
               {marqueeServices.slice(6, 18).map((service, index) => (
                 <div key={index} className="flex-shrink-0 w-[380px]">
                   <div className="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-xl shadow-black/30 relative overflow-hidden h-full min-h-[220px] flex flex-col">
                     {/* New Card Layout - Centered Content */}
-                    <div className="relative z-10 flex flex-col h-full items-center text-center">
+                    <div className="relative z-10 flex flex-col items-center h-full text-center">
                       {/* Icon Container */}
                       <div className="p-4 bg-gradient-to-br from-[#66B5FF]/20 to-[#0084FF]/10 rounded-2xl shadow-lg shadow-[#66B5FF]/5 mb-4">
                         <div className="text-[#0084FF]">{service.icon}</div>
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-white font-bold text-xl mb-3 tracking-tight leading-tight">
+                      <h3 className="mb-3 text-xl font-bold leading-tight tracking-tight text-white">
                         {service.title}
                       </h3>
 
@@ -188,7 +191,7 @@ const CoreServices = () => {
                       <div className="w-16 h-1 bg-gradient-to-r from-[#66B5FF] to-[#0084FF] rounded-full mb-4"></div>
 
                       {/* Description */}
-                      <p className="text-gray-300/80 text-sm leading-relaxed font-light flex-1">
+                      <p className="flex-1 text-sm font-light leading-relaxed text-gray-300/80">
                         {service.description}
                       </p>
                     </div>
@@ -199,10 +202,10 @@ const CoreServices = () => {
           </div>
 
           {/* Enhanced Gradient Overlays - Perfectly blended with black background */}
-          <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-black to-transparent z-20 pointer-events-none"></div>
-          <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-black to-transparent z-20 pointer-events-none"></div>
-          <div className="absolute left-0 bottom-0 w-32 h-full bg-gradient-to-r from-black to-transparent z-20 pointer-events-none"></div>
-          <div className="absolute right-0 bottom-0 w-32 h-full bg-gradient-to-l from-black to-transparent z-20 pointer-events-none"></div>
+          <div className="absolute top-0 left-0 z-20 w-32 h-full pointer-events-none bg-gradient-to-r from-black to-transparent"></div>
+          <div className="absolute top-0 right-0 z-20 w-32 h-full pointer-events-none bg-gradient-to-l from-black to-transparent"></div>
+          <div className="absolute bottom-0 left-0 z-20 w-32 h-full pointer-events-none bg-gradient-to-r from-black to-transparent"></div>
+          <div className="absolute bottom-0 right-0 z-20 w-32 h-full pointer-events-none bg-gradient-to-l from-black to-transparent"></div>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import NexoraFaqs from "../../components/home/NexoraFaqs";
 
 // Lazy load all components
 const CosmicNavbar = React.lazy(() =>
@@ -34,18 +35,13 @@ const CoreService = React.lazy(() =>
 
 // Simple loading component
 const SectionLoader = () => (
-  <div className="h-20 bg-gray-900 animate-pulse rounded-lg"></div>
+  <div className="h-20 bg-gray-900 rounded-lg animate-pulse"></div>
 );
 
 const Home = () => {
   return (
-    <div className="bg-black min-h-screen">
+    <div className="min-h-screen bg-black">
       {/* Navbar loads first since it's critical */}
-      <Suspense
-        fallback={<div className="h-16 bg-gray-900 animate-pulse"></div>}
-      >
-        <CosmicNavbar />
-      </Suspense>
 
       {/* Hero section */}
       <Suspense
@@ -83,11 +79,11 @@ const Home = () => {
       </Suspense>
 
       <Suspense fallback={<SectionLoader />}>
-        <CosmicContactSection />
+        <NexoraFaqs />
       </Suspense>
 
       <Suspense fallback={<SectionLoader />}>
-        <CosmicFooter />
+        <CosmicContactSection />
       </Suspense>
     </div>
   );

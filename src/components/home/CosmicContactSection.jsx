@@ -9,7 +9,8 @@ export default function CosmicBookingSection() {
 
   return (
     <div
-      className="relative min-h-screen bg-black overflow-hidden py-16"
+      id="contact"
+      className="relative min-h-screen py-16 overflow-hidden bg-black"
       style={{
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
@@ -27,16 +28,16 @@ export default function CosmicBookingSection() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4">
+      <div className="container relative z-10 px-4 mx-auto">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="mb-12 text-center"
         >
           <motion.div
-            className="inline-flex items-center gap-3 text-blue-400 text-lg font-medium tracking-widest mb-6"
+            className="inline-flex items-center gap-3 mb-6 text-lg font-medium tracking-widest text-blue-400"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -56,7 +57,7 @@ export default function CosmicBookingSection() {
             </motion.div>
           </motion.div>
 
-          <h2 className="text-5xl md:text-6xl font-black text-white mb-6">
+          <h2 className="mb-6 text-5xl font-black text-white md:text-6xl">
             <span
               style={{
                 background: "linear-gradient(45deg, #0084FF, #0066CC, #0099FF)",
@@ -72,13 +73,13 @@ export default function CosmicBookingSection() {
             <span className="text-3xl md:text-4xl">Session</span>
           </h2>
 
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="max-w-2xl mx-auto text-xl leading-relaxed text-gray-300">
             Schedule your 60-minute strategy session directly below
           </p>
         </motion.div>
 
         {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid gap-8 mx-auto lg:grid-cols-3 max-w-7xl">
           {/* Info Card */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -86,7 +87,7 @@ export default function CosmicBookingSection() {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="lg:col-span-1"
           >
-            <div className="relative rounded-2xl overflow-hidden border border-blue-500/30 bg-gradient-to-br from-gray-900/60 to-blue-900/30 backdrop-blur-xl p-8 h-full">
+            <div className="relative h-full p-8 overflow-hidden border rounded-2xl border-blue-500/30 bg-gradient-to-br from-gray-900/60 to-blue-900/30 backdrop-blur-xl">
               {/* Card Glow Effect */}
               <motion.div
                 className="absolute inset-0 rounded-2xl blur-md"
@@ -95,18 +96,18 @@ export default function CosmicBookingSection() {
                 transition={{ duration: 3, repeat: Infinity }}
               />
 
-              <div className="relative z-10 h-full flex flex-col">
+              <div className="relative z-10 flex flex-col h-full">
                 {/* Header */}
-                <div className="text-center mb-6">
+                <div className="mb-6 text-center">
                   <div className="inline-flex items-center gap-3 mb-4">
                     <div className="p-3 rounded-xl bg-blue-500/20">
                       <FaRocket className="w-8 h-8 text-blue-400" />
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">
+                  <h3 className="mb-3 text-2xl font-bold text-white">
                     Strategy Session
                   </h3>
-                  <div className="flex items-center justify-center gap-2 text-blue-300 mb-4">
+                  <div className="flex items-center justify-center gap-2 mb-4 text-blue-300">
                     <FaClock className="w-5 h-5" />
                     <span className="text-lg">60 Minutes</span>
                   </div>
@@ -114,14 +115,14 @@ export default function CosmicBookingSection() {
 
                 {/* Description */}
                 <div className="flex-1">
-                  <p className="text-gray-300 text-center mb-6 leading-relaxed">
+                  <p className="mb-6 leading-relaxed text-center text-gray-300">
                     Deep dive into your project with comprehensive planning and
                     roadmap creation. Perfect for startups and established
                     businesses.
                   </p>
 
                   {/* Features */}
-                  <div className="space-y-3 mb-6">
+                  <div className="mb-6 space-y-3">
                     {[
                       "Project Analysis",
                       "Strategy Planning",
@@ -135,7 +136,7 @@ export default function CosmicBookingSection() {
                         transition={{ delay: 0.5 + index * 0.1 }}
                         className="flex items-center gap-3 text-blue-300"
                       >
-                        <HiSparkles className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                        <HiSparkles className="flex-shrink-0 w-4 h-4 text-blue-400" />
                         <span className="text-sm">{feature}</span>
                       </motion.div>
                     ))}
@@ -143,8 +144,8 @@ export default function CosmicBookingSection() {
                 </div>
 
                 {/* Price */}
-                <div className="text-center mt-auto">
-                  <span className="px-6 py-3 bg-blue-500/20 text-blue-400 rounded-full text-lg font-bold">
+                <div className="mt-auto text-center">
+                  <span className="px-6 py-3 text-lg font-bold text-blue-400 rounded-full bg-blue-500/20">
                     FREE SESSION
                   </span>
                 </div>
@@ -162,7 +163,7 @@ export default function CosmicBookingSection() {
             <div className="relative rounded-2xl overflow-hidden border border-blue-500/30 bg-gradient-to-br from-gray-900/60 to-blue-900/30 backdrop-blur-xl p-1 h-[600px]">
               {/* Loading State */}
               {!iframeLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm z-10">
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm">
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -175,11 +176,11 @@ export default function CosmicBookingSection() {
                         repeat: Infinity,
                         ease: "linear",
                       }}
-                      className="w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4"
+                      className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600"
                     >
                       <HiSparkles className="w-8 h-8 text-white" />
                     </motion.div>
-                    <h3 className="text-xl font-bold text-white mb-2">
+                    <h3 className="mb-2 text-xl font-bold text-white">
                       Loading Calendar
                     </h3>
                     <p className="text-blue-300">
@@ -192,7 +193,7 @@ export default function CosmicBookingSection() {
               {/* TidyCal Iframe */}
               <iframe
                 src="https://tidycal.com/mdmahim924214/60-minute-meeting"
-                className="w-full h-full rounded-2xl border-0"
+                className="w-full h-full border-0 rounded-2xl"
                 title="Book Your Strategy Session"
                 onLoad={() => setIframeLoaded(true)}
                 sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
@@ -207,9 +208,9 @@ export default function CosmicBookingSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="text-center mt-12"
+          className="mt-12 text-center"
         >
-          <div className="flex flex-wrap items-center justify-center gap-8 text-gray-300 text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-gray-300">
             {[
               {
                 icon: HiSparkles,
