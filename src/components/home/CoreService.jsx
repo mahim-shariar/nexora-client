@@ -75,7 +75,7 @@ const CoreServices = () => {
   return (
     <section
       id="services"
-      className="relative px-4 py-20 overflow-hidden bg-black sm:px-6 lg:px-8"
+      className="relative px-4 py-10 overflow-hidden bg-black sm:px-6 lg:px-8"
     >
       {/* Animated Background Elements */}
       <div className="absolute inset-0 -z-10">
