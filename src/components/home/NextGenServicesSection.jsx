@@ -1,807 +1,515 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import {
-  FaCrown,
-  FaEdit,
-  FaVideo,
-  FaImage,
-  FaRocket,
-  FaChartLine,
-  FaArrowRight,
-} from "react-icons/fa";
-import { HiSparkles } from "react-icons/hi";
 
-const processSteps = [
-  {
-    id: 1,
-    title: "Positioning",
-    icon: FaCrown,
-    description:
-      "Craft authority-focused content to attract dream clients and make you the go-to expert.",
-    features: [
-      "Authority Content",
-      "Dream Client Targeting",
-      "Expert Positioning",
-      "Brand Messaging",
-    ],
-    color: "#0084FF",
-    duration: "1-2 weeks",
-  },
-  {
-    id: 2,
-    title: "Scripts",
-    icon: FaEdit,
-    description:
-      "Write conversion-driven scripts blending storytelling, social proof, and subtle CTAs for leads.",
-    features: [
-      "Storytelling Framework",
-      "Social Proof Integration",
-      "Subtle CTAs",
-      "Conversion Optimization",
-    ],
-    color: "#0066CC",
-    duration: "2-3 days",
-  },
-  {
-    id: 3,
-    title: "Edits",
-    icon: FaVideo,
-    description:
-      "Create trending, attention-grabbing videos that hold viewers and convert them into buyers.",
-    features: [
-      "Trend Integration",
-      "Attention Hooks",
-      "Viewer Retention",
-      "Conversion Editing",
-    ],
-    color: "#0084FF",
-    duration: "3-5 days",
-  },
-  {
-    id: 4,
-    title: "Thumbnails",
-    icon: FaImage,
-    description:
-      "Design high-CTR thumbnails and titles that stand out and force clicks on every video.",
-    features: [
-      "High CTR Design",
-      "Click Psychology",
-      "A/B Testing",
-      "Brand Consistency",
-    ],
-    color: "#0066CC",
-    duration: "1-2 days",
-  },
-  {
-    id: 5,
-    title: "Publishing",
-    icon: FaRocket,
-    description:
-      "Upload and distribute content strategically across platforms for maximum visibility and engagement.",
-    features: [
-      "Multi-platform Strategy",
-      "Optimal Timing",
-      "Platform Optimization",
-      "Content Distribution",
-    ],
-    color: "#0084FF",
-    duration: "Ongoing",
-  },
-  {
-    id: 6,
-    title: "Optimization",
-    icon: FaChartLine,
-    description:
-      "Track, analyze, and improve every video to generate more qualified leads consistently.",
-    features: [
-      "Performance Analytics",
-      "Lead Tracking",
-      "Continuous Improvement",
-      "ROI Optimization",
-    ],
-    color: "#0066CC",
-    duration: "Ongoing",
-  },
-];
-
-// Ultra-smooth easing curves
-const SMOOTH_EASE = [0.4, 0, 0.2, 1];
-const GENTLE_EASE = [0.25, 0.1, 0.25, 1];
-const BOUNCE_EASE = [0.68, -0.55, 0.265, 1.55];
-
-export default function ClientGettingProcess() {
+const ProcessSteps = () => {
   const containerRef = useRef(null);
   const [activeStep, setActiveStep] = useState(0);
-  const [scrollDirection, setScrollDirection] = useState("down");
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const stepRefs = useRef([]);
-  const [isMobile, setIsMobile] = useState(false);
+
+  const steps = [
+    {
+      number: "01",
+      title: "Consultation",
+      description: "We discuss your vision, goals, and video requirements.",
+      color: "blue",
+      pinImage:
+        "https://framerusercontent.com/images/ceWoRGcAON0ADKDjPd9HhJlf0h4.png",
+    },
+    {
+      number: "02",
+      title: "Script & Storyboard",
+      description:
+        "Crafting compelling narratives and visual planning for your story.",
+      color: "purple",
+      pinImage:
+        "https://framerusercontent.com/images/qfrgnhbit9GLh4NOTnKVvU.png",
+    },
+    {
+      number: "03",
+      title: "Footage Review",
+      description: "Selecting the best shots and organizing your raw footage.",
+      color: "blue",
+      pinImage:
+        "https://framerusercontent.com/images/ceWoRGcAON0ADKDjPd9HhJlf0h4.png",
+    },
+    {
+      number: "04",
+      title: "Editing & Effects",
+      description:
+        "Professional cutting, transitions, and visual enhancements.",
+      color: "purple",
+      pinImage:
+        "https://framerusercontent.com/images/qfrgnhbit9GLh4NOTnKVvU.png",
+    },
+    {
+      number: "05",
+      title: "Final Delivery",
+      description: "Quality check and delivering your polished final video.",
+      color: "blue",
+      pinImage:
+        "https://framerusercontent.com/images/ceWoRGcAON0ADKDjPd9HhJlf0h4.png",
+    },
+  ];
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  // Smoother scroll direction tracking
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-          if (Math.abs(currentScrollY - lastScrollY) > 5) {
-            if (currentScrollY > lastScrollY) {
-              setScrollDirection("down");
-            } else if (currentScrollY < lastScrollY) {
-              setScrollDirection("up");
-            }
-            setLastScrollY(currentScrollY);
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
-
-  // Smoother step progression
-  const activeStepProgress = useTransform(
+  const stepProgress = useTransform(
     scrollYProgress,
-    processSteps.map((_, index) => index / (processSteps.length - 1)),
-    processSteps.map((_, index) => index)
+    [0, 1],
+    [0, steps.length - 1]
   );
 
   useEffect(() => {
-    const unsubscribe = activeStepProgress.on("change", (latest) => {
-      const step = Math.floor(latest);
-      if (step !== activeStep) {
-        setActiveStep(step);
-      }
+    const unsubscribe = stepProgress.on("change", (latest) => {
+      setActiveStep(Math.floor(latest));
     });
     return () => unsubscribe();
-  }, [activeStepProgress, activeStep]);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  }, [stepProgress]);
 
   // Animation variants
-  const containerVariants = {
-    down: {
-      hidden: {
-        opacity: 0,
-        y: 80,
-        scale: 0.98,
-      },
-      visible: {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        transition: {
-          duration: 1.2,
-          ease: SMOOTH_EASE,
-        },
-      },
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      y: 100,
+      rotate: 0,
     },
-    up: {
-      hidden: {
-        opacity: 0,
-        y: -80,
-        scale: 0.98,
-      },
-      visible: {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        transition: {
-          duration: 1.2,
-          ease: SMOOTH_EASE,
-        },
-      },
-    },
-  };
-
-  const iconVariants = {
-    down: {
-      hidden: {
-        scale: 0,
-        rotate: -180,
-        opacity: 0,
-      },
-      visible: {
-        scale: 1,
-        rotate: 0,
-        opacity: 1,
-        transition: {
-          type: "spring",
-          stiffness: 60,
-          damping: 15,
-          delay: 0.4,
-        },
-      },
-    },
-    up: {
-      hidden: {
-        scale: 0,
-        rotate: 180,
-        opacity: 0,
-      },
-      visible: {
-        scale: 1,
-        rotate: 0,
-        opacity: 1,
-        transition: {
-          type: "spring",
-          stiffness: 60,
-          damping: 15,
-          delay: 0.3,
-        },
-      },
-    },
-  };
-
-  const featureVariants = {
-    down: {
-      hidden: {
-        opacity: 0,
-        x: -30,
-        scale: 0.9,
-      },
-      visible: (i) => ({
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        transition: {
-          delay: i * 0.08 + 0.5,
-          duration: 0.7,
-          ease: GENTLE_EASE,
-        },
-      }),
-    },
-    up: {
-      hidden: {
-        opacity: 0,
-        x: 30,
-        scale: 0.9,
-      },
-      visible: (i) => ({
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        transition: {
-          delay: i * 0.08 + 0.4,
-          duration: 0.7,
-          ease: GENTLE_EASE,
-        },
-      }),
-    },
-  };
-
-  const contentVariants = {
-    down: {
-      hidden: {
-        opacity: 0,
-        x: 80,
-        scale: 0.95,
-      },
-      visible: {
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        transition: {
-          duration: 1,
-          delay: 0.3,
-          ease: SMOOTH_EASE,
-        },
-      },
-    },
-    up: {
-      hidden: {
-        opacity: 0,
-        x: -80,
-        scale: 0.95,
-      },
-      visible: {
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        transition: {
-          duration: 1,
-          delay: 0.3,
-          ease: SMOOTH_EASE,
-        },
-      },
-    },
-  };
-
-  const backgroundVariants = {
-    inactive: {
-      opacity: 0.1,
-      scale: 1,
-    },
-    active: {
-      opacity: 0.3,
-      scale: 1.02,
+    visible: {
+      opacity: 1,
+      y: 0,
+      rotate: -6,
       transition: {
-        duration: 1.5,
-        ease: GENTLE_EASE,
+        duration: 0.8,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const rightCardVariants = {
+    hidden: {
+      opacity: 0,
+      y: 100,
+      rotate: 0,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      rotate: 6,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const connectorVariants = {
+    hidden: {
+      pathLength: 0,
+      strokeDashoffset: 1000,
+    },
+    visible: {
+      pathLength: 1,
+      strokeDashoffset: 0,
+      transition: {
+        duration: 2,
+        ease: "easeInOut",
       },
     },
   };
 
   return (
-    <section
-      id="proses"
-      className="relative min-h-screen py-12 overflow-hidden text-white bg-black md:py-24"
+    <div
+      ref={containerRef}
+      className="flex flex-col rounded-t-[5rem] text-left justify-center items-center w-full mx-auto py-16 gap-20 md:gap-32 bg-black"
     >
-      {/* Background Elements */}
-      <motion.div
-        className="absolute top-1/4 left-10 w-32 h-32 rounded-full bg-[#0084FF]/10 blur-3xl -z-10"
-        animate={{
-          opacity: [0.1, 0.15, 0.1],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: GENTLE_EASE,
-        }}
-      />
-      <motion.div
-        className="absolute bottom-1/3 right-20 w-40 h-40 rounded-full bg-[#0066CC]/10 blur-3xl -z-10"
-        animate={{
-          opacity: [0.1, 0.2, 0.1],
-          scale: [1, 1.05, 1],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: GENTLE_EASE,
-          delay: 1,
-        }}
-      />
-      <motion.div
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-[#0084FF]/5 blur-3xl -z-10"
-        animate={{
-          opacity: [0.05, 0.08, 0.05],
-          scale: [1, 1.02, 1],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: GENTLE_EASE,
-          delay: 2,
-        }}
-      />
-
-      {/* Fixed Progress Indicator */}
-      <div className="fixed z-30 hidden transform -translate-y-1/2 top-1/2 right-8 lg:block">
-        <div className="flex flex-col items-center">
-          {processSteps.map((step, index) => (
-            <motion.div
-              key={step.id}
-              className="flex flex-col items-center"
-              initial={false}
-              animate={{
-                scale: activeStep === index ? 1.3 : 1,
-              }}
-              transition={{
-                duration: 0.5,
-                ease: GENTLE_EASE,
-              }}
-            >
-              <motion.div
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  activeStep === index
-                    ? "bg-[#0084FF] shadow-lg shadow-[#0084FF]/50"
-                    : index < activeStep
-                    ? "bg-[#0084FF]/60"
-                    : "bg-white/30"
-                }`}
-                animate={{
-                  scale: activeStep === index ? [1, 1.4, 1] : 1,
-                }}
-                transition={{
-                  duration: 2.5,
-                  repeat: activeStep === index ? Infinity : 0,
-                  ease: GENTLE_EASE,
-                }}
-              />
-              {index < processSteps.length - 1 && (
-                <motion.div
-                  className={`w-0.5 h-8 ${
-                    index < activeStep ? "bg-[#0084FF]" : "bg-white/20"
-                  }`}
-                  animate={{
-                    height: index < activeStep ? "2rem" : "2rem",
-                    opacity: index < activeStep ? 1 : 0.3,
-                  }}
-                  transition={{
-                    duration: 0.8,
-                    ease: GENTLE_EASE,
-                  }}
-                />
-              )}
-            </motion.div>
-          ))}
+      {/* Header Section */}
+      <div className="flex flex-col items-center justify-center gap-5 px-4 mx-auto text-center">
+        {/* Enhanced Badge */}
+        <div className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-[#0084FF]/10 to-[#66B5FF]/10 backdrop-blur-sm border border-[#0084FF]/20 shadow-lg shadow-[#0084FF]/5">
+          <div className="w-1.5 h-1.5 bg-[#0084FF] rounded-full animate-pulse"></div>
+          <span className="text-[#0084FF] font-semibold text-sm tracking-wider">
+            Our Process,
+          </span>
+          <div className="w-1.5 h-1.5 bg-[#66B5FF] rounded-full animate-pulse"></div>
         </div>
+
+        {/* Smaller Main Title */}
+        <h1 className="text-2xl font-bold  md:text-4xl lg:text-5xl">
+          <span className="bg-gradient-to-r from-[#66B5FF] via-[#0084FF] to-[#66B5FF] bg-clip-text text-transparent bg-size-200 animate-gradient block mt-2">
+            Our strategy to get <br /> you leads with content
+          </span>
+        </h1>
       </div>
 
-      {/* Mobile Progress Bar */}
-      <div className="fixed z-30 top-4 left-4 right-4 lg:hidden">
-        <div className="flex items-center justify-between gap-2">
-          {processSteps.map((step, index) => (
-            <motion.div
-              key={step.id}
-              className="flex flex-col items-center flex-1"
-              initial={false}
-              animate={{
-                scale: activeStep === index ? 1.2 : 1,
-              }}
-              transition={{
-                duration: 0.4,
-                ease: GENTLE_EASE,
-              }}
-            >
-              <motion.div
-                className={`w-2 h-2 rounded-full mb-1 ${
-                  activeStep === index
-                    ? "bg-[#0084FF]"
-                    : index < activeStep
-                    ? "bg-[#0084FF]/60"
-                    : "bg-white/30"
-                }`}
-                animate={{
-                  scale: activeStep === index ? [1, 1.3, 1] : 1,
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: activeStep === index ? Infinity : 0,
-                  ease: GENTLE_EASE,
-                }}
-              />
-              <div
-                className={`text-xs transition-all duration-300 ${
-                  activeStep === index
-                    ? "text-[#0084FF] font-bold"
-                    : "text-white/50"
-                }`}
-              >
-                {index + 1}
-              </div>
-            </motion.div>
-          ))}
+      {/* Process Steps */}
+      <div className="relative flex flex-col items-center justify-center w-full gap-16 p-4 md:p-16 md:gap-56">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-[#0084FF] rounded-full opacity-20 animate-pulse"></div>
+          <div className="absolute top-3/4 right-1/3 w-1.5 h-1.5 bg-[#66B5FF] rounded-full opacity-30 animate-ping"></div>
+          <div className="absolute bottom-1/4 left-1/3 w-2 h-2 bg-[#0084FF] rounded-full opacity-25 animate-bounce"></div>
         </div>
-        <div className="w-full h-0.5 bg-white/20 mt-2 relative">
-          <motion.div
-            className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#0084FF] to-[#0066CC]"
-            animate={{
-              width: `${((activeStep + 1) / processSteps.length) * 100}%`,
-            }}
-            transition={{
-              duration: 0.8,
-              ease: SMOOTH_EASE,
-            }}
-          />
-        </div>
-      </div>
 
-      <div ref={containerRef} className="container relative z-20 px-4 mx-auto">
-        {/* Header */}
-        <motion.div
-          className="pt-16 mb-20 text-center md:mb-32"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 1.2,
-            ease: SMOOTH_EASE,
-          }}
-          viewport={{ once: true, margin: "-50px" }}
-        >
+        {/* Step 1 & 2 */}
+        <div className="relative flex flex-col items-center justify-center w-full max-w-4xl gap-20 md:flex-row md:gap-60">
+          {/* Step 2 - Script & Storyboard */}
           <motion.div
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-gray-900/50 backdrop-blur-xl border border-[#0084FF]/30 mb-6"
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{
-              duration: 0.8,
-              delay: 0.2,
-              ease: SMOOTH_EASE,
-            }}
-            viewport={{ once: true }}
+            className="relative z-20 order-2 md:order-1"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={cardVariants}
           >
-            <HiSparkles className="w-5 h-5 text-[#0084FF]" />
-            <span className="text-[#0084FF] font-semibold tracking-widest text-sm uppercase">
-              The Proven System
-            </span>
-            <HiSparkles className="w-5 h-5 text-[#0084FF]" />
+            <div className="relative bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-[50px] border border-white/10 p-6 shadow-2xl shadow-black/30 md:w-80 w-72 transform md:-rotate-6 rotate-0">
+              <div className="absolute z-10 -top-12 right-12">
+                <img src={steps[1].pinImage} alt="Pin" className="h-56" />
+              </div>
+              <div className="h-20"></div>
+              <div className="relative from-[#0084FF]/10 bg-gradient-to-t to-transparent rounded-3xl p-4 border border-[#0084FF]/10">
+                <div className="space-y-2">
+                  <div className="text-[#0084FF] caveat font-mono text-4xl font-bold mb-2">
+                    {steps[1].number}
+                  </div>
+                  <h2 className="text-2xl font-semibold tracking-tight text-white">
+                    {steps[1].title}
+                  </h2>
+                  <p className="text-lg font-light leading-relaxed text-gray-300/80 md:text-xl">
+                    {steps[1].description}
+                  </p>
+                </div>
+              </div>
+            </div>
           </motion.div>
 
-          <motion.h2
-            className="mb-6 text-3xl font-bold text-white md:text-6xl"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 1,
-              delay: 0.3,
-              ease: SMOOTH_EASE,
-            }}
-            viewport={{ once: true }}
-          >
-            <span className="text-gray-400">Our Strategy to get</span>
-            <br />
-            <span className="bg-gradient-to-r from-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent">
-              You leads through content
-            </span>
-          </motion.h2>
-
-          <motion.p
-            className="max-w-3xl mx-auto text-xl text-gray-400"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 1,
-              delay: 0.4,
-              ease: SMOOTH_EASE,
-            }}
-            viewport={{ once: true }}
-          >
-            Scroll to explore our proven 6-step system that transforms coaches
-            into client-attracting powerhouses through strategic content
-            creation.
-          </motion.p>
-        </motion.div>
-
-        {/* Process Steps */}
-        <div className="max-w-6xl mx-auto space-y-32 md:space-y-48">
-          {processSteps.map((step, index) => (
-            <motion.div
-              key={step.id}
-              ref={(el) => (stepRefs.current[index] = el)}
-              className={`flex flex-col ${
-                index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
-              } items-center gap-8 md:gap-16 min-h-screen lg:min-h-[80vh]`}
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-150px" }}
-              custom={scrollDirection}
+          {/* Connector - Hidden on mobile/tablet, visible on desktop */}
+          <div className="absolute z-10 w-96 h-48 transform md:top-6 md:rotate-[0deg] rotate-[70deg] hidden md:block">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 400 200"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              {/* Visual Side */}
-              <div className="flex-1 w-full">
-                <motion.div
-                  className="relative"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{
-                    duration: 1,
-                    ease: SMOOTH_EASE,
-                  }}
-                  viewport={{ once: true }}
-                >
-                  {/* Animated Background */}
-                  <motion.div
-                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20"
-                    variants={backgroundVariants}
-                    animate={activeStep === index ? "active" : "inactive"}
-                  />
+              <motion.path
+                d="M10,100 Q200,50 390,100"
+                stroke="url(#gradient)"
+                strokeWidth="4"
+                strokeDasharray="10 10"
+                fill="none"
+                variants={connectorVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              />
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#0084FF" />
+                  <stop offset="100%" stopColor="#66B5FF" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
 
-                  {/* Step Icon */}
-                  <motion.div
-                    className="relative z-10 w-32 h-32 mx-auto mb-8 rounded-2xl bg-gradient-to-br from-[#0084FF] to-[#0066CC] flex items-center justify-center shadow-2xl shadow-[#0084FF]/30"
-                    variants={iconVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    custom={scrollDirection}
-                    animate={{
-                      scale: activeStep === index ? [1, 1.08, 1] : 1,
-                      rotate: activeStep === index ? [0, 2, -2, 0] : 0,
-                      y: activeStep === index ? [0, -3, 0] : 0,
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: activeStep === index ? Infinity : 0,
-                      repeatType: "reverse",
-                      ease: GENTLE_EASE,
-                    }}
-                  >
-                    <step.icon className="w-12 h-12 text-white" />
-                  </motion.div>
-
-                  {/* Feature Dots */}
-                  <div className="relative z-10 grid grid-cols-2 gap-4">
-                    {step.features.map((feature, featureIndex) => (
-                      <motion.div
-                        key={feature}
-                        className="flex items-center gap-3 p-4 transition-colors duration-300 border rounded-xl bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10"
-                        variants={featureVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        custom={featureIndex}
-                        whileHover={{
-                          scale: 1.02,
-                          transition: { duration: 0.2, ease: GENTLE_EASE },
-                        }}
-                      >
-                        <motion.div
-                          className="w-2 h-2 rounded-full bg-[#0084FF] flex-shrink-0"
-                          animate={{
-                            scale: activeStep === index ? [1, 1.4, 1] : 1,
-                            opacity: activeStep === index ? [1, 0.7, 1] : 1,
-                          }}
-                          transition={{
-                            duration: 2,
-                            delay: featureIndex * 0.15,
-                            repeat: activeStep === index ? Infinity : 0,
-                            ease: GENTLE_EASE,
-                          }}
-                        />
-                        <span className="text-sm text-white/90">{feature}</span>
-                      </motion.div>
-                    ))}
+          {/* Step 1 - Consultation */}
+          <motion.div
+            className="relative z-20 order-1 md:order-2"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={rightCardVariants}
+          >
+            <div className="relative bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-[50px] border border-white/10 p-6 shadow-2xl shadow-black/30 md:w-80 w-72 transform md:rotate-6 rotate-0">
+              <div className="absolute z-10 -top-12 right-12">
+                <img src={steps[0].pinImage} alt="Pin" className="h-56" />
+              </div>
+              <div className="h-20"></div>
+              <div className="relative from-[#66B5FF]/10 bg-gradient-to-t to-transparent rounded-3xl p-4 border border-[#66B5FF]/10">
+                <div className="space-y-2">
+                  <div className="text-[#66B5FF] caveat font-mono text-4xl font-bold mb-2">
+                    {steps[0].number}
                   </div>
-
-                  {/* Duration Badge */}
-                  <motion.div
-                    className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-[#0084FF]/30 text-[#0084FF] text-sm font-medium"
-                    initial={{ opacity: 0, scale: 0.8, y: -10 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{
-                      duration: 0.7,
-                      delay: scrollDirection === "down" ? 0.7 : 0.5,
-                      ease: SMOOTH_EASE,
-                    }}
-                    viewport={{ once: true }}
-                  >
-                    ⏱️ {step.duration}
-                  </motion.div>
-                </motion.div>
+                  <h2 className="text-2xl font-semibold tracking-tight text-white">
+                    {steps[0].title}
+                  </h2>
+                  <p className="text-lg font-light leading-relaxed text-gray-300/80 md:text-xl">
+                    {steps[0].description}
+                  </p>
+                </div>
               </div>
-
-              {/* Content Side */}
-              <div className="flex-1 w-full">
-                <motion.div
-                  className="text-center lg:text-left"
-                  variants={contentVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={scrollDirection}
-                >
-                  {/* Step Number */}
-                  <motion.div
-                    className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm border rounded-full bg-white/5 border-white/10 text-white/60"
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.6,
-                      delay: scrollDirection === "down" ? 0.4 : 0.3,
-                      ease: SMOOTH_EASE,
-                    }}
-                    viewport={{ once: true }}
-                  >
-                    <motion.span
-                      className="w-2 h-2 rounded-full bg-[#0084FF]"
-                      animate={{
-                        scale: activeStep === index ? [1, 1.6, 1] : 1,
-                      }}
-                      transition={{
-                        duration: 2.5,
-                        repeat: activeStep === index ? Infinity : 0,
-                        ease: GENTLE_EASE,
-                      }}
-                    />
-                    STEP {index + 1} of {processSteps.length}
-                  </motion.div>
-
-                  {/* Title */}
-                  <motion.h3
-                    className="mb-6 text-3xl font-bold text-white md:text-5xl"
-                    animate={{
-                      color: activeStep === index ? "#FFFFFF" : "#666666",
-                      x: activeStep === index ? [0, -2, 2, 0] : 0,
-                    }}
-                    transition={{
-                      duration: 0.5,
-                      repeat: activeStep === index ? 1 : 0,
-                      ease: GENTLE_EASE,
-                    }}
-                  >
-                    {step.title}
-                  </motion.h3>
-
-                  {/* Description */}
-                  <motion.p
-                    className="mb-8 text-xl leading-relaxed text-white/80"
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.8,
-                      delay: scrollDirection === "down" ? 0.5 : 0.4,
-                      ease: SMOOTH_EASE,
-                    }}
-                    viewport={{ once: true }}
-                  >
-                    {step.description}
-                  </motion.p>
-
-                  {/* Progress Indicator */}
-                  <motion.div
-                    className="w-full h-1 mb-8 overflow-hidden rounded-full bg-white/10"
-                    initial={{ opacity: 0, scaleX: 0 }}
-                    whileInView={{ opacity: 1, scaleX: 1 }}
-                    transition={{
-                      duration: 0.7,
-                      delay: scrollDirection === "down" ? 0.6 : 0.5,
-                      ease: SMOOTH_EASE,
-                    }}
-                    viewport={{ once: true }}
-                  >
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-[#0084FF] to-[#0066CC]"
-                      animate={{
-                        width: activeStep >= index ? "100%" : "0%",
-                      }}
-                      transition={{
-                        duration: 1.2,
-                        ease: SMOOTH_EASE,
-                      }}
-                    />
-                  </motion.div>
-                </motion.div>
-              </div>
-            </motion.div>
-          ))}
+            </div>
+          </motion.div>
         </div>
 
-        {/* Final CTA */}
-        <motion.div
-          className="mt-32 text-center"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 1.2,
-            ease: SMOOTH_EASE,
-          }}
-          viewport={{ once: true, margin: "-50px" }}
-        >
-          <motion.h3
-            className="mb-6 text-2xl font-bold text-white md:text-4xl"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{
-              duration: 0.8,
-              delay: 0.2,
-              ease: SMOOTH_EASE,
-            }}
-            viewport={{ once: true }}
+        {/* Connector between sections - WIDER - Hidden on mobile/tablet */}
+        <div className="absolute z-10 md:top-[25rem] top-[60rem] w-[32rem] h-80 transform md:rotate-[45deg] -rotate-[90deg] hidden md:block">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 400 200"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Ready to Become a Client-Getting Machine?
-          </motion.h3>
-
-          <motion.p
-            className="text-sm text-gray-500"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.4,
-              ease: SMOOTH_EASE,
-            }}
-            viewport={{ once: true }}
-          >
-            Join 250+ coaches who transformed their client acquisition
-          </motion.p>
-        </motion.div>
+            <motion.path
+              d="M10,100 Q200,150 390,100"
+              stroke="url(#gradient2)"
+              strokeWidth="4"
+              strokeDasharray="10 10"
+              fill="none"
+              variants={connectorVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            />
+            <defs>
+              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#66B5FF" />
+                <stop offset="100%" stopColor="#0084FF" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
       </div>
-    </section>
+
+      {/* Step 3 & 4 */}
+      <div className="relative flex flex-col items-center justify-center w-full gap-16 p-4 md:p-16 md:gap-56">
+        <div className="relative flex flex-col items-center justify-center w-full max-w-4xl gap-20 md:flex-row md:gap-60">
+          {/* Step 4 - Editing & Effects */}
+          <motion.div
+            className="relative z-20 order-2 md:order-1"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={cardVariants}
+          >
+            <div className="relative bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-[50px] border border-white/10 p-6 shadow-2xl shadow-black/30 md:w-80 w-72 transform md:-rotate-6 rotate-0">
+              <div className="absolute z-10 -top-12 right-12">
+                <img src={steps[3].pinImage} alt="Pin" className="h-56" />
+              </div>
+              <div className="h-20"></div>
+              <div className="relative from-[#0084FF]/10 bg-gradient-to-t to-transparent rounded-3xl p-4 border border-[#0084FF]/10">
+                <div className="space-y-2">
+                  <div className="text-[#0084FF] caveat font-mono text-4xl font-bold mb-2">
+                    {steps[3].number}
+                  </div>
+                  <h2 className="text-2xl font-semibold tracking-tight text-white">
+                    {steps[3].title}
+                  </h2>
+                  <p className="text-lg font-light leading-relaxed text-gray-300/80 md:text-xl">
+                    {steps[3].description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Connector - Hidden on mobile/tablet */}
+          <div className="absolute z-10 w-96 h-48 transform md:top-6 md:rotate-[0deg] rotate-[70deg] hidden md:block">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 400 200"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <motion.path
+                d="M10,100 Q200,50 390,100"
+                stroke="url(#gradient3)"
+                strokeWidth="4"
+                strokeDasharray="10 10"
+                fill="none"
+                variants={connectorVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              />
+              <defs>
+                <linearGradient
+                  id="gradient3"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stopColor="#0084FF" />
+                  <stop offset="100%" stopColor="#66B5FF" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* Step 3 - Footage Review */}
+          <motion.div
+            className="relative z-20 order-1 md:order-2"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={rightCardVariants}
+          >
+            <div className="relative bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-[50px] border border-white/10 p-6 shadow-2xl shadow-black/30 md:w-80 w-72 transform md:rotate-6 rotate-0">
+              <div className="absolute z-10 -top-12 right-12">
+                <img src={steps[2].pinImage} alt="Pin" className="h-56" />
+              </div>
+              <div className="h-20"></div>
+              <div className="relative from-[#66B5FF]/10 bg-gradient-to-t to-transparent rounded-3xl p-4 border border-[#66B5FF]/10">
+                <div className="space-y-2">
+                  <div className="text-[#66B5FF] caveat font-mono text-4xl font-bold mb-2">
+                    {steps[2].number}
+                  </div>
+                  <h2 className="text-2xl font-semibold tracking-tight text-white">
+                    {steps[2].title}
+                  </h2>
+                  <p className="text-lg font-light leading-relaxed text-gray-300/80 md:text-xl">
+                    {steps[2].description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Connector between sections - WIDER - Hidden on mobile/tablet */}
+        <div className="absolute z-10 md:top-[25rem] top-[60rem] w-[32rem] h-80 transform md:rotate-[50deg] -rotate-[90deg] hidden md:block">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 400 200"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <motion.path
+              d="M10,100 Q200,150 390,100"
+              stroke="url(#gradient4)"
+              strokeWidth="4"
+              strokeDasharray="10 10"
+              fill="none"
+              variants={connectorVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            />
+            <defs>
+              <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#66B5FF" />
+                <stop offset="100%" stopColor="#0084FF" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      {/* Step 5 - Final Step */}
+      <div className="relative flex flex-col items-center justify-center w-full gap-16 p-4 md:p-16 md:gap-56">
+        <div className="relative flex flex-col items-center justify-center w-full max-w-4xl gap-20 md:flex-row md:gap-60">
+          {/* Final Text */}
+          <motion.div
+            className="relative z-20 order-2 md:order-1"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="rotate-0 md:-rotate-6">
+              <h2 className="text-xl font-light tracking-wide text-center text-white">
+                Your{" "}
+                <span className="text-[#0084FF] font-semibold">all in one</span>
+                <br />
+                Video Editing Partner
+              </h2>
+            </div>
+          </motion.div>
+
+          {/* Connector - Hidden on mobile/tablet */}
+          <div className="absolute z-10 w-96 h-48 transform md:top-6 md:rotate-[0deg] rotate-[70deg] hidden md:block">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 400 200"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <motion.path
+                d="M10,100 Q200,50 390,100"
+                stroke="url(#gradient5)"
+                strokeWidth="4"
+                strokeDasharray="10 10"
+                fill="none"
+                variants={connectorVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              />
+              <defs>
+                <linearGradient
+                  id="gradient5"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stopColor="#0084FF" />
+                  <stop offset="100%" stopColor="#66B5FF" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* Step 5 - Final Delivery */}
+          <motion.div
+            className="relative z-20 order-1 md:order-2"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={rightCardVariants}
+          >
+            <div className="relative bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-[50px] border border-white/10 p-6 shadow-2xl shadow-black/30 md:w-80 w-72 transform md:rotate-6 rotate-0">
+              <div className="absolute z-10 -top-12 right-12">
+                <img src={steps[4].pinImage} alt="Pin" className="h-56" />
+              </div>
+              <div className="h-20"></div>
+              <div className="relative from-[#66B5FF]/10 bg-gradient-to-t to-transparent rounded-3xl p-4 border border-[#66B5FF]/10">
+                <div className="space-y-2">
+                  <div className="text-[#66B5FF] caveat font-mono text-4xl font-bold mb-2">
+                    {steps[4].number}
+                  </div>
+                  <h2 className="text-2xl font-semibold tracking-tight text-white">
+                    {steps[4].title}
+                  </h2>
+                  <p className="text-lg font-light leading-relaxed text-gray-300/80 md:text-xl">
+                    {steps[4].description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Enhanced Custom CSS */}
+      <style jsx>{`
+        @keyframes gradient {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 4s ease infinite;
+        }
+
+        .bg-size-200 {
+          background-size: 200% 200%;
+        }
+      `}</style>
+    </div>
   );
-}
+};
+
+export default ProcessSteps;

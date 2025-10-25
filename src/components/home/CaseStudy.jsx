@@ -67,8 +67,8 @@ export default function CaseStudyCardLayout() {
           </span>
         </div>
 
-        {/* Main Title */}
-        <h1 className="mb-6 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+        {/* Main Title - Reduced size */}
+        <h1 className="mb-6 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
           Some solid
           <br />
           <span className="bg-gradient-to-r from-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent">
@@ -92,61 +92,70 @@ export default function CaseStudyCardLayout() {
             </span>
           </motion.div>
 
+          {/* Inner Card Title - Reduced size */}
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="mb-6 text-3xl font-bold leading-tight md:text-4xl lg:text-5xl"
+            className="mb-6 text-2xl font-bold leading-tight md:text-3xl lg:text-4xl"
           >
             "With just 5,000 subscribers, Spencer now generates $350K per month"
           </motion.h2>
         </div>
 
+        {/* Profile and Button Section - Updated for mobile responsiveness */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="flex items-center justify-between p-6 border bg-white/5 rounded-2xl border-white/10 backdrop-blur-sm"
+          className="p-6 border bg-white/5 rounded-2xl border-white/10 backdrop-blur-sm"
         >
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face"
-                alt="Neel Nafis"
-                className="w-14 h-14 rounded-full object-cover border-2 border-[#0084FF]"
-              />
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-full flex items-center justify-center border-2 border-gray-900">
-                <Star className="w-3 h-3 text-white" fill="currentColor" />
+          <div className="flex flex-col items-center gap-6 md:flex-row md:justify-between md:items-center">
+            {/* Profile Info */}
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face"
+                  alt="Neel Nafis"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-[#0084FF]"
+                />
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-full flex items-center justify-center border-2 border-gray-900">
+                  <Star className="w-3 h-3 text-white" fill="currentColor" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold">Neel Nafis</h3>
+                <p className="text-sm text-white/60">Founder & CEO</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-green-400">
+                    Verified Success
+                  </span>
+                </div>
               </div>
             </div>
-            <div>
-              <h3 className="text-lg font-bold">Neel Nafis</h3>
-              <p className="text-sm text-white/60">Founder & CEO</p>
-              <div className="flex items-center gap-1 mt-1">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-xs text-green-400">Verified Success</span>
+
+            {/* Book Button */}
+            <motion.button
+              onClick={scrollToContact}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="w-full md:w-auto bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-2xl p-4 md:p-6 font-bold hover:shadow-[0_0_40px_#0084FF] transition-all duration-300 group relative overflow-hidden"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <div className="relative flex items-center justify-center gap-3">
+                <Calendar className="w-5 h-5" />
+                <div className="text-left">
+                  <div className="text-sm md:text-base">Book Free Call</div>
+                  <div className="text-xs text-white/80">Limited Spots</div>
+                </div>
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </div>
-            </div>
+            </motion.button>
           </div>
-          <motion.button
-            onClick={scrollToContact}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-2xl p-6 font-bold hover:shadow-[0_0_40px_#0084FF] transition-all duration-300 group relative overflow-hidden"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-            <div className="relative flex items-center justify-center gap-3">
-              <Calendar className="w-5 h-5" />
-              <div className="text-left">
-                <div className="text-sm md:text-base">Book Free Call</div>
-                <div className="text-xs text-white/80">Limited Spots</div>
-              </div>
-              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </div>
-          </motion.button>
         </motion.div>
 
         {/* Content Grid - Adjusted gap for bigger video */}

@@ -76,157 +76,6 @@ const videoCategories = [
   },
 ];
 
-// Balloon Tag Component
-// Balloon Tag Component - Restored original positioning
-const BalloonTag = ({ text, delay = 0, direction }) => {
-  const positions =
-    {
-      topLeft: "top-2 left-2",
-      topRight: "top-2 right-2",
-      topCenter: "top-2 left-1/2 -translate-x-1/2",
-      bottomLeft: "bottom-2 left-2",
-      bottomRight: "bottom-2 right-2",
-      bottomCenter: "bottom-2 left-1/2 -translate-x-1/2",
-      middleLeft: "top-1/2 left-2 -translate-y-1/2",
-      middleRight: "top-1/2 right-2 -translate-y-1/2",
-    }[direction] || "top-2 left-1/2 -translate-x-1/2";
-
-  const balloonVariants = {
-    topLeft: {
-      x: [0, -1, -2],
-      y: [0, -1, -2],
-      scale: [0, 1.1, 1],
-      opacity: [0, 1, 1],
-      rotateZ: [0, 5, 10],
-    },
-    topCenter: {
-      x: [0, 0, 0],
-      y: [0, -2, -3],
-      scale: [0, 1.1, 1],
-      opacity: [0, 1, 1],
-      rotateZ: [0, 0, 0],
-    },
-    topRight: {
-      x: [0, 1, 2],
-      y: [0, -1, -2],
-      scale: [0, 1.1, 1],
-      opacity: [0, 1, 1],
-      rotateZ: [0, -5, -10],
-    },
-    bottomLeft: {
-      x: [0, -1, -2],
-      y: [0, 1, 2],
-      scale: [0, 1.1, 1],
-      opacity: [0, 1, 1],
-      rotateZ: [0, -5, -10],
-    },
-    bottomCenter: {
-      x: [0, 0, 0],
-      y: [0, 2, 3],
-      scale: [0, 1.1, 1],
-      opacity: [0, 1, 1],
-      rotateZ: [0, 0, 0],
-    },
-    bottomRight: {
-      x: [0, 1, 2],
-      y: [0, 1, 2],
-      scale: [0, 1.1, 1],
-      opacity: [0, 1, 1],
-      rotateZ: [0, 5, 10],
-    },
-    middleLeft: {
-      x: [0, -2, -3],
-      y: [0, 0, 0],
-      scale: [0, 1.1, 1],
-      opacity: [0, 1, 1],
-      rotateZ: [0, -3, -5],
-    },
-    middleRight: {
-      x: [0, 2, 3],
-      y: [0, 0, 0],
-      scale: [0, 1.1, 1],
-      opacity: [0, 1, 1],
-      rotateZ: [0, 3, 5],
-    },
-  }[direction] || {
-    x: [0, 0, 0],
-    y: [0, -2, -3],
-    scale: [0, 1.1, 1],
-    opacity: [0, 1, 1],
-    rotateZ: [0, 0, 0],
-  };
-
-  return (
-    <motion.div
-      className={`absolute ${positions} z-20`}
-      initial={{
-        opacity: 0,
-        x: balloonVariants.x[0],
-        y: balloonVariants.y[0],
-        scale: balloonVariants.scale[0],
-        rotateZ: balloonVariants.rotateZ[0],
-      }}
-      whileInView={{
-        opacity: balloonVariants.opacity[2],
-        x: balloonVariants.x[2],
-        y: balloonVariants.y[2],
-        scale: balloonVariants.scale[2],
-        rotateZ: balloonVariants.rotateZ[2],
-      }}
-      whileHover={{
-        scale: 1.1,
-        y: balloonVariants.y[2] - 0.5,
-        rotateZ: balloonVariants.rotateZ[2] + 2,
-        transition: {
-          duration: 0.3,
-          ease: [0.25, 0.46, 0.45, 0.94],
-        },
-      }}
-      transition={{
-        duration: 0.8,
-        delay,
-        type: "spring",
-        stiffness: 60,
-        damping: 12,
-        mass: 0.8,
-      }}
-      viewport={{ once: true, margin: "-50px" }}
-    >
-      <motion.div
-        className="px-4 py-2 rounded-full bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 backdrop-blur-sm border border-[#0084FF]/30 text-white font-medium text-sm shadow-lg"
-        whileHover={{
-          background:
-            "linear-gradient(135deg, rgba(0, 132, 255, 0.25), rgba(0, 102, 204, 0.25))",
-          borderColor: "rgba(0, 132, 255, 0.5)",
-          boxShadow: "0 6px 20px rgba(0, 132, 255, 0.25)",
-          transition: {
-            duration: 0.3,
-            ease: [0.25, 0.46, 0.45, 0.94],
-          },
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              y: [0, -1, 0],
-            }}
-            transition={{
-              duration: 2.5,
-              repeat: Infinity,
-              delay: Math.random() * 1.5,
-              ease: "easeInOut",
-            }}
-            className="w-1.5 h-1.5 bg-[#0084FF] rounded-full"
-          />
-          <span className="text-sm font-semibold whitespace-nowrap">
-            {text}
-          </span>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
 // Custom Video Player Component with YouTube support
 const CustomVideoPlayer = ({ video, category }) => {
   const videoRef = useRef(null);
@@ -569,14 +418,6 @@ const ProtectedVideoShowcase = () => {
   // Use the custom hook to fetch videos for the active category
   const { videos, loading, error } = useVideo(activeCategory);
 
-  // Balloon tags for the header
-  const balloons = [
-    { text: "YouTube", direction: "topLeft", delay: 0.2 },
-    { text: "Shorts", direction: "topRight", delay: 0.3 },
-    { text: "SaaS", direction: "bottomLeft", delay: 0.4 },
-    { text: "Ads & VSL", direction: "bottomRight", delay: 0.5 },
-  ];
-
   // Additional global protection
   useEffect(() => {
     const preventDevTools = (e) => {
@@ -608,21 +449,11 @@ const ProtectedVideoShowcase = () => {
       onContextMenu={(e) => e.preventDefault()}
     >
       <div className="mx-auto max-w-7xl">
-        {/* Header with Balloon Tags */}
+        {/* Header - Simplified without balloons */}
         <div
           ref={ref}
-          className="relative flex items-center justify-center mb-16"
+          className="relative flex items-center justify-center mb-8"
         >
-          {/* Balloon Tags */}
-          {balloons.map((balloon, index) => (
-            <BalloonTag
-              key={index}
-              text={balloon.text}
-              direction={balloon.direction}
-              delay={balloon.delay}
-            />
-          ))}
-
           {/* Main Header Content */}
           <div className="relative z-30 mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900/80 backdrop-blur-sm border border-[#0084FF]/30 mb-6">
@@ -631,17 +462,13 @@ const ProtectedVideoShowcase = () => {
               </span>
             </div>
 
-            <h2 className="mb-6 text-4xl font-bold text-white md:text-6xl">
+            <h2 className="mb-6 text-3xl font-bold text-white md:text-5xl">
               Some of our
               <br />
               <span className="bg-gradient-to-r from-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent">
                 featured projects
               </span>
             </h2>
-
-            <p className="max-w-2xl mx-auto text-lg text-gray-300">
-              Explore our work across different platforms and formats
-            </p>
           </div>
         </div>
 

@@ -18,79 +18,55 @@ import { FaWandSparkles } from "react-icons/fa6";
 import { GiFilmSpool, GiVideoCamera } from "react-icons/gi";
 
 const CoreServices = () => {
-  // Services data
+  // Updated services data with your requested services
   const services = [
     {
-      icon: <FaVideo className="w-6 h-6" />,
-      title: "4K Video Production",
+      icon: <FaYoutube className="w-6 h-6" />,
+      title: "YouTube Videos",
       description:
-        "Cinematic footage captured with professional cinema cameras and expert lighting setups",
-    },
-    {
-      icon: <FaEdit className="w-6 h-6" />,
-      title: "AI-Powered Editing",
-      description:
-        "Intelligent editing workflows enhanced by artificial intelligence for precision cutting",
-    },
-    {
-      icon: <FaPhotoVideo className="w-6 h-6" />,
-      title: "3D Motion Design",
-      description:
-        "Immersive animations and visual storytelling that brings your brand to life",
+        "Professional YouTube content creation with optimized formatting and audience engagement strategies",
     },
     {
       icon: <GiFilmSpool className="w-6 h-6" />,
-      title: "Short Form Mastery",
+      title: "Short Form Video",
       description:
-        "Viral-optimized content designed for TikTok, Reels, and Shorts with engagement hooks",
+        "Viral-optimized short content designed for maximum engagement and platform-specific formatting",
     },
     {
-      icon: <FaYoutube className="w-6 h-6" />,
-      title: "YT Algorithm Optimization",
+      icon: <FaCube className="w-6 h-6" />,
+      title: "SaaS Video",
       description:
-        "Data-driven strategies that maximize visibility through YouTube's recommendation algorithm",
-    },
-    {
-      icon: <FaMagic className="w-6 h-6" />,
-      title: "Neural Color Grading",
-      description:
-        "AI-enhanced color science that creates cinematic looks and consistent color palettes",
+        "Professional software demonstration videos that showcase features and drive conversions",
     },
     {
       icon: <FaRocket className="w-6 h-6" />,
-      title: "Performance Ads",
+      title: "Ad Creatives & VSLs",
+      description:
+        "High-converting video sales letters and advertising creatives designed to maximize ROI",
+    },
+    {
+      icon: <FaVideo className="w-6 h-6" />,
+      title: "Demo Videos",
+      description:
+        "Product demonstration videos that highlight key features and user benefits effectively",
+    },
+    {
+      icon: <FaRegLightbulb className="w-6 h-6" />,
+      title: "Podcasts",
+      description:
+        "Professional podcast production with crystal clear audio and engaging visual components",
+    },
+    {
+      icon: <FaRocket className="w-6 h-6" />,
+      title: "Ad Creatives & VSLs",
       description:
         "Conversion-optimized video advertisements designed to drive results and maximize ROI",
     },
     {
-      icon: <FaPalette className="w-6 h-6" />,
-      title: "Visual Identity",
+      icon: <FaFilm className="w-6 h-6" />,
+      title: "Reels Video",
       description:
-        "Cohesive branding systems that maintain visual consistency across all video assets",
-    },
-    {
-      icon: <FaWandSparkles className="w-6 h-6" />,
-      title: "VFX & Compositing",
-      description:
-        "Seamless visual effects and green screen work that transforms ordinary footage",
-    },
-    {
-      icon: <FaCube className="w-6 h-6" />,
-      title: "Spatial Video",
-      description:
-        "Immersive content creation for next-generation platforms including VR and AR",
-    },
-    {
-      icon: <FaGlobe className="w-6 h-6" />,
-      title: "Multi-Platform Distribution",
-      description:
-        "Optimized delivery across all channels with platform-specific formatting",
-    },
-    {
-      icon: <FaMobile className="w-6 h-6" />,
-      title: "Interactive Video",
-      description:
-        "Engaging experiences featuring interactive elements and branching narratives",
+        "Platform-specific Reels content with trending audio and engagement-driven editing techniques",
     },
   ];
 
@@ -110,29 +86,23 @@ const CoreServices = () => {
 
       <div className="max-w-[1200px] mx-auto">
         {/* Header Section */}
-        <div className="mb-20 text-center">
+        <div className="mb-10 text-center">
           {/* Enhanced Badge */}
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-gradient-to-r from-[#0084FF]/10 to-[#66B5FF]/10 backdrop-blur-sm border border-[#0084FF]/20 mb-8 shadow-lg shadow-[#0084FF]/5">
             <div className="w-1.5 h-1.5 bg-[#0084FF] rounded-full animate-pulse"></div>
             <span className="text-[#0084FF] font-semibold text-sm tracking-wider">
-              PREMIUM SERVICES
+              Core services
             </span>
             <div className="w-1.5 h-1.5 bg-[#66B5FF] rounded-full animate-pulse"></div>
           </div>
 
-          {/* Enhanced Main Title */}
-          <h1 className="mb-8 text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
-            Video
+          {/* Reduced Main Title */}
+          <h1 className="mb-8 text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-4xl">
+            Types of work
             <span className="bg-gradient-to-r from-[#66B5FF] via-[#0084FF] to-[#66B5FF] bg-clip-text text-transparent bg-size-200 animate-gradient block mt-2">
-              Excellence
+              ‍We do
             </span>
           </h1>
-
-          {/* Enhanced Subtitle */}
-          <p className="max-w-2xl mx-auto text-lg font-light leading-relaxed tracking-wide text-gray-300/80">
-            Next-generation video solutions powered by cutting-edge technology
-            and creative innovation
-          </p>
         </div>
 
         {/* Marquee Section */}
@@ -140,7 +110,7 @@ const CoreServices = () => {
           {/* Top Marquee - Moving Right */}
           <div className="flex mb-6">
             <div className="flex space-x-5 animate-marquee-right">
-              {marqueeServices.slice(0, 12).map((service, index) => (
+              {marqueeServices.slice(0, 8).map((service, index) => (
                 <div key={index} className="flex-shrink-0 w-[380px]">
                   <div className="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-xl shadow-black/30 relative overflow-hidden h-full min-h-[220px] flex flex-col">
                     {/* New Card Layout - Centered Content */}
@@ -151,7 +121,7 @@ const CoreServices = () => {
                       </div>
 
                       {/* Title */}
-                      <h3 className="mb-3 text-xl font-bold leading-tight tracking-tight text-white">
+                      <h3 className="mb-3 text-lg font-bold leading-tight tracking-tight text-white">
                         {service.title}
                       </h3>
 
@@ -172,7 +142,7 @@ const CoreServices = () => {
           {/* Bottom Marquee - Moving Left */}
           <div className="flex">
             <div className="flex space-x-5 animate-marquee-left">
-              {marqueeServices.slice(6, 18).map((service, index) => (
+              {marqueeServices.slice(4, 12).map((service, index) => (
                 <div key={index} className="flex-shrink-0 w-[380px]">
                   <div className="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-xl shadow-black/30 relative overflow-hidden h-full min-h-[220px] flex flex-col">
                     {/* New Card Layout - Centered Content */}
@@ -183,7 +153,7 @@ const CoreServices = () => {
                       </div>
 
                       {/* Title */}
-                      <h3 className="mb-3 text-xl font-bold leading-tight tracking-tight text-white">
+                      <h3 className="mb-3 text-lg font-bold leading-tight tracking-tight text-white">
                         {service.title}
                       </h3>
 

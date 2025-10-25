@@ -62,9 +62,9 @@ const Home = () => {
         <CaseStudy />
       </Suspense>
 
-      <Suspense fallback={<SectionLoader />}>
+      {/* <Suspense fallback={<SectionLoader />}>
         <WhyChooseUsSection />
-      </Suspense>
+      </Suspense> */}
 
       <Suspense fallback={<SectionLoader />}>
         <NextGenServicesSection />

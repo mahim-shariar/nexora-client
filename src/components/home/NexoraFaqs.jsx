@@ -169,26 +169,17 @@ const NexoraFaqs = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-[#0084FF]/20 to-[#66B5FF]/20 blur-xl"></div>
             <div className="w-2 h-2 bg-[#0084FF] rounded-full animate-pulse"></div>
             <span className="text-[#0084FF] font-bold text-sm tracking-widest relative z-10">
-              FAQ
+              Any queries you have
             </span>
             <div className="w-2 h-2 bg-[#66B5FF] rounded-full animate-pulse"></div>
           </div>
 
-          {/* Main Title with Enhanced Gradient */}
-          <h1 className="mb-6 text-5xl font-bold tracking-tight text-white md:text-6xl lg:text-7xl">
+          {/* Reduced Main Title */}
+          <h1 className="mb-6 text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-4xl">
             <span className="bg-gradient-to-r from-white via-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent bg-size-200 animate-gradient">
-              Questions
+              Questions you may Ask
             </span>
-            <br />
-            <span className="text-white">Answered</span>
           </h1>
-
-          {/* Enhanced Subtitle */}
-          <p className="max-w-2xl mx-auto text-xl font-light leading-relaxed tracking-wide text-gray-300/90">
-            Everything you need to know about our video editing and content
-            creation services. Can't find the answer you're looking for? Reach
-            out to our team.
-          </p>
         </motion.div>
 
         {/* Loading State */}
@@ -273,7 +264,7 @@ const NexoraFaqs = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="text-lg font-light leading-relaxed text-gray-300/90"
+                            className="text-base font-light leading-relaxed text-gray-300/90"
                           >
                             {faq.answer}
                           </motion.p>

@@ -72,10 +72,6 @@ export default function CosmicBookingSection() {
             <br />
             <span className="text-3xl md:text-4xl">Session</span>
           </h2>
-
-          <p className="max-w-2xl mx-auto text-xl leading-relaxed text-gray-300">
-            Schedule your 60-minute strategy session directly below
-          </p>
         </motion.div>
 
         {/* Main Content Grid */}

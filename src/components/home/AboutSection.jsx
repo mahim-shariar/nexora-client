@@ -11,12 +11,17 @@ import {
   FaUserPlus,
   FaChevronLeft,
   FaChevronRight,
+  FaPodcast,
+  FaVideo,
+  FaShareAlt,
+  FaMagic,
 } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import { useReviews } from "../../hook/useReview";
+import StatsSection from "./StatsSection";
 
-// Enhanced Balloon Tag Component
-const BalloonTag = memo(({ text, delay = 0, direction }) => {
+// Enhanced Balloon Tag Component with Icons
+const BalloonTag = memo(({ text, delay = 0, direction, icon: Icon }) => {
   const positions = useMemo(() => {
     const pos = {
       topLeft: "top-2 left-2",
@@ -210,7 +215,7 @@ const BalloonTag = memo(({ text, delay = 0, direction }) => {
       </svg>
 
       <motion.div
-        className="px-4 py-2 rounded-full bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 backdrop-blur-sm border border-[#0084FF]/30 text-white font-medium text-sm shadow-lg"
+        className="px-4 py-2 rounded-xl bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 backdrop-blur-sm border border-[#0084FF]/30 text-white font-medium shadow-lg"
         whileHover={{
           background:
             "linear-gradient(135deg, rgba(0, 132, 255, 0.25), rgba(0, 102, 204, 0.25))",
@@ -234,8 +239,10 @@ const BalloonTag = memo(({ text, delay = 0, direction }) => {
               delay: Math.random() * 1.5,
               ease: "easeInOut",
             }}
-            className="w-1.5 h-1.5 bg-[#0084FF] rounded-full"
-          />
+            className="flex items-center justify-center"
+          >
+            <Icon className="w-3 h-3 text-[#0084FF]" />
+          </motion.div>
           <span className="text-sm font-semibold whitespace-nowrap">
             {text}
           </span>
@@ -249,7 +256,7 @@ const BalloonTag = memo(({ text, delay = 0, direction }) => {
 const StatCard = memo(({ icon: Icon, number, caption, delay = 0 }) => {
   return (
     <motion.div
-      className="group relative p-5 rounded-xl bg-gradient-to-br from-gray-900/80 to-gray-800/60 backdrop-blur-lg border border-gray-700/50 hover:border-[#0084FF]/50 transition-all duration-500"
+      className="group relative p-4 rounded-xl bg-gradient-to-br from-gray-900/80 to-gray-800/60 backdrop-blur-lg border border-gray-700/50 hover:border-[#0084FF]/50 transition-all duration-500"
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       whileHover={{
@@ -268,7 +275,7 @@ const StatCard = memo(({ icon: Icon, number, caption, delay = 0 }) => {
     >
       <div className="flex items-center gap-3">
         <motion.div
-          className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 border border-[#0084FF]/30 flex items-center justify-center group-hover:from-[#0084FF]/30 group-hover:to-[#0066CC]/30 transition-all duration-300"
+          className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#0084FF]/20 to-[#0066CC]/20 border border-[#0084FF]/30 flex items-center justify-center group-hover:from-[#0084FF]/30 group-hover:to-[#0066CC]/30 transition-all duration-300"
           whileHover={{
             scale: 1.05,
             rotate: 5,
@@ -278,11 +285,11 @@ const StatCard = memo(({ icon: Icon, number, caption, delay = 0 }) => {
             },
           }}
         >
-          <Icon className="w-4 h-4 text-[#0084FF] group-hover:text-[#66B5FF] transition-colors duration-300" />
+          <Icon className="w-3 h-3 text-[#0084FF] group-hover:text-[#66B5FF] transition-colors duration-300" />
         </motion.div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-bold text-white mb-0.5">{number}</h3>
+          <h3 className="text-sm font-bold text-white mb-0.5">{number}</h3>
           <p className="text-xs text-gray-400 transition-colors duration-300 group-hover:text-gray-300">
             {caption}
           </p>
@@ -364,12 +371,12 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
     >
       <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
         {/* Video Section - Optimized for Shorts */}
-        <div className="relative flex items-center justify-center p-6">
+        <div className="relative flex items-center justify-center p-4">
           <motion.div
             className="relative overflow-hidden bg-black border-2 border-gray-700 rounded-2xl"
             style={{
-              width: "280px",
-              height: "500px",
+              width: "260px",
+              height: "460px",
               // Force vertical aspect ratio for Shorts-like appearance
               aspectRatio: "9/16",
             }}
@@ -401,8 +408,8 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
             ) : (
               // Simple fallback when no video URL
               <div className="flex flex-col items-center justify-center w-full h-full p-4 text-center text-white bg-gradient-to-br from-gray-900 to-black">
-                <FaPlay className="w-12 h-12 mb-4 text-[#0084FF]" />
-                <p className="text-sm font-semibold">Video Content</p>
+                <FaPlay className="w-10 h-10 mb-3 text-[#0084FF]" />
+                <p className="text-xs font-semibold">Video Content</p>
                 {isShorts && (
                   <p className="mt-1 text-xs text-gray-400">YouTube Short</p>
                 )}
@@ -417,7 +424,8 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="flex items-center gap-1 px-2 py-1 bg-purple-600 rounded-md">
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-600 rounded-lg">
+                  <FaVideo className="w-2.5 h-2.5 text-white" />
                   <span className="text-xs font-bold text-white">SHORTS</span>
                 </div>
               </motion.div>
@@ -426,10 +434,10 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
         </div>
 
         {/* Compact Review Content */}
-        <div className="flex flex-col justify-center p-6">
+        <div className="flex flex-col justify-center p-4">
           {/* Customer Info - Compact */}
           <motion.div
-            className="flex items-center gap-3 mb-4"
+            className="flex items-center gap-3 mb-3"
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{
@@ -442,7 +450,7 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
               <motion.img
                 src={review.profileImage}
                 alt={review.name}
-                className="w-10 h-10 rounded-xl border border-[#0084FF]/30"
+                className="w-8 h-8 rounded-lg border border-[#0084FF]/30"
                 whileHover={{
                   scale: 1.05,
                   rotate: 5,
@@ -453,7 +461,7 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
               />
             ) : (
               <motion.div
-                className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0084FF] to-[#0066CC] flex items-center justify-center text-white font-bold text-sm border border-[#0084FF]/30"
+                className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0084FF] to-[#0066CC] flex items-center justify-center text-white font-bold text-xs border border-[#0084FF]/30"
                 whileHover={{
                   scale: 1.05,
                   rotate: 5,
@@ -466,11 +474,11 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
               </motion.div>
             )}
             <div>
-              <h3 className="font-bold text-white text-base mb-0.5">
+              <h3 className="text-sm font-bold text-white mb-0.5">
                 {review.name}
               </h3>
               <p className="text-xs text-gray-400">{review.position}</p>
-              <div className="flex items-center gap-1 mt-0.5">
+              <div className="flex items-center gap-0.5 mt-0.5">
                 {[...Array(5)].map((_, i) => (
                   <motion.div
                     key={i}
@@ -479,7 +487,7 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
                       transition: { duration: 0.2 },
                     }}
                   >
-                    <FaStar className="w-2.5 h-2.5 text-yellow-400 fill-current" />
+                    <FaStar className="w-2 h-2 text-yellow-400 fill-current" />
                   </motion.div>
                 ))}
               </div>
@@ -488,7 +496,7 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
 
           {/* Review Text - Compact */}
           <motion.blockquote
-            className="mb-4 text-sm leading-relaxed text-gray-200"
+            className="mb-3 text-xs leading-relaxed text-gray-200"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{
@@ -503,7 +511,7 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
 
           {/* Compact Metrics */}
           <motion.div
-            className="flex items-center gap-3 py-3 border-t border-gray-800"
+            className="flex items-center gap-2 py-2 border-t border-gray-800"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{
@@ -515,17 +523,17 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
           >
             {/* Views */}
             <motion.div
-              className="flex items-center gap-2"
+              className="flex items-center gap-1.5"
               whileHover={{
                 scale: 1.05,
                 transition: { duration: 0.2 },
               }}
             >
-              <div className="w-8 h-8 rounded-lg bg-[#0084FF]/10 flex items-center justify-center border border-[#0084FF]/20">
+              <div className="w-7 h-7 rounded-md bg-[#0084FF]/10 flex items-center justify-center border border-[#0084FF]/20">
                 <FaEye className="w-3 h-3 text-[#0084FF]" />
               </div>
               <div>
-                <div className="text-sm font-bold text-white">
+                <div className="text-xs font-bold text-white">
                   {review.views}
                 </div>
                 <div className="text-xs text-gray-400">Views</div>
@@ -534,17 +542,17 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
 
             {/* Subscribers */}
             <motion.div
-              className="flex items-center gap-2"
+              className="flex items-center gap-1.5"
               whileHover={{
                 scale: 1.05,
                 transition: { duration: 0.2 },
               }}
             >
-              <div className="flex items-center justify-center w-8 h-8 border rounded-lg bg-green-500/10 border-green-500/20">
+              <div className="flex items-center justify-center border rounded-md w-7 h-7 bg-green-500/10 border-green-500/20">
                 <FaUserPlus className="w-3 h-3 text-green-400" />
               </div>
               <div>
-                <div className="text-sm font-bold text-white">
+                <div className="text-xs font-bold text-white">
                   {review.subscribers}
                 </div>
                 <div className="text-xs text-gray-400">Subscribers</div>
@@ -554,7 +562,7 @@ const CustomerReviewCard = memo(({ review, isActive }) => {
 
           {/* Timeline */}
           <motion.div
-            className="flex items-center justify-between mt-3 text-xs text-gray-500"
+            className="flex items-center justify-between mt-2 text-xs text-gray-500"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{
@@ -666,18 +674,18 @@ const CustomerReviewsCarousel = memo(() => {
   // Show loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center max-w-6xl py-20 mx-auto">
+      <div className="flex items-center justify-center max-w-6xl py-16 mx-auto">
         <motion.div
           className="text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           <motion.div
-            className="w-16 h-16 mx-auto mb-4 border-4 border-[#0084FF] border-t-transparent rounded-full"
+            className="w-12 h-12 mx-auto mb-3 border-4 border-[#0084FF] border-t-transparent rounded-full"
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           />
-          <p className="text-gray-400">Loading success stories...</p>
+          <p className="text-sm text-gray-400">Loading success stories...</p>
         </motion.div>
       </div>
     );
@@ -687,7 +695,7 @@ const CustomerReviewsCarousel = memo(() => {
   if (error && reviews.length === 0) {
     return (
       <div className="max-w-6xl mx-auto text-center">
-        <p className="text-gray-400">Showing demo success stories</p>
+        <p className="text-sm text-gray-400">Showing demo success stories</p>
       </div>
     );
   }
@@ -707,7 +715,7 @@ const CustomerReviewsCarousel = memo(() => {
     >
       {/* Section Title */}
       <motion.div
-        className="mb-12 text-center"
+        className="mb-8 text-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{
@@ -717,10 +725,10 @@ const CustomerReviewsCarousel = memo(() => {
         }}
         viewport={{ once: true, margin: "-50px" }}
       >
-        <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">
+        <h2 className="mb-3 text-2xl font-bold text-white md:text-3xl">
           Hear what they're Saying about us
         </h2>
-        <p className="max-w-2xl mx-auto text-lg text-gray-400">
+        <p className="max-w-2xl mx-auto text-sm text-gray-400">
           See how businesses like yours achieved incredible results with our
           viral content strategies
         </p>
@@ -733,7 +741,7 @@ const CustomerReviewsCarousel = memo(() => {
           <>
             <motion.button
               onClick={prevSlide}
-              className="absolute z-20 flex items-center justify-center w-10 h-10 transition-all duration-300 -translate-y-1/2 border border-gray-600 rounded-full left-4 top-1/2 bg-black/50 hover:bg-black/70"
+              className="absolute z-20 flex items-center justify-center w-8 h-8 transition-all duration-300 -translate-y-1/2 border border-gray-600 rounded-lg left-2 top-1/2 bg-black/50 hover:bg-black/70"
               whileHover={{
                 scale: 1.1,
                 backgroundColor: "rgba(0,0,0,0.7)",
@@ -744,12 +752,12 @@ const CustomerReviewsCarousel = memo(() => {
               }}
               whileTap={{ scale: 0.9 }}
             >
-              <FaChevronLeft className="w-4 h-4 text-white" />
+              <FaChevronLeft className="w-3 h-3 text-white" />
             </motion.button>
 
             <motion.button
               onClick={nextSlide}
-              className="absolute z-20 flex items-center justify-center w-10 h-10 transition-all duration-300 -translate-y-1/2 border border-gray-600 rounded-full right-4 top-1/2 bg-black/50 hover:bg-black/70"
+              className="absolute z-20 flex items-center justify-center w-8 h-8 transition-all duration-300 -translate-y-1/2 border border-gray-600 rounded-lg right-2 top-1/2 bg-black/50 hover:bg-black/70"
               whileHover={{
                 scale: 1.1,
                 backgroundColor: "rgba(0,0,0,0.7)",
@@ -760,7 +768,7 @@ const CustomerReviewsCarousel = memo(() => {
               }}
               whileTap={{ scale: 0.9 }}
             >
-              <FaChevronRight className="w-4 h-4 text-white" />
+              <FaChevronRight className="w-3 h-3 text-white" />
             </motion.button>
           </>
         )}
@@ -780,7 +788,7 @@ const CustomerReviewsCarousel = memo(() => {
             {displayReviews.map((review, index) => (
               <div
                 key={review._id || review.id}
-                className="flex-shrink-0 w-full px-4"
+                className="flex-shrink-0 w-full px-3"
               >
                 <CustomerReviewCard
                   review={review}
@@ -793,12 +801,12 @@ const CustomerReviewsCarousel = memo(() => {
 
         {/* Enhanced Dots Indicator - Only show if there are multiple reviews */}
         {displayReviews.length > 1 && (
-          <div className="flex justify-center mt-8 space-x-2">
+          <div className="flex justify-center mt-6 space-x-1.5">
             {displayReviews.map((_, index) => (
               <motion.button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                className={`w-2.5 h-2.5 rounded-lg transition-all duration-300 ${
                   index === currentIndex
                     ? "bg-[#0084FF]"
                     : "bg-gray-600 hover:bg-gray-500"
@@ -830,10 +838,20 @@ const AboutSection = memo(() => {
 
   const balloons = useMemo(
     () => [
-      { text: "Podcast", direction: "topLeft", delay: 0.2 },
-      { text: "Short Form", direction: "topRight", delay: 0.3 },
-      { text: "Social Media", direction: "bottomLeft", delay: 0.4 },
-      { text: "Viral Edits", direction: "bottomRight", delay: 0.5 },
+      { text: "Podcast", direction: "topLeft", delay: 0.2, icon: FaPodcast },
+      { text: "Short Form", direction: "topRight", delay: 0.3, icon: FaVideo },
+      {
+        text: "Social Media",
+        direction: "bottomLeft",
+        delay: 0.4,
+        icon: FaShareAlt,
+      },
+      {
+        text: "Viral Edits",
+        direction: "bottomRight",
+        delay: 0.5,
+        icon: FaMagic,
+      },
     ],
     []
   );
@@ -866,7 +884,7 @@ const AboutSection = memo(() => {
   return (
     <section
       id="about"
-      className="relative flex items-center min-h-screen px-4 py-20 overflow-hidden"
+      className="relative flex items-center min-h-screen px-4 py-16 overflow-hidden"
     >
       {/* Enhanced Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -898,13 +916,14 @@ const AboutSection = memo(() => {
       </div>
 
       <div className="relative z-10 w-full max-w-6xl mx-auto">
-        <div className="relative flex items-center justify-center mb-16">
+        <div className="relative flex items-center justify-center mb-12">
           {balloons.map((balloon, index) => (
             <BalloonTag
               key={index}
               text={balloon.text}
               direction={balloon.direction}
               delay={balloon.delay}
+              icon={balloon.icon}
             />
           ))}
 
@@ -919,35 +938,7 @@ const AboutSection = memo(() => {
             }}
             viewport={{ once: true, margin: "-50px" }}
           >
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/50 backdrop-blur-sm border border-[#0084FF]/20 mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.6,
-                delay: 0.1,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-              viewport={{ once: true, margin: "-50px" }}
-            >
-              <motion.div
-                animate={{
-                  rotate: [0, 10, -10, 0],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <HiSparkles className="w-4 h-4 text-[#0084FF]" />
-              </motion.div>
-              <span className="text-[#0084FF] font-medium text-sm">
-                EXPLODE YOUR REACH
-              </span>
-            </motion.div>
-
-            <motion.h1 className="mb-6 text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
+            <motion.h1 className="mb-4 text-3xl font-bold leading-tight text-white md:text-4xl lg:text-5xl">
               <motion.span
                 className="block"
                 initial={{ opacity: 0, y: 30 }}
@@ -975,51 +966,13 @@ const AboutSection = memo(() => {
                 that doesn't stand out?
               </motion.span>
             </motion.h1>
-
-            <motion.p
-              className="mb-8 text-xl font-light text-gray-300"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{
-                duration: 0.8,
-                delay: 0.4,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-              viewport={{ once: true, margin: "-50px" }}
-            >
-              It's time to{" "}
-              <span className="text-[#0084FF] font-semibold">
-                upgrade the game
-              </span>{" "}
-              with us!
-            </motion.p>
           </motion.div>
         </div>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 py-8 border-b-2 border-b-[#0084FF]/30"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 0.8,
-            delay: 0.6,
-            ease: [0.25, 0.46, 0.45, 0.94],
-          }}
-          viewport={{ once: true, margin: "-50px" }}
-        >
-          {stats.map((stat, index) => (
-            <StatCard
-              key={index}
-              icon={stat.icon}
-              number={stat.number}
-              caption={stat.caption}
-              delay={stat.delay}
-            />
-          ))}
-        </motion.div>
+        <StatsSection stats={stats} />
 
         {/* Customer Reviews Carousel */}
-        <div className="mb-12">
+        <div className="mb-8">
           <CustomerReviewsCarousel />
         </div>
 

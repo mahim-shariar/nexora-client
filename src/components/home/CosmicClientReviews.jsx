@@ -125,29 +125,23 @@ const ClientReviews = () => {
 
       <div className="max-w-[1200px] mx-auto">
         {/* Header Section - EXACTLY AS ORIGINAL */}
-        <div className="mb-20 text-center">
+        <div className="mb-10 text-center">
           {/* Enhanced Badge */}
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-gradient-to-r from-[#0084FF]/10 to-[#66B5FF]/10 backdrop-blur-sm border border-[#0084FF]/20 mb-8 shadow-lg shadow-[#0084FF]/5">
             <div className="w-1.5 h-1.5 bg-[#0084FF] rounded-full animate-pulse"></div>
             <span className="text-[#0084FF] font-semibold text-sm tracking-wider">
-              CLIENT TESTIMONIALS
+              Feedback
             </span>
             <div className="w-1.5 h-1.5 bg-[#66B5FF] rounded-full animate-pulse"></div>
           </div>
 
-          {/* Enhanced Main Title */}
-          <h1 className="mb-8 text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
-            Client
+          {/* Reduced Main Title */}
+          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-4xl">
+            How we
             <span className="bg-gradient-to-r from-[#66B5FF] via-[#0084FF] to-[#66B5FF] bg-clip-text text-transparent bg-size-200 animate-gradient block mt-2">
-              Success Stories
+              Benefit Our Clients
             </span>
           </h1>
-
-          {/* Enhanced Subtitle */}
-          <p className="max-w-2xl mx-auto text-lg font-light leading-relaxed tracking-wide text-gray-300/80">
-            Hear from brands that have achieved stellar results with our cosmic
-            video editing services
-          </p>
         </div>
 
         {/* Marquee Section - EXACTLY AS ORIGINAL */}

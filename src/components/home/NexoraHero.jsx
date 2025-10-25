@@ -262,22 +262,6 @@ const VideoPlayer = memo(() => {
       className="relative w-full max-w-4xl px-4 mx-auto mb-8"
     >
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4 }}
-        className="mb-6 text-center"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4 }}
-          className="text-[#0084FF] text-sm font-light tracking-widest"
-        >
-          EXPERIENCE OUR WORK IN MOTION
-        </motion.div>
-      </motion.div>
-
-      <motion.div
         ref={containerRef}
         className="w-full h-[400px] lg:h-[500px] relative overflow-hidden rounded-2xl border border-[#0084FF]/40 shadow-2xl shadow-[#0084FF]/30 bg-black/80 backdrop-blur-sm cursor-pointer"
         whileHover={{
@@ -396,13 +380,44 @@ VideoPlayer.displayName = "VideoPlayer";
 
 // ===== User Avatars Component =====
 const UserAvatars = memo(() => {
+  // Profile images for avatars (using placeholder images)
   const users = useMemo(
     () => [
-      { id: 1, bg: "bg-gradient-to-r from-blue-500 to-cyan-500" },
-      { id: 2, bg: "bg-gradient-to-r from-purple-500 to-pink-500" },
-      { id: 3, bg: "bg-gradient-to-r from-green-500 to-emerald-500" },
-      { id: 4, bg: "bg-gradient-to-r from-orange-500 to-red-500" },
-      { id: 5, bg: "bg-gradient-to-r from-indigo-500 to-blue-500" },
+      {
+        id: 1,
+        bg: "bg-gradient-to-r from-blue-500 to-cyan-500",
+        profile:
+          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+        name: "Alex Chen",
+      },
+      {
+        id: 2,
+        bg: "bg-gradient-to-r from-purple-500 to-pink-500",
+        profile:
+          "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
+        name: "Maria Garcia",
+      },
+      {
+        id: 3,
+        bg: "bg-gradient-to-r from-green-500 to-emerald-500",
+        profile:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+        name: "James Wilson",
+      },
+      {
+        id: 4,
+        bg: "bg-gradient-to-r from-orange-500 to-red-500",
+        profile:
+          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+        name: "Sarah Johnson",
+      },
+      {
+        id: 5,
+        bg: "bg-gradient-to-r from-indigo-500 to-blue-500",
+        profile:
+          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
+        name: "Mike Thompson",
+      },
     ],
     []
   );
@@ -412,8 +427,21 @@ const UserAvatars = memo(() => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 1.1, duration: 0.6 }}
-      className="flex items-center justify-center gap-6 mb-8"
+      className="flex flex-col items-center justify-center gap-6 mb-8 md:flex-row"
     >
+      {/* Mobile: Text above avatars */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.3 }}
+        className="block text-center md:hidden"
+      >
+        <p className="mb-1 text-lg font-semibold text-white">
+          Loved by 500+ Businesses worldwide.
+        </p>
+        <p className="text-sm text-gray-300">Our Clients Speak for Us</p>
+      </motion.div>
+
       {/* Avatars */}
       <div className="flex -space-x-3">
         {users.map((user, index) => (
@@ -422,24 +450,50 @@ const UserAvatars = memo(() => {
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 1.2 + index * 0.1 }}
-            className={`w-12 h-12 rounded-full border-2 border-white/20 ${user.bg} flex items-center justify-center text-white text-xs font-bold shadow-lg`}
+            className="relative group"
           >
-            {index === users.length - 1 ? "+" : ""}
+            <div
+              className={`w-12 h-12 rounded-full border-2 border-white/20 ${user.bg} flex items-center justify-center text-white text-xs font-bold shadow-lg overflow-hidden`}
+            >
+              <img
+                src={user.profile}
+                alt={user.name}
+                className="object-cover w-full h-full"
+              />
+            </div>
+
+            {/* Profile Tooltip */}
+            <div className="absolute z-30 px-2 py-1 mb-2 text-xs text-white transition-opacity duration-200 transform -translate-x-1/2 rounded opacity-0 pointer-events-none bottom-full left-1/2 bg-black/80 group-hover:opacity-100 whitespace-nowrap">
+              {user.name}
+              <div className="absolute transform -translate-x-1/2 border-4 border-transparent top-full left-1/2 border-t-black/80"></div>
+            </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Text Content */}
+      {/* Desktop: Text beside avatars */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 1.4 }}
-        className="text-left"
+        className="hidden text-left md:block"
       >
         <p className="mb-1 text-lg font-semibold text-white">
           Loved by 500+ Businesses worldwide.
         </p>
         <p className="text-sm text-gray-300">Our Clients Speak for Us</p>
+      </motion.div>
+
+      {/* Mobile: Additional text below avatars */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5 }}
+        className="block text-center md:hidden"
+      >
+        <p className="text-xs text-gray-400">
+          Trusted by industry leaders worldwide
+        </p>
       </motion.div>
     </motion.div>
   );
@@ -449,13 +503,13 @@ UserAvatars.displayName = "UserAvatars";
 
 // ===== Smooth Text Animation =====
 const AnimatedText = memo(
-  ({ text, delay = 0, className = "", size = "xl", color = "blue" }) => {
+  ({ text, delay = 0, className = "", size = "md", color = "blue" }) => {
     const sizeClasses = useMemo(
       () => ({
-        xl: "text-6xl md:text-8xl lg:text-9xl font-black",
-        lg: "text-5xl md:text-7xl lg:text-8xl font-bold",
-        md: "text-4xl md:text-6xl lg:text-7xl font-semibold",
-        sm: "text-xl md:text-2xl lg:text-3xl font-medium",
+        xl: "text-4xl md:text-6xl lg:text-7xl font-black",
+        lg: "text-3xl md:text-5xl lg:text-6xl font-bold",
+        md: "text-2xl md:text-4xl lg:text-5xl font-semibold",
+        sm: "text-lg md:text-xl lg:text-2xl font-medium",
       }),
       []
     );
@@ -571,36 +625,13 @@ const HeroSection = memo(() => {
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 py-20">
         {/* Heading */}
-        <div className="mb-12 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-8"
-          >
-            <div className="text-[#0084FF] text-lg md:text-xl font-medium tracking-widest flex items-center justify-center gap-3">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              >
-                <HiSparkles className="w-5 h-5 text-[#0084FF]" />
-              </motion.div>
-              NEXT-GENERATION VIDEO PLATFORM
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              >
-                <HiSparkles className="w-5 h-5 text-[#0084FF]" />
-              </motion.div>
-            </div>
-          </motion.div>
-
-          <div className="mb-6">
+        <div className="mb-8 text-center">
+          <div className="mb-4">
             <AnimatedText
               text="Get More Qualified"
               color="white"
               delay={0.3}
-              size="xl"
+              size="lg"
             />
           </div>
 
@@ -612,19 +643,19 @@ const HeroSection = memo(() => {
             <AnimatedText
               text="Leads Through Video Content"
               delay={0.6}
-              size="lg"
+              size="md"
             />
           </motion.div>
         </div>
 
-        {/* Subtitle */}
+        {/* Subtitle - Reduced description size */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9, duration: 0.8 }}
-          className="max-w-2xl mx-auto mb-8 text-center"
+          className="max-w-2xl mx-auto mb-6 text-center"
         >
-          <p className="text-xl font-light leading-relaxed text-gray-200 md:text-2xl">
+          <p className="text-base font-light leading-relaxed text-gray-200 md:text-lg">
             Transform raw footage into professional-grade videos in minutes.
             Experience the future of video editing with advanced processing and
             cinematic rendering.
@@ -643,23 +674,23 @@ const HeroSection = memo(() => {
             duration: 0.8,
             ease: [0.25, 0.46, 0.45, 0.94],
           }}
-          className="flex justify-center mb-16"
+          className="flex justify-center mb-12"
         >
           <motion.button
             onClick={scrollToContact}
             whileHover={ctaButtonHover}
             whileTap={{ scale: 0.95 }}
-            className="relative px-12 py-5 bg-gradient-to-r from-[#0066CC] to-[#0084FF] rounded-2xl text-white font-bold text-xl hover:shadow-2xl transition-all group overflow-hidden flex items-center gap-3"
+            className="relative px-10 py-4 bg-gradient-to-r from-[#0066CC] to-[#0084FF] rounded-xl text-white font-bold text-lg hover:shadow-2xl transition-all group overflow-hidden flex items-center gap-3"
           >
             <span className="relative z-10 flex items-center">
-              <FaRocket className="w-5 h-5 mr-2" />
+              <FaRocket className="w-4 h-4 mr-2" />
               Book a Call
               <motion.span
-                className="ml-3"
+                className="ml-2"
                 animate={arrowAnimation}
                 transition={arrowTransition}
               >
-                <HiArrowRight className="w-5 h-5" />
+                <HiArrowRight className="w-4 h-4" />
               </motion.span>
             </span>
             <motion.div
@@ -697,16 +728,16 @@ const HeroSection = memo(() => {
                 repeat: Infinity,
                 repeatType: "loop",
               }}
-              className="text-[#0084FF] text-sm mb-3 tracking-widest font-light flex items-center gap-2"
+              className="text-[#0084FF] text-xs mb-2 tracking-widest font-light flex items-center gap-2"
             >
-              <FaChevronDown className="w-3 h-3" />
+              <FaChevronDown className="w-2 h-2" />
               SCROLL TO EXPLORE
-              <FaChevronDown className="w-3 h-3" />
+              <FaChevronDown className="w-2 h-2" />
             </motion.span>
             <motion.div
-              className="w-px h-16 bg-gradient-to-b from-[#0084FF] to-transparent"
+              className="w-px h-12 bg-gradient-to-b from-[#0084FF] to-transparent"
               animate={{
-                height: [16, 32, 16],
+                height: [12, 24, 12],
                 opacity: [0.5, 1, 0.5],
               }}
               transition={{

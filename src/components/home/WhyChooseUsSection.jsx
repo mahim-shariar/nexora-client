@@ -28,32 +28,14 @@ const WhyChooseUs = () => {
             </span>
           </div>
 
-          {/* Main Title */}
-          <h1 className="mb-6 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
+          {/* Reduced Main Title */}
+          <h1 className="mb-6 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             Know what
             <br />
             <span className="bg-gradient-to-r from-[#66B5FF] to-[#0084FF] bg-clip-text text-transparent">
-              we do differently
+              We do differently
             </span>
           </h1>
-
-          {/* Subtitle */}
-          <p className="mb-8 text-xl text-gray-300">
-            From Videos to High-Ticket Leads
-          </p>
-
-          {/* Pill Badges */}
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
-            <span className="inline-flex items-center px-4 py-2 text-sm font-medium text-green-400 border rounded-full bg-green-500/10 border-green-500/20">
-              ✅ 48-hour turnaround
-            </span>
-            <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#0084FF]/10 text-[#0084FF] border border-[#0084FF]/20">
-              🎯 Results-driven
-            </span>
-            <span className="inline-flex items-center px-4 py-2 text-sm font-medium text-yellow-400 border rounded-full bg-yellow-500/10 border-yellow-500/20">
-              👥 20+ experts
-            </span>
-          </div>
         </div>
 
         {/* Main Content Card */}
@@ -68,13 +50,13 @@ const WhyChooseUs = () => {
 
           <div className="relative z-10 grid grid-cols-1 gap-8 mb-12 lg:grid-cols-2">
             {/* Left Column - Features */}
-            <div className="relative p-8 overflow-hidden border bg-gradient-to-br from-gray-900 to-black rounded-2xl border-white/10 backdrop-blur-sm">
+            <div className="relative p-6 overflow-hidden border bg-gradient-to-br from-gray-900 to-black rounded-2xl border-white/10 backdrop-blur-sm md:p-8">
               {/* Logo Section */}
               <div className="flex items-center gap-4 mb-6">
                 <img
                   src={logo}
                   alt="Company Logo"
-                  className="object-contain w-50"
+                  className="object-contain w-40 md:w-50"
                 />
               </div>
 
@@ -92,12 +74,12 @@ const WhyChooseUs = () => {
                     key={index}
                     className="flex items-start gap-3 p-2 -mx-2 transition-colors rounded-lg group hover:bg-white/5"
                   >
-                    <GoCheck className="w-5 h-5 text-[#0084FF] mt-1" />
+                    <GoCheck className="w-5 h-5 text-[#0084FF] mt-1 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <span className="font-semibold text-white group-hover:text-[#0084FF] transition-colors">
+                      <span className="font-semibold text-white group-hover:text-[#0084FF] transition-colors text-sm md:text-base">
                         {feature.split(" – ")[0]}
                       </span>
-                      <span className="text-gray-300">
+                      <span className="text-sm text-gray-300 md:text-base">
                         {" "}
                         – {feature.split(" – ")[1]}
                       </span>
@@ -108,7 +90,7 @@ const WhyChooseUs = () => {
 
               {/* Micro-copy */}
               <div className="relative z-10 pt-6 mt-8 border-t border-white/10">
-                <div className="flex flex-wrap gap-6 text-sm text-gray-300">
+                <div className="flex flex-wrap gap-4 text-xs text-gray-300 md:text-sm md:gap-6">
                   <span className="flex items-center gap-2">
                     <svg
                       className="w-4 h-4 text-green-500"
@@ -159,7 +141,7 @@ const WhyChooseUs = () => {
             <div className="space-y-6">
               {/* Other Agencies Card */}
               <div className="p-6 border bg-gradient-to-br from-gray-900 to-black rounded-2xl border-white/10 backdrop-blur-sm">
-                <h3 className="flex items-center gap-2 mb-4 text-xl font-bold text-white">
+                <h3 className="flex items-center gap-2 mb-4 text-lg font-bold text-white md:text-xl">
                   <span className="text-red-400">⚠️</span>
                   Other Agencies
                 </h3>
@@ -175,7 +157,7 @@ const WhyChooseUs = () => {
                   ].map((issue, index) => (
                     <li
                       key={index}
-                      className="flex items-center gap-3 text-gray-300"
+                      className="flex items-center gap-3 text-sm text-gray-300 md:text-base"
                     >
                       <span className="flex items-center flex-shrink-0 w-5 h-5 text-white/30">
                         <RxCross2 />
@@ -188,7 +170,7 @@ const WhyChooseUs = () => {
 
               {/* Bonuses Card - Moved below Other Agencies */}
               <div className="bg-white/5 rounded-2xl p-6 border border-[#0084FF]/30 backdrop-blur-sm">
-                <h3 className="flex items-center gap-2 mb-4 text-xl font-bold text-white">
+                <h3 className="flex items-center gap-2 mb-4 text-lg font-bold text-white md:text-xl">
                   <span className="text-[#0084FF]">🎁</span>
                   Bonuses You Get With Us
                 </h3>
@@ -200,7 +182,7 @@ const WhyChooseUs = () => {
                   ].map((bonus, index) => (
                     <li
                       key={index}
-                      className="flex items-center gap-3 text-gray-300"
+                      className="flex items-center gap-3 text-sm text-gray-300 md:text-base"
                     >
                       <span className="flex-shrink-0 w-2 h-2 bg-[#0084FF] rounded-full"></span>
                       <span>{bonus}</span>
@@ -214,7 +196,7 @@ const WhyChooseUs = () => {
                 <div className="text-center">
                   <button
                     onClick={scrollToContact}
-                    className="w-full bg-gradient-to-r from-[#0084FF] to-[#0066CC] hover:from-[#0066CC] hover:to-[#0055AA] text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-[0_0_40px_#0084FF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0084FF] focus:ring-offset-2 focus:ring-offset-gray-900 mb-4"
+                    className="w-full bg-gradient-to-r from-[#0084FF] to-[#0066CC] hover:from-[#0066CC] hover:to-[#0055AA] text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-[0_0_40px_#0084FF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0084FF] focus:ring-offset-2 focus:ring-offset-gray-900 mb-4 text-sm md:text-base"
                     aria-label="Get started with our video marketing services"
                   >
                     Get Started
