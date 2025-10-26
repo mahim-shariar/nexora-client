@@ -135,7 +135,7 @@ const ProcessSteps = () => {
         </div>
 
         {/* Smaller Main Title */}
-        <h1 className="text-2xl font-bold  md:text-4xl lg:text-5xl">
+        <h1 className="text-2xl font-bold md:text-4xl lg:text-5xl">
           <span className="bg-gradient-to-r from-[#66B5FF] via-[#0084FF] to-[#66B5FF] bg-clip-text text-transparent bg-size-200 animate-gradient block mt-2">
             Our strategy to get <br /> you leads with content
           </span>
@@ -398,24 +398,39 @@ const ProcessSteps = () => {
         </div>
       </div>
 
-      {/* Step 5 - Final Step */}
+      {/* Step 5 & Final Partner Card */}
       <div className="relative flex flex-col items-center justify-center w-full gap-16 p-4 md:p-16 md:gap-56">
         <div className="relative flex flex-col items-center justify-center w-full max-w-4xl gap-20 md:flex-row md:gap-60">
-          {/* Final Text */}
+          {/* Final Partner Card */}
           <motion.div
             className="relative z-20 order-2 md:order-1"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={cardVariants}
           >
-            <div className="rotate-0 md:-rotate-6">
-              <h2 className="text-xl font-light tracking-wide text-center text-white">
-                Your{" "}
-                <span className="text-[#0084FF] font-semibold">all in one</span>
-                <br />
-                Video Editing Partner
-              </h2>
+            <div className="relative bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-[50px] border border-white/10 p-6 shadow-2xl shadow-black/30 md:w-80 w-72 transform md:-rotate-6 rotate-0">
+              <div className="absolute z-10 -top-12 right-12">
+                <img src={steps[0].pinImage} alt="Pin" className="h-56" />
+              </div>
+              <div className="h-20"></div>
+              <div className="relative from-[#0084FF]/10 bg-gradient-to-t to-transparent rounded-3xl p-4 border border-[#0084FF]/10">
+                <div className="space-y-2">
+                  <div className="text-[#0084FF] caveat font-mono text-4xl font-bold mb-2">
+                    06
+                  </div>
+                  <h2 className="text-2xl font-semibold tracking-tight text-white">
+                    Your Video Partner
+                  </h2>
+                  <p className="text-lg font-light leading-relaxed text-gray-300/80 md:text-xl">
+                    Your{" "}
+                    <span className="text-[#0084FF] font-semibold">
+                      all in one
+                    </span>{" "}
+                    video editing partner for continuous success
+                  </p>
+                </div>
+              </div>
             </div>
           </motion.div>
 

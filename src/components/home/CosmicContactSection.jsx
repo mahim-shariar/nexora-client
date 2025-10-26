@@ -37,7 +37,7 @@ export default function CosmicBookingSection() {
           className="mb-12 text-center"
         >
           <motion.div
-            className="inline-flex items-center gap-3 mb-6 text-lg font-medium tracking-widest text-blue-400"
+            className="inline-flex items-center gap-3 mb-6 text-base font-medium tracking-widest text-blue-400"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -57,7 +57,8 @@ export default function CosmicBookingSection() {
             </motion.div>
           </motion.div>
 
-          <h2 className="mb-6 text-5xl font-black text-white md:text-6xl">
+          {/* Reduced Title Size */}
+          <h2 className="mb-6 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             <span
               style={{
                 background: "linear-gradient(45deg, #0084FF, #0066CC, #0099FF)",
@@ -70,7 +71,7 @@ export default function CosmicBookingSection() {
               Book Your
             </span>
             <br />
-            <span className="text-3xl md:text-4xl">Session</span>
+            <span className="text-xl md:text-2xl">Session</span>
           </h2>
         </motion.div>
 
@@ -83,7 +84,7 @@ export default function CosmicBookingSection() {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="lg:col-span-1"
           >
-            <div className="relative h-full p-8 overflow-hidden border rounded-2xl border-blue-500/30 bg-gradient-to-br from-gray-900/60 to-blue-900/30 backdrop-blur-xl">
+            <div className="relative h-full p-6 overflow-hidden border rounded-2xl border-blue-500/30 bg-gradient-to-br from-gray-900/60 to-blue-900/30 backdrop-blur-xl">
               {/* Card Glow Effect */}
               <motion.div
                 className="absolute inset-0 rounded-2xl blur-md"
@@ -97,21 +98,21 @@ export default function CosmicBookingSection() {
                 <div className="mb-6 text-center">
                   <div className="inline-flex items-center gap-3 mb-4">
                     <div className="p-3 rounded-xl bg-blue-500/20">
-                      <FaRocket className="w-8 h-8 text-blue-400" />
+                      <FaRocket className="w-6 h-6 text-blue-400" />
                     </div>
                   </div>
-                  <h3 className="mb-3 text-2xl font-bold text-white">
+                  <h3 className="mb-3 text-xl font-bold text-white">
                     Strategy Session
                   </h3>
                   <div className="flex items-center justify-center gap-2 mb-4 text-blue-300">
-                    <FaClock className="w-5 h-5" />
-                    <span className="text-lg">60 Minutes</span>
+                    <FaClock className="w-4 h-4" />
+                    <span className="text-base">60 Minutes</span>
                   </div>
                 </div>
 
                 {/* Description */}
                 <div className="flex-1">
-                  <p className="mb-6 leading-relaxed text-center text-gray-300">
+                  <p className="mb-6 text-sm leading-relaxed text-center text-gray-300">
                     Deep dive into your project with comprehensive planning and
                     roadmap creation. Perfect for startups and established
                     businesses.
@@ -132,8 +133,8 @@ export default function CosmicBookingSection() {
                         transition={{ delay: 0.5 + index * 0.1 }}
                         className="flex items-center gap-3 text-blue-300"
                       >
-                        <HiSparkles className="flex-shrink-0 w-4 h-4 text-blue-400" />
-                        <span className="text-sm">{feature}</span>
+                        <HiSparkles className="flex-shrink-0 w-3 h-3 text-blue-400" />
+                        <span className="text-xs">{feature}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -141,7 +142,7 @@ export default function CosmicBookingSection() {
 
                 {/* Price */}
                 <div className="mt-auto text-center">
-                  <span className="px-6 py-3 text-lg font-bold text-blue-400 rounded-full bg-blue-500/20">
+                  <span className="px-4 py-2 text-sm font-bold text-blue-400 rounded-full bg-blue-500/20">
                     FREE SESSION
                   </span>
                 </div>
@@ -172,14 +173,14 @@ export default function CosmicBookingSection() {
                         repeat: Infinity,
                         ease: "linear",
                       }}
-                      className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600"
+                      className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600"
                     >
-                      <HiSparkles className="w-8 h-8 text-white" />
+                      <HiSparkles className="w-6 h-6 text-white" />
                     </motion.div>
-                    <h3 className="mb-2 text-xl font-bold text-white">
+                    <h3 className="mb-2 text-lg font-bold text-white">
                       Loading Calendar
                     </h3>
-                    <p className="text-blue-300">
+                    <p className="text-sm text-blue-300">
                       Preparing your booking experience...
                     </p>
                   </motion.div>
@@ -206,7 +207,7 @@ export default function CosmicBookingSection() {
           transition={{ delay: 0.8 }}
           className="mt-12 text-center"
         >
-          <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-gray-300">
+          <div className="flex flex-wrap items-center justify-center gap-8 text-xs text-gray-300">
             {[
               {
                 icon: HiSparkles,
@@ -223,7 +224,7 @@ export default function CosmicBookingSection() {
                 transition={{ delay: 0.9 + index * 0.1 }}
                 className="flex items-center gap-2"
               >
-                <item.icon className={`w-4 h-4 ${item.color}`} />
+                <item.icon className={`w-3 h-3 ${item.color}`} />
                 <span>{item.text}</span>
               </motion.div>
             ))}
