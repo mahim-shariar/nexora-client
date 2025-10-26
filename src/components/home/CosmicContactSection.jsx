@@ -189,7 +189,7 @@ export default function CosmicBookingSection() {
 
               {/* TidyCal Iframe */}
               <iframe
-                src="https://tidycal.com/mdmahim924214/60-minute-meeting"
+                src="https://tidycal.com/nexoramedia123/60-minute-meeting"
                 className="w-full h-full border-0 rounded-2xl"
                 title="Book Your Strategy Session"
                 onLoad={() => setIframeLoaded(true)}

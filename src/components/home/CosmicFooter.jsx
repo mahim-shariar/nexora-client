@@ -14,6 +14,7 @@ import {
 import { HiSparkles, HiMail } from "react-icons/hi";
 import logo from "../../assets/main-log.png";
 import { useAuth } from "../../hook/useAuth";
+import { FaMeta, FaX } from "react-icons/fa6";
 
 // ===== Back to Top Button =====
 const BackToTop = () => {
@@ -59,10 +60,25 @@ export default function CosmicFooter() {
   const { isAuthenticated, user, logout } = useAuth();
 
   const socials = [
-    { icon: FaTwitter, href: "#", color: "#1DA1F2", label: "Twitter" },
-    { icon: FaLinkedin, href: "#", color: "#0077B5", label: "LinkedIn" },
-    { icon: FaInstagram, href: "#", color: "#E4405F", label: "Instagram" },
-    { icon: FaGithub, href: "#", color: "#333", label: "GitHub" },
+    {
+      icon: FaX,
+      href: "https://x.com/ShahorinH4802",
+      color: "#1DA1F2",
+      label: "Twitter",
+    },
+    {
+      icon: FaLinkedin,
+      href: "https://www.linkedin.com/in/nexora-pro-123ba7353/",
+      color: "#0077B5",
+      label: "LinkedIn",
+    },
+    {
+      icon: FaInstagram,
+      href: "https://www.instagram.com/shahorinhasan",
+      color: "#E4405F",
+      label: "Instagram",
+    },
+    // { icon: FaMeta, href: "#", color: "#1877F2", label: "FaceBook" },
   ];
 
   const quickLinks = [
@@ -283,20 +299,6 @@ export default function CosmicFooter() {
           <div className="flex flex-col items-center justify-between gap-4 text-sm text-gray-400 md:flex-row">
             <div className="flex items-center gap-4">
               <span>© {currentYear} All rights reserved</span>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => handleQuickLinkClick("#")}
-                  className="hover:text-[#0084FF] transition-colors"
-                >
-                  Privacy
-                </button>
-                <button
-                  onClick={() => handleQuickLinkClick("#")}
-                  className="hover:text-[#0084FF] transition-colors"
-                >
-                  Terms
-                </button>
-              </div>
             </div>
 
             <div className="flex items-center gap-2">

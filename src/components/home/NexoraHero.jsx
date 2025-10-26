@@ -387,36 +387,28 @@ const UserAvatars = memo(() => {
         id: 1,
         bg: "bg-gradient-to-r from-blue-500 to-cyan-500",
         profile:
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-        name: "Alex Chen",
+          "https://i.postimg.cc/mkTDq6CZ/487239742-1354528409018334-6501910613559968407-n.jpg",
       },
       {
         id: 2,
         bg: "bg-gradient-to-r from-purple-500 to-pink-500",
-        profile:
-          "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
-        name: "Maria Garcia",
+        profile: "https://i.postimg.cc/j28s1qRv/channels4-profile-1.jpg",
       },
       {
         id: 3,
         bg: "bg-gradient-to-r from-green-500 to-emerald-500",
-        profile:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-        name: "James Wilson",
+        profile: "https://i.postimg.cc/mDjRcZ1g/channels4-profile.jpg",
       },
       {
         id: 4,
         bg: "bg-gradient-to-r from-orange-500 to-red-500",
-        profile:
-          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-        name: "Sarah Johnson",
+        profile: "https://i.postimg.cc/MZr2gFyt/unnamed.webp",
       },
       {
         id: 5,
         bg: "bg-gradient-to-r from-indigo-500 to-blue-500",
         profile:
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-        name: "Mike Thompson",
+          "https://i.postimg.cc/prm72PfN/482030877-1198505171700609-4335114017922048258-n.jpg",
       },
     ],
     []
@@ -457,15 +449,9 @@ const UserAvatars = memo(() => {
             >
               <img
                 src={user.profile}
-                alt={user.name}
+                alt="User"
                 className="object-cover w-full h-full"
               />
-            </div>
-
-            {/* Profile Tooltip */}
-            <div className="absolute z-30 px-2 py-1 mb-2 text-xs text-white transition-opacity duration-200 transform -translate-x-1/2 rounded opacity-0 pointer-events-none bottom-full left-1/2 bg-black/80 group-hover:opacity-100 whitespace-nowrap">
-              {user.name}
-              <div className="absolute transform -translate-x-1/2 border-4 border-transparent top-full left-1/2 border-t-black/80"></div>
             </div>
           </motion.div>
         ))}

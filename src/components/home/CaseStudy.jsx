@@ -115,8 +115,8 @@ export default function CaseStudyCardLayout() {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face"
-                  alt="Neel Nafis"
+                  src="https://i.postimg.cc/K8CtVxzT/1000023500.jpg"
+                  alt="Shahorin Hasan"
                   className="w-14 h-14 rounded-full object-cover border-2 border-[#0084FF]"
                 />
                 <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-[#0084FF] to-[#0066CC] rounded-full flex items-center justify-center border-2 border-gray-900">
@@ -124,7 +124,7 @@ export default function CaseStudyCardLayout() {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-bold">Neel Nafis</h3>
+                <h3 className="text-lg font-bold">Shahorin Hasan</h3>
                 <p className="text-sm text-white/60">Founder & CEO</p>
                 <div className="flex items-center gap-1 mt-1">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>

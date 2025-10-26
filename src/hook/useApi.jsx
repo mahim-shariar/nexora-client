@@ -47,8 +47,6 @@ const useApi = () => {
           config.headers.Authorization = `Bearer ${token}`;
         }
 
-        console.log(`API Call: ${config.method || "GET"} ${url}`); // For debugging
-
         const response = await fetch(url, config);
 
         if (!response.ok) {

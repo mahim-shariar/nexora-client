@@ -136,8 +136,9 @@ const ProcessSteps = () => {
 
         {/* Smaller Main Title */}
         <h1 className="text-2xl font-bold md:text-4xl lg:text-5xl">
+          <span className="text-white ">Our strategy to get</span>
           <span className="bg-gradient-to-r from-[#66B5FF] via-[#0084FF] to-[#66B5FF] bg-clip-text text-transparent bg-size-200 animate-gradient block mt-2">
-            Our strategy to get <br /> you leads with content
+            you leads with content
           </span>
         </h1>
       </div>
@@ -411,7 +412,7 @@ const ProcessSteps = () => {
           >
             <div className="relative bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-[50px] border border-white/10 p-6 shadow-2xl shadow-black/30 md:w-80 w-72 transform md:-rotate-6 rotate-0">
               <div className="absolute z-10 -top-12 right-12">
-                <img src={steps[0].pinImage} alt="Pin" className="h-56" />
+                <img src={steps[1].pinImage} alt="Pin" className="h-56" />
               </div>
               <div className="h-20"></div>
               <div className="relative from-[#0084FF]/10 bg-gradient-to-t to-transparent rounded-3xl p-4 border border-[#0084FF]/10">
